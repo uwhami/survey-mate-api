@@ -2,7 +2,7 @@ package com.surveymate.api.member;
 
 
 import com.surveymate.api.domain.member.dto.MemberDTO;
-import com.surveymate.api.domain.member.entity.Member;
+import com.surveymate.api.domain.member.dto.MemberSignupDTO;
 import com.surveymate.api.domain.member.service.MemberService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -18,17 +18,16 @@ public class MemberServiceTests {
     private MemberService memberService;
 
     @Test
-    void testCreateMember() throws Exception {
-        MemberDTO memberDTO = MemberDTO.builder()
-                .memNum("")
-                .userId("user3")
-                .password("12341234")
+    void testCreateMember() {
+        MemberSignupDTO memberSignupDTO = MemberSignupDTO.builder()
+                .userId("user11")
+                .password("password")
                 .userName("John Doe")
                 .profileImage("profile.jpg")
-                .joinDate("20231022")
+                .joinDate("20241024")
                 .memStatus("1")
                 .build();
-        Member member = memberService.createMember(memberDTO);
+        MemberDTO member = memberService.createMember(memberSignupDTO);
 
         System.out.println(member.toString());
 

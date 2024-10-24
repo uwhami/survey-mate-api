@@ -1,6 +1,7 @@
 package com.surveymate.api.domain.member.service;
 
 import com.surveymate.api.domain.member.dto.MemberDTO;
+import com.surveymate.api.domain.member.dto.MemberSignupDTO;
 import com.surveymate.api.domain.member.entity.Member;
 import com.surveymate.api.domain.member.mapper.MemberMapper;
 import com.surveymate.api.domain.member.repository.MemberRepository;
@@ -24,10 +25,11 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public Member createMember(MemberDTO memberDTO) throws Exception{
-        Member member = memberMapper.toEntity(memberDTO);
+    public MemberDTO createMember(MemberSignupDTO memberSignupDTO) {
+        Member member = memberMapper.toEntity(memberSignupDTO);
         member.setMemNum(codeGenerator.generateCode("MU01"));
         member.setPassword(passwordEncoder.encode(member.getPassword()));
-        return memberRepository.save(member);
+        member = memberRepository.save(member);
+        return memberMapper.toDTO(member);
     }
 }
