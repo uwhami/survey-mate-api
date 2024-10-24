@@ -1,12 +1,12 @@
 package com.surveymate.api.domain.member.service;
 
 import com.surveymate.api.domain.member.dto.MemberDTO;
-import com.surveymate.api.domain.member.entity.Member;
+import com.surveymate.api.domain.member.dto.MemberSignupDTO;
 
 
 public interface MemberService {
 
-    Member createMember(MemberDTO memberDTO) throws Exception;
+    MemberDTO createMember(MemberSignupDTO memberSignupDTO);
 
 
 }
