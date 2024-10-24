@@ -18,7 +18,7 @@ import java.util.Set;
 public class Member {
 
     @Id
-    @Column(name = "mem_num", length = 13, nullable = false)
+    @Column(name = "mem_num", nullable = false)
     private String memNum;
 
     @Column(name = "user_id", length = 20, nullable = false, unique = true)

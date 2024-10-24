@@ -21,12 +21,12 @@ public class MemberServiceTests {
     void testCreateMember() throws Exception {
         MemberDTO memberDTO = MemberDTO.builder()
                 .memNum("")
-                .userId("user123")
+                .userId("user3")
                 .password("12341234")
                 .userName("John Doe")
                 .profileImage("profile.jpg")
                 .joinDate("20231022")
-                .memStatus("A")
+                .memStatus("1")
                 .build();
         Member member = memberService.createMember(memberDTO);
 
