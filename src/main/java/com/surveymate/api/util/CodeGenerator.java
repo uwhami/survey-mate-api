@@ -28,15 +28,27 @@ public class CodeGenerator {
         }
 
         int number = 0;
+        boolean last = true;
+        String format = "%04d";
         if(topNumStr != null && !topNumStr.isEmpty()){
+            for(char c : topNumStr.toCharArray()){
+                if (c != '9') {
+                    last = false;
+                    break;
+                }
+            }
             int codeStartIndex = topNumStr.indexOf(today);
             if(codeStartIndex != -1){
                 int index = codeStartIndex + today.length();
                 number = Integer.parseInt(topNumStr.substring(index));
             }
+            if(last){
+                format = "%0" + topNumStr.length()+1 + "d";
+            }
         }
         number += 1;
-        String formattedNumber = String.format("%04d", number);
+
+        String formattedNumber = String.format(format, number);
 
         return prefixCode + today + formattedNumber;
     }
