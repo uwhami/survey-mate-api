@@ -6,7 +6,7 @@ import com.surveymate.api.domain.member.dto.MemberSignupDTO;
 
 public interface MemberService {
 
-    MemberDTO createMember(MemberSignupDTO memberSignupDTO);
+    MemberDTO createMember(MemberSignupDTO memberSignupDTO) throws Exception ;
 
 
 }

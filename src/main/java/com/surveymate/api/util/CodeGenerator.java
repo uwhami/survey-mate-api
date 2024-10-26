@@ -29,18 +29,13 @@ public class CodeGenerator {
             } else {
                 throw new IllegalArgumentException("잘못된 코드 번호입니다.");
             }
-        } catch (IllegalArgumentException e) {
-            log.error("예외 발생: " + e.getMessage());
-
         } catch (Exception e) {
-            log.error("알 수 없는 오류 발생: " + e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
 
 
         topNum += 1;
-        log.info("==========자동 채번 번호 : " + topNum);
-        String codeNum = null;
+        String codeNum;
         if(topNum < 1000){
             String formattedNumber = String.format("%04d", topNum);
             codeNum = prefixCode + today + formattedNumber;

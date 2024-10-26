@@ -11,7 +11,6 @@ public class MemberDTO {
 
     private String memNum;
     private String userId;
-    private String password;
     private String userName;
     private String profileImage;
     private String joinDate;

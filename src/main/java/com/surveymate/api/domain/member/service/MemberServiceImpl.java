@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -25,11 +27,21 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public MemberDTO createMember(MemberSignupDTO memberSignupDTO) {
+    public MemberDTO createMember(MemberSignupDTO memberSignupDTO) throws Exception {
         Member member = memberMapper.toEntity(memberSignupDTO);
+
+        if(isUserIdDuplicate(member.getUserId())){
+            throw new Exception("이미 존재하는 ID 입니다.");
+        }
+
         member.setMemNum(codeGenerator.generateCode("MU01"));
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         member = memberRepository.save(member);
         return memberMapper.toDTO(member);
+    }
+
+    public boolean isUserIdDuplicate(String userId) {
+        Optional<Member> duplicate = memberRepository.findByUserId(userId);
+        return duplicate.isPresent();
     }
 }

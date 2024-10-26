@@ -45,10 +45,11 @@ public class SecurityConfig {
         http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable())
 
          .authorizeHttpRequests(auth -> auth
-                 .requestMatchers("/api/auth/**", "/login").permitAll()
+                 .requestMatchers("/api/auth/**", "/api/member/**").permitAll()
                  .anyRequest().authenticated()                   // 그 외 모든 요청은 인증 필요
         )
-                .formLogin(form -> form.disable());;
+                .formLogin(form -> form.disable())
+                .httpBasic(form -> form.disable());
 
 
 //        http.addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

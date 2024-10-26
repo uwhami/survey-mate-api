@@ -18,12 +18,11 @@ public class MemberServiceTests {
     private MemberService memberService;
 
     @Test
-    void testCreateMember() {
+    void testCreateMember() throws Exception {
         MemberSignupDTO memberSignupDTO = MemberSignupDTO.builder()
                 .userId("user11")
                 .password("password")
                 .userName("John Doe")
-                .profileImage("profile.jpg")
                 .joinDate("20241024")
                 .memStatus("1")
                 .build();
