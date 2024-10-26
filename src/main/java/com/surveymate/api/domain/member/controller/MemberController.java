@@ -22,7 +22,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/register")
-    public MemberDTO changeCart(@RequestBody MemberSignupDTO memberSignupDTO) {
+    public MemberDTO changeCart(@RequestBody MemberSignupDTO memberSignupDTO) throws Exception {
         log.info(memberSignupDTO);
 
         return memberService.createMember(memberSignupDTO);
