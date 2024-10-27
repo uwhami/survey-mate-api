@@ -1,5 +1,6 @@
 package com.surveymate.api.security;
 
+import com.surveymate.api.security.handler.CustomAccessDeniedHandler;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,9 +55,9 @@ public class SecurityConfig {
 
 //        http.addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-//        http.exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
-//            httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(new CustomAccessDeniedHandler());
-//        });
+        http.exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
+            httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(new CustomAccessDeniedHandler());
+        });
 
 
         return http.build();
