@@ -6,12 +6,11 @@ import com.surveymate.api.domain.member.dto.MemberSignupDTO;
 import com.surveymate.api.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -21,10 +20,13 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/register")
-    public MemberDTO changeCart(@RequestBody MemberSignupDTO memberSignupDTO) throws Exception {
-        log.info(memberSignupDTO);
+    @GetMapping("/check-duplicate-id")
+    public Map<String, String> checkDuplicateId(@RequestParam String userId) {
+        return memberService.checkDuplicateId(userId);
+    }
 
+    @PostMapping("/register")
+    public MemberDTO createMember(@RequestBody MemberSignupDTO memberSignupDTO) throws Exception {
         return memberService.createMember(memberSignupDTO);
     }
 

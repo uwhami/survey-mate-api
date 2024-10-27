@@ -15,6 +15,11 @@ public class MemberRepositoryTests {
     @Autowired
     MemberRepository memberRepository;
 
+    @Test
+    public void testExsitsByUserId(){
+        boolean exists = memberRepository.existsByUserId("user11");
+        System.out.println(exists);
+    }
 
     @Test
     public void save() {
