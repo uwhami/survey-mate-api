@@ -1,4 +1,4 @@
-package com.surveymate.api.exception;
+package com.surveymate.api.member.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

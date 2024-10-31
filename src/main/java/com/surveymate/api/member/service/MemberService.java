@@ -1,7 +1,7 @@
-package com.surveymate.api.domain.member.service;
+package com.surveymate.api.member.service;
 
-import com.surveymate.api.domain.member.dto.MemberDTO;
-import com.surveymate.api.domain.member.dto.MemberSignupDTO;
+import com.surveymate.api.member.dto.MemberDTO;
+import com.surveymate.api.member.dto.MemberSignupDTO;
 
 import java.util.Map;
 

@@ -1,9 +1,9 @@
 package com.surveymate.api.member;
 
 
-import com.surveymate.api.domain.member.dto.MemberDTO;
-import com.surveymate.api.domain.member.dto.MemberSignupDTO;
-import com.surveymate.api.domain.member.service.MemberService;
+import com.surveymate.api.member.dto.MemberDTO;
+import com.surveymate.api.member.dto.MemberSignupDTO;
+import com.surveymate.api.member.service.MemberService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
