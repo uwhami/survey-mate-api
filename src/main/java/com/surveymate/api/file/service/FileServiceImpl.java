@@ -92,6 +92,8 @@ public class FileServiceImpl implements FileService {
 
                     Path thumbnailPath = Paths.get(thumbnailPathString, "s_" + saveName);
                     Thumbnails.of(savedFilePath.toFile()).size(200, 200).toFile(thumbnailPath.toFile());
+                }else{
+                    throw new ThumbnailCreationException("image 파일만 등록 가능 합니다.");
                 }
             } catch (IOException e) {
                 throw new ThumbnailCreationException("이미지 파일 썸네일 생성 중 에러 발생.");

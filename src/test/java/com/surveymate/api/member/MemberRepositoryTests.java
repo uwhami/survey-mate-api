@@ -22,7 +22,6 @@ public class MemberRepositoryTests {
                 .userId("user123")
                 .password("encodedPassword")
                 .userName("John Doe")
-                .profileImage("profile.jpg")
                 .joinDate("20231022")
                 .memStatus("A")
                 .build();
