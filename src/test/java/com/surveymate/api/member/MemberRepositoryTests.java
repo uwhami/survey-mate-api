@@ -1,8 +1,7 @@
 package com.surveymate.api.member;
 
-import com.surveymate.api.domain.member.entity.Member;
-import com.surveymate.api.domain.member.mapper.MemberMapper;
-import com.surveymate.api.domain.member.repository.MemberRepository;
+import com.surveymate.api.member.entity.Member;
+import com.surveymate.api.member.repository.MemberRepository;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

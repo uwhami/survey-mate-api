@@ -1,6 +1,6 @@
-package com.surveymate.api.domain.member.repository;
+package com.surveymate.api.member.repository;
 
-import com.surveymate.api.domain.member.entity.Member;
+import com.surveymate.api.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

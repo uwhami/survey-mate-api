@@ -1,7 +1,8 @@
-package com.surveymate.api.domain.member.entity;
+package com.surveymate.api.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
@@ -28,8 +29,8 @@ public class Member {
     @Column(name = "user_name", length = 50, nullable = false)
     private String userName;
 
-    @Column(name = "profile_image", length = 50)
-    private String profileImage;
+    @Column(name = "profile_image_uuid", length = 50)
+    private String profileImageUuid;
 
     @Column(name = "join_date", length = 8, nullable = false)
     private String joinDate;

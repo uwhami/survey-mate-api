@@ -48,6 +48,8 @@ dependencies {
 	implementation 'org.mapstruct:mapstruct:1.6.2'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.2'
 
+	implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.8'
+
 }
 
 tasks.named('test') {
