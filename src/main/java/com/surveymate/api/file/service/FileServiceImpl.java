@@ -7,8 +7,8 @@ import com.surveymate.api.file.exception.FileNameTooLongException;
 import com.surveymate.api.file.exception.ThumbnailCreationException;
 import com.surveymate.api.file.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnails;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Log4j2
 @RequiredArgsConstructor
 @Service
 public class FileServiceImpl implements FileService {
@@ -68,10 +69,7 @@ public class FileServiceImpl implements FileService {
     public UploadedFile uploadFile(MultipartFile multipartFile, boolean thumbnail, FilePath filePath) throws Exception {
         String fileUuid = UUID.randomUUID().toString();
         String filePathString = getUploadPath(filePath);
-        Path directory = Paths.get(filePathString);
-        if (!Files.exists(directory)) {
-            Files.createDirectories(directory);
-        }
+        Path directory = createDirectoryIfNotExists(filePathString);
 
         String originalFilename = multipartFile.getOriginalFilename();
         if(originalFilename.length() > 100){
@@ -80,27 +78,19 @@ public class FileServiceImpl implements FileService {
         String saveName = fileUuid + "_" + originalFilename;
 
         Path savedFilePath = directory.resolve(saveName);
-        Files.copy(multipartFile.getInputStream(), savedFilePath);
+        try {
+            Files.copy(multipartFile.getInputStream(), savedFilePath);
 
-        if(thumbnail) {
-            try {
-                String contentType = multipartFile.getContentType();
-                //이미지 파일이라면
-                if (contentType != null && contentType.startsWith("image")) {
-                    String thumbnailPathString = filePathString + "/thumbnail";
-                    Path thumbnailDirectory = Paths.get(thumbnailPathString);
-                    if (!Files.exists(thumbnailDirectory)) {
-                        Files.createDirectories(thumbnailDirectory);
-                    }
+            if(thumbnail) {
+                validateImageFile(multipartFile);
 
-                    Path thumbnailPath = Paths.get(thumbnailPathString, "s_" + saveName);
-                    Thumbnails.of(savedFilePath.toFile()).size(200, 200).toFile(thumbnailPath.toFile());
-                }else{
-                    throw new ThumbnailCreationException("image 파일만 등록 가능 합니다.");
-                }
-            } catch (IOException e) {
-                throw new ThumbnailCreationException("이미지 파일 썸네일 생성 중 에러 발생.");
+                String thumbnailPathString = filePathString + "/thumbnail";
+                Path thumbnailDirectory = createDirectoryIfNotExists(thumbnailPathString);
+                Path thumbnailPath = thumbnailDirectory.resolve("s_" + saveName);
+                Thumbnails.of(savedFilePath.toFile()).size(200, 200).toFile(thumbnailPath.toFile());
             }
+        } catch (ThumbnailCreationException | IOException e){
+            handleThumbnailCreationError(savedFilePath, e);
         }
 
         // 파일 메타데이터 저장
@@ -114,6 +104,34 @@ public class FileServiceImpl implements FileService {
 
         return file;
     }
+
+    /* 파일 폴더 설정 */
+    private Path createDirectoryIfNotExists(String directoryPath) throws IOException {
+        Path directory = Paths.get(directoryPath);
+        if (!Files.exists(directory)) {
+            Files.createDirectories(directory);
+        }
+        return directory;
+    }
+
+    /* 이미지 파일 검증 */
+    private void validateImageFile(MultipartFile multipartFile) {
+        String contentType = multipartFile.getContentType();
+        if (contentType == null || !contentType.startsWith("image")) {
+            throw new ThumbnailCreationException("image 파일만 등록 가능 합니다.");
+        }
+    }
+
+    /* 에러 발생 시 파일 삭제 및 예외 처리 */
+    private void handleThumbnailCreationError(Path savedFilePath, Exception e) {
+        try {
+            Files.deleteIfExists(savedFilePath);
+        } catch (IOException ioException) {
+            log.error("파일 삭제 중 에러 발생: {}", savedFilePath, ioException);
+        }
+        throw new ThumbnailCreationException(e.getMessage(), e);
+    }
+
 
     public Resource downloadFile(String fileId) throws Exception {
         UploadedFile fileEntity = fileRepository.findById(fileId)
