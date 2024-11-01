@@ -29,7 +29,7 @@ public class Member {
     @Column(name = "user_name", length = 50, nullable = false)
     private String userName;
 
-    @Column(name = "profile_image_uuid", length = 50)
+    @Column(name = "profile_image_uuid", length = 200)
     private String profileImageUuid;
 
     @Column(name = "join_date", length = 8, nullable = false)

@@ -46,7 +46,7 @@ public class SecurityConfig {
         http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable())
 
          .authorizeHttpRequests(auth -> auth
-                 .requestMatchers("/api/auth/**", "/api/member/**").permitAll()
+                 .requestMatchers("/api/auth/**", "/api/member/**", "/uploads/**").permitAll()
                  .anyRequest().authenticated()                   // 그 외 모든 요청은 인증 필요
         )
                 .formLogin(form -> form.disable())
