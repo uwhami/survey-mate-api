@@ -1,6 +1,7 @@
 package com.surveymate.api.member.service;
 
 import com.surveymate.api.common.enums.FilePath;
+import com.surveymate.api.file.entity.UploadedFile;
 import com.surveymate.api.file.service.FileService;
 import com.surveymate.api.member.dto.MemberDTO;
 import com.surveymate.api.member.dto.MemberSignupDTO;
@@ -52,16 +53,22 @@ public class MemberServiceImpl implements MemberService {
         }
 
         MultipartFile file = memberSignupDTO.getProfileImage();
+        UploadedFile savedFile = null;
         if(file != null){
-            String fileUuid = fileService.uploadFileAndCreateThumbnail(file, FilePath.MEMBER_PROFILE);
-            member.setProfileImageUuid(fileUuid);
+            savedFile = fileService.uploadFileAndCreateThumbnail(file, FilePath.MEMBER_PROFILE);
+            member.setProfileImageUuid(savedFile.getFileId());
         }
 
         member.setMemNum(codeGenerator.generateCode("MU01"));
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         member = memberRepository.save(member);
 
-        return memberMapper.toDTO(member);
+        MemberDTO memberDTO = memberMapper.toDTO(member);
+        if(savedFile != null){
+            memberDTO.setProfileImageUri(savedFile.getFilePath());
+        }
+
+        return memberDTO;
     }
 
     public boolean isUserIdDuplicate(String userId) {

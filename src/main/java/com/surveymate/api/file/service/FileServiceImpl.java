@@ -3,6 +3,7 @@ package com.surveymate.api.file.service;
 import com.surveymate.api.common.enums.FilePath;
 import com.surveymate.api.config.FileUploadProperties;
 import com.surveymate.api.file.entity.UploadedFile;
+import com.surveymate.api.file.exception.FileNameTooLongException;
 import com.surveymate.api.file.exception.ThumbnailCreationException;
 import com.surveymate.api.file.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,6 @@ public class FileServiceImpl implements FileService {
     private final FileRepository fileRepository;
     private final FileUploadProperties fileUploadProperties;
 
-
     public String getUploadPath(FilePath filePath){
         String uploadPath = null;
         switch (filePath){
@@ -46,26 +46,26 @@ public class FileServiceImpl implements FileService {
     }
 
     @Transactional
-    public String uploadFile(MultipartFile multipartFile, FilePath filePath) throws Exception {
+    public UploadedFile uploadFile(MultipartFile multipartFile, FilePath filePath) throws Exception {
         return uploadFile(multipartFile, false, filePath);
     }
 
     @Transactional
-    public List<String> uploadFiles(List<MultipartFile> multipartFiles, FilePath filePath) throws Exception {
-        List<String> fileUuids = new ArrayList<>();
+    public List<UploadedFile> uploadFiles(List<MultipartFile> multipartFiles, FilePath filePath) throws Exception {
+        List<UploadedFile> files = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
-            fileUuids.add(uploadFile(multipartFile, filePath));
+            files.add(uploadFile(multipartFile, filePath));
         }
-        return fileUuids;
+        return files;
     }
 
     @Transactional
-    public String uploadFileAndCreateThumbnail(MultipartFile multipartFile, FilePath filePath) throws Exception{
+    public UploadedFile uploadFileAndCreateThumbnail(MultipartFile multipartFile, FilePath filePath) throws Exception{
         return uploadFile(multipartFile, true, filePath);
     }
 
     @Transactional
-    public String uploadFile(MultipartFile multipartFile, boolean thumbnail, FilePath filePath) throws Exception {
+    public UploadedFile uploadFile(MultipartFile multipartFile, boolean thumbnail, FilePath filePath) throws Exception {
         String fileUuid = UUID.randomUUID().toString();
         String filePathString = getUploadPath(filePath);
         Path directory = Paths.get(filePathString);
@@ -74,6 +74,9 @@ public class FileServiceImpl implements FileService {
         }
 
         String originalFilename = multipartFile.getOriginalFilename();
+        if(originalFilename.length() > 100){
+            throw new FileNameTooLongException("파일 이름이 너무 깁니다.");
+        }
         String saveName = fileUuid + "_" + originalFilename;
 
         Path savedFilePath = directory.resolve(saveName);
@@ -102,14 +105,14 @@ public class FileServiceImpl implements FileService {
 
         // 파일 메타데이터 저장
         UploadedFile file = UploadedFile.builder()
-                .fileId(saveName)
-                .fileName(originalFilename)
-                .filePath(savedFilePath.toString())
-                .thumbnail(thumbnail)
-                .build();
+                                        .fileId(saveName)
+                                        .fileName(originalFilename)
+                                        .filePath(savedFilePath.toString())
+                                        .thumbnail(thumbnail)
+                                        .build();
         fileRepository.save(file);
 
-        return fileUuid;
+        return file;
     }
 
     public Resource downloadFile(String fileId) throws Exception {

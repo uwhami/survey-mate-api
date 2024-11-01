@@ -13,7 +13,7 @@ public class MemberDTO {
     private String memNum;
     private String userId;
     private String userName;
-    private MultipartFile profileImage;
+    private String profileImageUri;
     private String joinDate;
     private String memStatus;
 }
