@@ -49,6 +49,9 @@ dependencies {
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.2'
 
 	implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.8'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.12.6'
+
+
 
 }
 

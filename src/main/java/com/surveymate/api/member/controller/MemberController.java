@@ -2,10 +2,12 @@ package com.surveymate.api.member.controller;
 
 
 import com.surveymate.api.member.dto.MemberDTO;
+import com.surveymate.api.member.dto.MemberLoginDTO;
 import com.surveymate.api.member.dto.MemberSignupDTO;
 import com.surveymate.api.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -26,6 +28,11 @@ public class MemberController {
     @PostMapping("/register")
     public MemberDTO createMember(MemberSignupDTO memberSignupDTO) throws Exception {
         return memberService.createMember(memberSignupDTO);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> memberLogin(MemberLoginDTO memberLoginDTO) throws Exception {
+        return null;
     }
 
 }

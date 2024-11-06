@@ -1,6 +1,7 @@
 package com.surveymate.api.security;
 
 import com.surveymate.api.security.handler.CustomAccessDeniedHandler;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -22,7 +24,10 @@ import java.util.List;
 @Configuration
 @EnableMethodSecurity
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -48,12 +53,21 @@ public class SecurityConfig {
          .authorizeHttpRequests(auth -> auth
                  .requestMatchers("/api/auth/**", "/api/member/**", "/uploads/**").permitAll()
                  .anyRequest().authenticated()                   // 그 외 모든 요청은 인증 필요
-        )
-                .formLogin(form -> form.disable())
-                .httpBasic(form -> form.disable());
+
+        );
+        http.formLogin(config -> {
+            config.loginPage("/api/member/login");
+//            config.successHandler(new APILoginSuccessHandler());
+//            config.failureHandler(new APILoginFailHandler());
+        });
+
+        http.logout(config -> config.logoutUrl("/api/member/logout"));
 
 
-//        http.addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.httpBasic(form -> form.disable());
+
+
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         http.exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
             httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(new CustomAccessDeniedHandler());
