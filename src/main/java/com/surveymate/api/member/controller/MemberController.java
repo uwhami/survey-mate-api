@@ -7,7 +7,11 @@ import com.surveymate.api.member.dto.MemberSignupDTO;
 import com.surveymate.api.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -20,6 +24,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
+
     @GetMapping("/check-duplicate-id")
     public Map<String, String> checkDuplicateId(@RequestParam String userId) {
         return memberService.checkDuplicateId(userId);
@@ -31,8 +36,13 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> memberLogin(MemberLoginDTO memberLoginDTO) throws Exception {
-        return null;
+    public ResponseEntity<?> memberLogin(MemberLoginDTO memberLoginDTO) {
+        try {
+            Map<String, String> jwtResponse = memberService.loginMember(memberLoginDTO);
+            return ResponseEntity.ok(jwtResponse);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+        }
     }
 
 }
