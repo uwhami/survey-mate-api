@@ -20,7 +20,7 @@ public class JwtTokenProvider {
     public String generateToken(Authentication authentication) {
         String username = authentication.getName();
         Date now = new Date();
-        int jwtExpirationInMs = 3600000;
+        int jwtExpirationInMs = 3600000;    // 1시간
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         return Jwts.builder()
@@ -31,13 +31,34 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public String generateRefreshToken(Authentication authentication) {
+        String username = authentication.getName();
+        Date now = new Date();
+        int refreshTokenExpirationInMs = 86400000; // 1일 (24시간)
+        Date expiryDate = new Date(now.getTime() + refreshTokenExpirationInMs);
+
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(key)
+                .compact();
+    }
+
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (SecurityException | MalformedJwtException | ExpiredJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
-            // Handle the exception accordingly, e.g., log the error or rethrow
-            return false;
+        } catch (SecurityException ex) {
+            throw new RuntimeException("Security exception occurred: Invalid signature");
+        } catch (MalformedJwtException ex) {
+            throw new RuntimeException("Malformed JWT token");
+        } catch (ExpiredJwtException ex) {
+            throw new RuntimeException("Token expired");
+        } catch (UnsupportedJwtException ex) {
+            throw new RuntimeException("Unsupported JWT token");
+        } catch (IllegalArgumentException ex) {
+            throw new RuntimeException("Token argument is invalid or missing");
         }
     }
 

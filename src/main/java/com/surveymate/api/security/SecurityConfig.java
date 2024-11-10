@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,11 +32,6 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, HttpSecurity httpSecurity) throws Exception {
 
         log.info("================================securify config================================");
@@ -55,17 +52,9 @@ public class SecurityConfig {
                  .anyRequest().authenticated()                   // 그 외 모든 요청은 인증 필요
 
         );
-        http.formLogin(config -> {
-            config.loginPage("/api/member/login");
-//            config.successHandler(new APILoginSuccessHandler());
-//            config.failureHandler(new APILoginFailHandler());
-        });
 
-        http.logout(config -> config.logoutUrl("/api/member/logout"));
-
-
+        http.formLogin(config -> config.disable());
         http.httpBasic(form -> form.disable());
-
 
         http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
@@ -91,4 +80,16 @@ public class SecurityConfig {
 
         return source;
     }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        return http.getSharedObject(AuthenticationManagerBuilder.class).build();
+    }
+
+
 }
