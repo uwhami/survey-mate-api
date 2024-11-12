@@ -1,5 +1,7 @@
-package com.surveymate.api.security;
+package com.surveymate.api.security.config;
 
+import com.surveymate.api.security.JwtTokenProvider;
+import com.surveymate.api.security.filter.JwtAuthenticationFilter;
 import com.surveymate.api.security.handler.CustomAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

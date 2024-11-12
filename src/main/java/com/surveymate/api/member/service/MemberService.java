@@ -11,7 +11,7 @@ public interface MemberService {
 
     Map<String,String> checkDuplicateId(String userId);
 
-    MemberDTO createMember(MemberSignupDTO memberSignupDTO) throws Exception;
-
     Map<String, String> loginMember(MemberLoginDTO memberLoginDTO);
+
+    boolean isUserIdDuplicate(String userId);
 }

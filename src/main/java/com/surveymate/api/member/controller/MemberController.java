@@ -30,11 +30,6 @@ public class MemberController {
         return memberService.checkDuplicateId(userId);
     }
 
-    @PostMapping("/register")
-    public MemberDTO createMember(MemberSignupDTO memberSignupDTO) throws Exception {
-        return memberService.createMember(memberSignupDTO);
-    }
-
     @PostMapping("/login")
     public ResponseEntity<?> memberLogin(MemberLoginDTO memberLoginDTO) {
         try {

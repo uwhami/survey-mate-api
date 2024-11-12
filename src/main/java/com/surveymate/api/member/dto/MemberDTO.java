@@ -1,13 +1,13 @@
 package com.surveymate.api.member.dto;
 
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class MemberDTO {
 
     private String memNum;
