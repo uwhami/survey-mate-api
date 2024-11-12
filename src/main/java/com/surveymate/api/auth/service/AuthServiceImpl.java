@@ -1,5 +1,6 @@
 package com.surveymate.api.auth.service;
 
+import com.surveymate.api.auth.dto.LoginRequest;
 import com.surveymate.api.auth.dto.RegisterRequest;
 import com.surveymate.api.auth.mapper.AuthMemberMapper;
 import com.surveymate.api.common.enums.FilePath;
@@ -12,10 +13,16 @@ import com.surveymate.api.member.exception.UserAlreadyExistsException;
 import com.surveymate.api.member.mapper.MemberMapper;
 import com.surveymate.api.member.repository.MemberRepository;
 import com.surveymate.api.member.service.MemberService;
+import com.surveymate.api.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 
 @RequiredArgsConstructor
@@ -29,6 +36,8 @@ public class AuthServiceImpl implements AuthService {
     private final CodeGenerator codeGenerator;
     private final FileService fileService;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
 
 
     @Override
@@ -56,5 +65,28 @@ public class AuthServiceImpl implements AuthService {
         }
 
         return memberDTO;
+    }
+
+
+    public Map<String, String> loginMember(LoginRequest loginRequest) {
+
+        try{
+            // 사용자 인증
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUserId(), loginRequest.getPassword())
+            );
+
+            // 인증 성공 시 JWT 토큰 생성
+            String accessToken = jwtTokenProvider.generateToken(authentication);
+            String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
+
+            return Map.of(
+                    "accessToken", accessToken,
+                    "refreshToken", refreshToken
+            );
+        }catch(Exception ex){
+            throw new RuntimeException("Authentication failed: " + ex.getMessage());
+        }
+
     }
 }

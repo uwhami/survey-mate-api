@@ -1,12 +1,9 @@
 package com.surveymate.api.member.controller;
 
 
-import com.surveymate.api.member.dto.MemberLoginDTO;
 import com.surveymate.api.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -25,14 +22,6 @@ public class MemberController {
         return memberService.checkDuplicateId(userId);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> memberLogin(MemberLoginDTO memberLoginDTO) {
-        try {
-            Map<String, String> jwtResponse = memberService.loginMember(memberLoginDTO);
-            return ResponseEntity.ok(jwtResponse);
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
-        }
-    }
+
 
 }
