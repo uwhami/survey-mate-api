@@ -1,17 +1,12 @@
 package com.surveymate.api.member.controller;
 
 
-import com.surveymate.api.member.dto.MemberDTO;
 import com.surveymate.api.member.dto.MemberLoginDTO;
-import com.surveymate.api.member.dto.MemberSignupDTO;
 import com.surveymate.api.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;

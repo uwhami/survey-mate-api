@@ -41,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
 
         MultipartFile file = registerRequest.getProfileImage();
         UploadedFile savedFile = null;
-        if(file != null){
+        if(file != null && !file.isEmpty()){
             savedFile = fileService.uploadFileAndCreateThumbnail(file, FilePath.MEMBER_PROFILE);
             member.setProfileImageUuid(savedFile.getFileId());
         }
