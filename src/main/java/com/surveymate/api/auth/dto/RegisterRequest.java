@@ -1,5 +1,4 @@
-package com.surveymate.api.member.dto;
-
+package com.surveymate.api.auth.dto;
 
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MemberSignupDTO {
+public class RegisterRequest {
 
     private String userId;
     private String password;

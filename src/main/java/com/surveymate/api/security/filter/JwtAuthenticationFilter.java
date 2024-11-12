@@ -1,5 +1,6 @@
-package com.surveymate.api.security;
+package com.surveymate.api.security.filter;
 
+import com.surveymate.api.security.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
