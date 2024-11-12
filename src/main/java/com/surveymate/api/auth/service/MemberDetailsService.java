@@ -1,10 +1,9 @@
-package com.surveymate.api.member.service;
+package com.surveymate.api.auth.service;
 
 import com.surveymate.api.member.entity.Member;
 import com.surveymate.api.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
