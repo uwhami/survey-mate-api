@@ -4,6 +4,7 @@ import com.surveymate.api.member.entity.Member;
 import com.surveymate.api.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Map<String, String> checkDuplicateId(String userId) {
-        boolean existId = isUserIdDuplicate(userId);
+        boolean existId = existsByUserId(userId);
         Map<String, String> param = new HashMap<>();
         if(existId){
             param.put("status", "FAILURE");
@@ -29,10 +30,15 @@ public class MemberServiceImpl implements MemberService {
         return param;
     }
 
-    public boolean isUserIdDuplicate(String userId) {
-        Optional<Member> duplicate = memberRepository.findByUserId(userId);
-        return duplicate.isPresent();
+    @Override
+    public boolean existsByUserId(String userId) {
+        Optional<Member> existId = memberRepository.findByUserId(userId);
+        return existId.isPresent();
     }
 
-
+    @Transactional
+    @Override
+    public void increasePasswordError(String userId) {
+        memberRepository.increasePasswordError(userId);
+    }
 }

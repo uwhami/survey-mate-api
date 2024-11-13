@@ -7,5 +7,8 @@ public interface MemberService {
 
     Map<String,String> checkDuplicateId(String userId);
 
-    boolean isUserIdDuplicate(String userId);
+    boolean existsByUserId(String userId);
+
+    void increasePasswordError(String userId);
+
 }

@@ -16,8 +16,10 @@ import com.surveymate.api.member.service.MemberService;
 import com.surveymate.api.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     public MemberDTO createMember(RegisterRequest registerRequest) throws Exception {
         Member member = authMemberMapper.toEntity(registerRequest);
 
-        if(memberService.isUserIdDuplicate(member.getUserId())){
+        if(memberService.existsByUserId(member.getUserId())){
             throw new UserAlreadyExistsException("이미 존재하는 ID 입니다. : " + member.getUserId());
         }
 
@@ -71,6 +73,12 @@ public class AuthServiceImpl implements AuthService {
     public Map<String, String> loginMember(LoginRequest loginRequest) {
 
         try{
+
+            // 사용자 ID가 존재하는지 확인
+            if (!memberService.existsByUserId(loginRequest.getUserId())) {
+                throw new UsernameNotFoundException("User not found");
+            }
+
             // 사용자 인증
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUserId(), loginRequest.getPassword())
@@ -84,7 +92,11 @@ public class AuthServiceImpl implements AuthService {
                     "accessToken", accessToken,
                     "refreshToken", refreshToken
             );
-        }catch(Exception ex){
+        }catch (BadCredentialsException ex) {   // 아이디나 비밀번호가 틀린 경우.
+            // 아이디는 맞지만 비밀번호가 틀렸을 경우 오류 횟수 증가
+            memberService.increasePasswordError(loginRequest.getUserId());
+            throw new RuntimeException("Authentication failed: " + ex.getMessage());
+        } catch(Exception ex){
             throw new RuntimeException("Authentication failed: " + ex.getMessage());
         }
 
