@@ -74,10 +74,7 @@ public class AuthServiceImpl implements AuthService {
 
         try{
 
-            // 사용자 ID가 존재하는지 확인
-            if (!memberService.existsByUserId(loginRequest.getUserId())) {
-                throw new UsernameNotFoundException("User not found");
-            }
+
 
             // 사용자 인증
             Authentication authentication = authenticationManager.authenticate(
@@ -93,8 +90,12 @@ public class AuthServiceImpl implements AuthService {
                     "refreshToken", refreshToken
             );
         }catch (BadCredentialsException ex) {   // 아이디나 비밀번호가 틀린 경우.
-            // 아이디는 맞지만 비밀번호가 틀렸을 경우 오류 횟수 증가
-            memberService.increasePasswordError(loginRequest.getUserId());
+            // 사용자 ID가 존재하는지 확인
+            if (memberService.existsByUserId(loginRequest.getUserId())) {
+                // throw new UsernameNotFoundException("User not found");
+                // 아이디는 맞지만 비밀번호가 틀렸을 경우 오류 횟수 증가
+                memberService.increasePasswordError(loginRequest.getUserId());
+            }
             throw new RuntimeException("Authentication failed: " + ex.getMessage());
         } catch(Exception ex){
             throw new RuntimeException("Authentication failed: " + ex.getMessage());
