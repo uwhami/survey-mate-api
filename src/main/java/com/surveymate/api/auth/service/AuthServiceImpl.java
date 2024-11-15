@@ -81,6 +81,8 @@ public class AuthServiceImpl implements AuthService {
                     new UsernamePasswordAuthenticationToken(loginRequest.getUserId(), loginRequest.getPassword())
             );
 
+            memberService.resetPasswordError(loginRequest.getUserId());
+
             // 인증 성공 시 JWT 토큰 생성
             String accessToken = jwtTokenProvider.generateToken(authentication);
             String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);

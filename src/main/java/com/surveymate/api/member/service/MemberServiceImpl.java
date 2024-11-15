@@ -41,4 +41,12 @@ public class MemberServiceImpl implements MemberService {
     public void increasePasswordError(String userId) {
         memberRepository.increasePasswordError(userId);
     }
+
+    @Transactional
+    @Override
+    public void resetPasswordError(String userId) {
+        memberRepository.resetPasswordError(userId);
+    }
+
+
 }
