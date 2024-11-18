@@ -46,11 +46,34 @@ public class FileServiceImpl implements FileService {
         return uploadPath;
     }
 
+    @Override
+    public UploadedFile getDefaultFilePath() throws Exception {
+        // 기본 파일 경로 설정
+        String defaultFileName = "default.png";
+        String defaultFilePath = getUploadPath(FilePath.MEMBER_PROFILE) + "/" + defaultFileName;
+
+        // 파일 경로 확인
+        Path defaultFile = Paths.get(defaultFilePath);
+        if (!Files.exists(defaultFile)) {
+            throw new FileNotFoundException("기본 파일이 존재하지 않습니다: " + defaultFilePath);
+        }
+
+        // UploadedFile 객체 생성
+        return UploadedFile.builder()
+                .fileId(defaultFileName)
+                .fileName(defaultFileName)
+                .filePath(defaultFile.toString())
+                .thumbnail(false)
+                .build();
+    }
+
+    @Override
     @Transactional
     public UploadedFile uploadFile(MultipartFile multipartFile, FilePath filePath) throws Exception {
         return uploadFile(multipartFile, false, filePath);
     }
 
+    @Override
     @Transactional
     public List<UploadedFile> uploadFiles(List<MultipartFile> multipartFiles, FilePath filePath) throws Exception {
         List<UploadedFile> files = new ArrayList<>();
@@ -60,11 +83,13 @@ public class FileServiceImpl implements FileService {
         return files;
     }
 
+    @Override
     @Transactional
     public UploadedFile uploadFileAndCreateThumbnail(MultipartFile multipartFile, FilePath filePath) throws Exception{
         return uploadFile(multipartFile, true, filePath);
     }
 
+    @Override
     @Transactional
     public UploadedFile uploadFile(MultipartFile multipartFile, boolean thumbnail, FilePath filePath) throws Exception {
         String fileUuid = UUID.randomUUID().toString();

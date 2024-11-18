@@ -48,5 +48,9 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.resetPasswordError(userId);
     }
 
+    @Override
+    public int findPasswordErrorByUserId(String userId) {
+        return memberRepository.findPasswordErrorByUserId(userId);
+    }
 
 }

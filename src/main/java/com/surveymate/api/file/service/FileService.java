@@ -8,12 +8,14 @@ import java.util.List;
 
 public interface FileService {
 
-    public UploadedFile uploadFile(MultipartFile multipartFile, FilePath filePath) throws Exception;
+    UploadedFile getDefaultFilePath() throws Exception;
 
-    public List<UploadedFile> uploadFiles(List<MultipartFile> multipartFiles, FilePath filePath) throws Exception;
+    UploadedFile uploadFile(MultipartFile multipartFile, FilePath filePath) throws Exception;
 
-    public UploadedFile uploadFileAndCreateThumbnail(MultipartFile multipartFile, FilePath filePath) throws Exception;
+    List<UploadedFile> uploadFiles(List<MultipartFile> multipartFiles, FilePath filePath) throws Exception;
 
-    public UploadedFile uploadFile(MultipartFile multipartFile, boolean thumbnail, FilePath filePath) throws Exception;
+    UploadedFile uploadFileAndCreateThumbnail(MultipartFile multipartFile, FilePath filePath) throws Exception;
+
+    UploadedFile uploadFile(MultipartFile multipartFile, boolean thumbnail, FilePath filePath) throws Exception;
 
 }
