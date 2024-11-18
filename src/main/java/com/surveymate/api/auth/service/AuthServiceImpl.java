@@ -51,10 +51,12 @@ public class AuthServiceImpl implements AuthService {
         }
 
         MultipartFile file = registerRequest.getProfileImage();
-        UploadedFile savedFile = null;
+        UploadedFile savedFile;
         if(file != null && !file.isEmpty()){
             savedFile = fileService.uploadFileAndCreateThumbnail(file, FilePath.MEMBER_PROFILE);
             member.setProfileImageUuid(savedFile.getFileId());
+        }else{
+            savedFile = fileService.getDefaultFilePath();
         }
 
         member.setMemNum(codeGenerator.generateCode("MU01"));
@@ -62,9 +64,7 @@ public class AuthServiceImpl implements AuthService {
         member = memberRepository.save(member);
 
         MemberDTO memberDTO = memberMapper.toDTO(member);
-        if(savedFile != null){
-            memberDTO.setProfileImageUri(savedFile.getFilePath());
-        }
+        memberDTO.setProfileImageUri(savedFile.getFilePath());
 
         return memberDTO;
     }
@@ -73,8 +73,6 @@ public class AuthServiceImpl implements AuthService {
     public Map<String, String> loginMember(LoginRequest loginRequest) {
 
         try{
-
-
 
             // 사용자 인증
             Authentication authentication = authenticationManager.authenticate(

@@ -13,4 +13,6 @@ public interface MemberService {
 
     void resetPasswordError(String userId);
 
+    int findPasswordErrorByUserId(String userId);
+
 }
