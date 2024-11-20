@@ -18,16 +18,8 @@ public class MemberServiceImpl implements MemberService {
 
 
     @Override
-    public Map<String, String> checkDuplicateId(String userId) {
-        boolean existId = existsByUserId(userId);
-        Map<String, String> param = new HashMap<>();
-        if(existId){
-            param.put("status", "FAILURE");
-            param.put("errorCode", "USERID_TAKEN");
-        }else{
-            param.put("status", "SUCCESS");
-        }
-        return param;
+    public boolean checkDuplicateId(String userId) {
+        return existsByUserId(userId);
     }
 
     @Override
