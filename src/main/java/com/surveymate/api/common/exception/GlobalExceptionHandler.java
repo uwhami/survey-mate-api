@@ -2,7 +2,7 @@ package com.surveymate.api.common.exception;
 
 import com.surveymate.api.file.exception.FileNameTooLongException;
 import com.surveymate.api.file.exception.ThumbnailCreationException;
-import com.surveymate.api.member.exception.UserAlreadyExistsException;
+import com.surveymate.api.domain.member.exception.UserAlreadyExistsException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

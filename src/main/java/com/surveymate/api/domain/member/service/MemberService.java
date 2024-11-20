@@ -1,4 +1,4 @@
-package com.surveymate.api.member.service;
+package com.surveymate.api.domain.member.service;
 
 
 public interface MemberService {

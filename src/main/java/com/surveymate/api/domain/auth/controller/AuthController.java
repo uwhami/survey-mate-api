@@ -1,9 +1,9 @@
-package com.surveymate.api.auth.controller;
+package com.surveymate.api.domain.auth.controller;
 
-import com.surveymate.api.auth.dto.LoginRequest;
-import com.surveymate.api.auth.dto.RegisterRequest;
-import com.surveymate.api.auth.service.AuthService;
-import com.surveymate.api.member.dto.MemberDTO;
+import com.surveymate.api.domain.auth.dto.LoginRequest;
+import com.surveymate.api.domain.auth.dto.RegisterRequest;
+import com.surveymate.api.domain.auth.service.AuthService;
+import com.surveymate.api.domain.member.dto.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public MemberDTO createMember(RegisterRequest registerRequest) throws Exception {
+    public MemberResponseDTO createMember(RegisterRequest registerRequest) throws Exception {
         return authService.createMember(registerRequest);
     }
 

@@ -1,7 +1,7 @@
-package com.surveymate.api.member.mapper;
+package com.surveymate.api.domain.member.mapper;
 
-import com.surveymate.api.member.dto.MemberDTO;
-import com.surveymate.api.member.entity.Member;
+import com.surveymate.api.domain.member.dto.MemberResponseDTO;
+import com.surveymate.api.domain.member.entity.Member;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -11,7 +11,7 @@ public interface MemberMapper {
     @Mappings({
             @Mapping(target = "profileImageUri", ignore = true)
     })
-    MemberDTO toDTO(Member member);
+    MemberResponseDTO toDTO(Member member);
 
     @Mappings({
             @Mapping(target = "memNum", ignore = true), // memNum은 직접 설정할 것이므로 무시
@@ -21,7 +21,7 @@ public interface MemberMapper {
             @Mapping(target = "createDate", ignore = true),
             @Mapping(target = "updateDate", ignore = true)
     })
-    Member toEntity(MemberDTO memberDTO);
+    Member toEntity(MemberResponseDTO memberResponseDTO);
 
 
 

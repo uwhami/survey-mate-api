@@ -1,4 +1,4 @@
-package com.surveymate.api.member.entity;
+package com.surveymate.api.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
