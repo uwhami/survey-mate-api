@@ -1,8 +1,8 @@
 package com.surveymate.api.auth;
 
-import com.surveymate.api.auth.dto.RegisterRequest;
-import com.surveymate.api.auth.service.AuthService;
-import com.surveymate.api.member.dto.MemberDTO;
+import com.surveymate.api.domain.auth.dto.RegisterRequest;
+import com.surveymate.api.domain.auth.service.AuthService;
+import com.surveymate.api.domain.member.dto.MemberResponseDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +25,7 @@ public class AuthServiceTests {
                 .memStatus("1")
                 .build();
 
-        MemberDTO memberDTO = authService.createMember(registerRequest);
-        System.out.println(memberDTO.toString());
+        MemberResponseDTO memberResponseDTO = authService.createMember(registerRequest);
+        System.out.println(memberResponseDTO.toString());
     }
 }

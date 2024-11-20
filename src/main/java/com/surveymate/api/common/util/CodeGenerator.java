@@ -1,6 +1,6 @@
 package com.surveymate.api.common.util;
 
-import com.surveymate.api.member.repository.MemberRepository;
+import com.surveymate.api.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;

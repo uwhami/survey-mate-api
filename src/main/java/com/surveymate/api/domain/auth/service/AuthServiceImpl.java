@@ -1,25 +1,24 @@
-package com.surveymate.api.auth.service;
+package com.surveymate.api.domain.auth.service;
 
-import com.surveymate.api.auth.dto.LoginRequest;
-import com.surveymate.api.auth.dto.RegisterRequest;
-import com.surveymate.api.auth.mapper.AuthMemberMapper;
+import com.surveymate.api.domain.auth.dto.LoginRequest;
+import com.surveymate.api.domain.auth.dto.RegisterRequest;
+import com.surveymate.api.domain.auth.mapper.AuthMemberMapper;
 import com.surveymate.api.common.enums.FilePath;
 import com.surveymate.api.common.util.CodeGenerator;
 import com.surveymate.api.file.entity.UploadedFile;
 import com.surveymate.api.file.service.FileService;
-import com.surveymate.api.member.dto.MemberDTO;
-import com.surveymate.api.member.entity.Member;
-import com.surveymate.api.member.exception.UserAlreadyExistsException;
-import com.surveymate.api.member.mapper.MemberMapper;
-import com.surveymate.api.member.repository.MemberRepository;
-import com.surveymate.api.member.service.MemberService;
+import com.surveymate.api.domain.member.dto.MemberResponseDTO;
+import com.surveymate.api.domain.member.entity.Member;
+import com.surveymate.api.domain.member.exception.UserAlreadyExistsException;
+import com.surveymate.api.domain.member.mapper.MemberMapper;
+import com.surveymate.api.domain.member.repository.MemberRepository;
+import com.surveymate.api.domain.member.service.MemberService;
 import com.surveymate.api.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
-    public MemberDTO createMember(RegisterRequest registerRequest) throws Exception {
+    public MemberResponseDTO createMember(RegisterRequest registerRequest) throws Exception {
         Member member = authMemberMapper.toEntity(registerRequest);
 
         if(memberService.existsByUserId(member.getUserId())){
@@ -63,10 +62,10 @@ public class AuthServiceImpl implements AuthService {
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         member = memberRepository.save(member);
 
-        MemberDTO memberDTO = memberMapper.toDTO(member);
-        memberDTO.setProfileImageUri(savedFile.getFilePath());
+        MemberResponseDTO memberResponseDTO = memberMapper.toDTO(member);
+        memberResponseDTO.setProfileImageUri(savedFile.getFilePath());
 
-        return memberDTO;
+        return memberResponseDTO;
     }
 
 

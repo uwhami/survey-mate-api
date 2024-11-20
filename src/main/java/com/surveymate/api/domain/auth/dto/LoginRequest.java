@@ -1,4 +1,4 @@
-package com.surveymate.api.auth.dto;
+package com.surveymate.api.domain.auth.dto;
 
 import lombok.*;
 

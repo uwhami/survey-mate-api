@@ -1,14 +1,12 @@
-package com.surveymate.api.member.controller;
+package com.surveymate.api.domain.member.controller;
 
 
-import com.surveymate.api.member.service.MemberService;
+import com.surveymate.api.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @Log4j2
 @RequiredArgsConstructor

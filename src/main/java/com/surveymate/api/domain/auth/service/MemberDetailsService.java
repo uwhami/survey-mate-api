@@ -1,7 +1,7 @@
-package com.surveymate.api.auth.service;
+package com.surveymate.api.domain.auth.service;
 
-import com.surveymate.api.member.entity.Member;
-import com.surveymate.api.member.repository.MemberRepository;
+import com.surveymate.api.domain.member.entity.Member;
+import com.surveymate.api.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

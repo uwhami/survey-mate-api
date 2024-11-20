@@ -1,19 +1,20 @@
-package com.surveymate.api.member.dto;
+package com.surveymate.api.domain.auth.dto;
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
-public class MemberDTO {
+public class RegisterRequest {
 
-    private String memNum;
     private String userId;
+    private String password;
     private String userName;
-    private String profileImageUri;
+    private MultipartFile profileImage;
     private String joinDate;
     private String memStatus;
+
 }

@@ -1,7 +1,7 @@
-package com.surveymate.api.auth.mapper;
+package com.surveymate.api.domain.auth.mapper;
 
-import com.surveymate.api.auth.dto.RegisterRequest;
-import com.surveymate.api.member.entity.Member;
+import com.surveymate.api.domain.auth.dto.RegisterRequest;
+import com.surveymate.api.domain.member.entity.Member;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
