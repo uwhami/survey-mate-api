@@ -17,7 +17,7 @@ public class AuthServiceTests {
     public void createMember() throws Exception {
 
         RegisterRequest registerRequest = RegisterRequest.builder()
-                .userId("john_doe")
+                .userId("test")
                 .password("password123")
                 .userName("John Doe")
                 .profileImage(null)

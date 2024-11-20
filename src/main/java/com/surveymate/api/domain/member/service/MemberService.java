@@ -1,6 +1,9 @@
 package com.surveymate.api.domain.member.service;
 
 
+import com.surveymate.api.domain.member.dto.MemberRequestDTO;
+import com.surveymate.api.domain.member.dto.MemberResponseDTO;
+
 public interface MemberService {
 
     boolean checkDuplicateId(String userId);
@@ -12,5 +15,7 @@ public interface MemberService {
     void resetPasswordError(String userId);
 
     int findPasswordErrorByUserId(String userId);
+
+    MemberResponseDTO modify(MemberRequestDTO memberRequestDTO) throws Exception;
 
 }
