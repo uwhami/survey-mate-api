@@ -10,6 +10,8 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, String> {
 
+    Optional<Member> findByMemNum(String memNum);
+
     Optional<Member> findByUserId(String userId);
 
     @Query("SELECT NVL(MAX(CAST(SUBSTRING(m.memNum, 10) AS integer)), 0) FROM Member m WHERE m.memNum LIKE CONCAT('M', :today, '%') ORDER BY m.memNum DESC LIMIT 1")
