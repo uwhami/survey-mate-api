@@ -14,6 +14,6 @@ public class MemberRequestDTO {
     private String memNum;
     private String userId;
     private String userName;
-    private MultipartFile profileImageUri;
+    private MultipartFile profileImageUuid;
 
 }
