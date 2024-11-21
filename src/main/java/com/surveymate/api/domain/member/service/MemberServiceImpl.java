@@ -4,6 +4,7 @@ import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
+import com.surveymate.api.common.enums.FilePath;
 import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.domain.member.dto.MemberRequestDTO;
 import com.surveymate.api.domain.member.dto.MemberResponseDTO;
@@ -12,12 +13,15 @@ import com.surveymate.api.domain.member.entity.QMember;
 import com.surveymate.api.domain.member.exception.UserNotFoundException;
 import com.surveymate.api.domain.member.mapper.MemberMapper;
 import com.surveymate.api.domain.member.repository.MemberRepository;
+import com.surveymate.api.file.entity.UploadedFile;
+import com.surveymate.api.file.service.FileService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -32,6 +36,7 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberMapper memberMapper;
+    private final FileService fileService;
 
     @Override
     public boolean checkDuplicateId(String userId) {
@@ -64,15 +69,17 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public MemberResponseDTO modify(MemberRequestDTO memberRequestDTO) throws Exception{
+    public MemberResponseDTO modify(MemberRequestDTO memberRequestDTO) {
 
         Optional<Member> optionalMember = memberRepository.findByMemNum(memberRequestDTO.getMemNum());
         if (optionalMember.isEmpty()) {
             throw new UserNotFoundException("해당 사용자가 존재하지 않습니다.");
         }
 
-        try {
 
+        Member existingMember = optionalMember.get();
+
+        try {
             // QueryDSL을 사용하여 동적으로 필드 업데이트
             QMember qMember = QMember.member;
 
@@ -95,11 +102,16 @@ public class MemberServiceImpl implements MemberService {
                             if (stringValue.isEmpty()) {
                                 return;
                             }
-                        }else{
-                            // 파일인 경우 추가 예정.
-
-
-//                            return;
+                        }else if(value instanceof MultipartFile){
+                            MultipartFile file = (MultipartFile) value;
+                            if(!file.getName().isEmpty()){
+                                String fileId = existingMember.getProfileImageUuid();
+                                UploadedFile newFile = fileService.deleteAndSaveFile(fileId, file, FilePath.MEMBER_PROFILE);
+                                value = newFile.getFileId();
+                                existingMember.setProfileImageUuid(newFile.getFileId());
+                            }else{
+                                return;
+                            }
                         }
 
                         // QueryDSL Path 생성 및 필드 업데이트
@@ -108,6 +120,8 @@ public class MemberServiceImpl implements MemberService {
                     }
                 } catch (IllegalAccessException e) {
                     throw new CustomRuntimeException("Reflection 필드 접근 중 에러 발생", e);
+                } catch (Exception e) {
+                    throw new CustomRuntimeException("정보 수정 중 에러 발생", e);
                 }
             });
 
@@ -120,6 +134,7 @@ public class MemberServiceImpl implements MemberService {
 
         Member updatedMember = memberRepository.findByMemNum(memberRequestDTO.getMemNum())
                 .orElseThrow(() -> new CustomRuntimeException("업데이트 후 사용자 정보를 조회할 수 없습니다."));
+        updatedMember.setProfileImageUuid(existingMember.getProfileImageUuid());
 
         return memberMapper.toDTO(updatedMember);
     }

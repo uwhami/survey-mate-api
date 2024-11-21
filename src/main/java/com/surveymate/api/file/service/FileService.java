@@ -18,4 +18,8 @@ public interface FileService {
 
     UploadedFile uploadFile(MultipartFile multipartFile, boolean thumbnail, FilePath filePath) throws Exception;
 
+    UploadedFile deleteAndSaveFile(String fileId, MultipartFile newFile, FilePath filePath) throws Exception;
+
+    void deleteFile(String fildId) throws Exception;
+
 }

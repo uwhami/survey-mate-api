@@ -70,7 +70,8 @@ public class FileServiceImpl implements FileService {
     @Override
     @Transactional
     public UploadedFile uploadFile(MultipartFile multipartFile, FilePath filePath) throws Exception {
-        return uploadFile(multipartFile, false, filePath);
+        boolean thumbnail = filePath.equals(FilePath.MEMBER_PROFILE);
+        return uploadFile(multipartFile, thumbnail, filePath);
     }
 
     @Override
@@ -90,7 +91,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public UploadedFile uploadFile(MultipartFile multipartFile, boolean thumbnail, FilePath filePath) throws Exception {
         String fileUuid = UUID.randomUUID().toString();
         String filePathString = getUploadPath(filePath);
@@ -126,7 +127,6 @@ public class FileServiceImpl implements FileService {
                                         .thumbnail(thumbnail)
                                         .build();
         fileRepository.save(file);
-
         return file;
     }
 
@@ -170,4 +170,39 @@ public class FileServiceImpl implements FileService {
             throw new FileNotFoundException("Could not read the file: " + fileEntity.getFilePath());
         }
     }
+
+    @Override
+    @Transactional
+    public UploadedFile deleteAndSaveFile(String fileId, MultipartFile newFile, FilePath filePath) throws Exception {
+        // 1. 기존 파일 삭제
+        if (fileId != null && !fileId.trim().isEmpty()) {
+            deleteFile(fileId);
+        }
+
+        // 2. 새 파일 저장
+        return uploadFile(newFile, filePath);
+    }
+
+
+
+    @Override
+    @Transactional
+    public void deleteFile(String fileId) throws Exception {
+
+        UploadedFile fileEntity = fileRepository.findById(fileId)
+                .orElseThrow(() -> new FileNotFoundException("File not found with ID: " + fileId));
+
+        Path filePath = Paths.get(fileEntity.getFilePath());
+        try {
+            Files.deleteIfExists(filePath); // 파일이 존재하면 삭제
+            log.info("파일 삭제 성공: {}", filePath);
+        } catch (IOException e) {
+            log.error("파일 삭제 실패: {}", filePath, e);
+            throw new IOException("파일 삭제 중 오류가 발생했습니다: " + filePath);
+        }
+
+        fileRepository.delete(fileEntity);
+        log.info("파일 메타데이터 삭제 성공: {}", fileId);
+    }
+
 }

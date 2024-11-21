@@ -9,9 +9,7 @@ import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring")
 public interface MemberMapper {
-    @Mappings({
-            @Mapping(target = "profileImageUri", ignore = true) //profileImageUri 는 파일이므로 매핑하지 않음.
-    })
+
     MemberResponseDTO toDTO(Member member);
 
 
