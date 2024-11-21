@@ -4,10 +4,12 @@ import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
+import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.domain.member.dto.MemberRequestDTO;
 import com.surveymate.api.domain.member.dto.MemberResponseDTO;
 import com.surveymate.api.domain.member.entity.Member;
 import com.surveymate.api.domain.member.entity.QMember;
+import com.surveymate.api.domain.member.exception.UserNotFoundException;
 import com.surveymate.api.domain.member.mapper.MemberMapper;
 import com.surveymate.api.domain.member.repository.MemberRepository;
 import jakarta.persistence.EntityManager;
@@ -66,7 +68,7 @@ public class MemberServiceImpl implements MemberService {
 
         Optional<Member> optionalMember = memberRepository.findByMemNum(memberRequestDTO.getMemNum());
         if (optionalMember.isEmpty()) {
-            throw new IllegalArgumentException("해당 사용자가 존재하지 않습니다.");
+            throw new UserNotFoundException("해당 사용자가 존재하지 않습니다.");
         }
 
         try {
@@ -97,7 +99,7 @@ public class MemberServiceImpl implements MemberService {
                             // 파일인 경우 추가 예정.
 
 
-                            return;
+//                            return;
                         }
 
                         // QueryDSL Path 생성 및 필드 업데이트
@@ -105,21 +107,19 @@ public class MemberServiceImpl implements MemberService {
                         updateClause.set(path, value);
                     }
                 } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Reflection 필드 접근 중 에러 발생", e);
+                    throw new CustomRuntimeException("Reflection 필드 접근 중 에러 발생", e);
                 }
             });
 
-            // 업데이트 실행
             updateClause.execute();
             entityManager.clear();
 
-        } catch (Exception e) {
-            log.error("에러 발생: {}", e.getMessage(), e);
-            throw new RuntimeException();
+        } catch (RuntimeException e) {
+            throw new CustomRuntimeException("회원정보 수정 중 에러 발생.", e);
         }
 
         Member updatedMember = memberRepository.findByMemNum(memberRequestDTO.getMemNum())
-                .orElseThrow(() -> new IllegalStateException("업데이트 후 사용자 정보를 조회할 수 없습니다."));
+                .orElseThrow(() -> new CustomRuntimeException("업데이트 후 사용자 정보를 조회할 수 없습니다."));
 
         return memberMapper.toDTO(updatedMember);
     }
