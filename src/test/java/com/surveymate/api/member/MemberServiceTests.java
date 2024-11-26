@@ -27,7 +27,7 @@ public class MemberServiceTests {
                 .memNum("M202411200001")
                 .userId(null)
                 .userName("modifyTest2")
-                .profileImage(null)
+                .profileImageUuid(null)
                 .build();
 
         MemberResponseDTO responseDTO = memberService.modify(memberRequestDTO);
