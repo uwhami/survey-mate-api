@@ -22,4 +22,6 @@ public interface FileService {
 
     void deleteFile(String fildId) throws Exception;
 
+    String getFilePath(String fileId) throws Exception;
+
 }

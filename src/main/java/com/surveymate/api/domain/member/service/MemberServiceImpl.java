@@ -69,7 +69,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public MemberResponseDTO modify(MemberRequestDTO memberRequestDTO) {
+    public MemberResponseDTO modify(MemberRequestDTO memberRequestDTO) throws Exception {
 
         Optional<Member> optionalMember = memberRepository.findByMemNum(memberRequestDTO.getMemNum());
         if (optionalMember.isEmpty()) {
@@ -126,7 +126,7 @@ public class MemberServiceImpl implements MemberService {
             });
 
             updateClause.execute();
-            entityManager.clear();
+            entityManager.clear(); // 영속성 컨텍스트 비우기
 
         } catch (RuntimeException e) {
             throw new CustomRuntimeException("회원정보 수정 중 에러 발생.", e);
@@ -134,8 +134,11 @@ public class MemberServiceImpl implements MemberService {
 
         Member updatedMember = memberRepository.findByMemNum(memberRequestDTO.getMemNum())
                 .orElseThrow(() -> new CustomRuntimeException("업데이트 후 사용자 정보를 조회할 수 없습니다."));
-        updatedMember.setProfileImageUuid(existingMember.getProfileImageUuid());
 
-        return memberMapper.toDTO(updatedMember);
+        MemberResponseDTO responseDTO = memberMapper.toDTO(updatedMember);
+        if(existingMember.getProfileImageUuid() != null){
+            responseDTO.setProfileImageUri(fileService.getFilePath(existingMember.getProfileImageUuid()));
+        }
+        return responseDTO;
     }
 }
