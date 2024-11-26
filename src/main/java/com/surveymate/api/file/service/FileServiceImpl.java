@@ -193,9 +193,19 @@ public class FileServiceImpl implements FileService {
                 .orElseThrow(() -> new FileNotFoundException("File not found with ID: " + fileId));
 
         Path filePath = Paths.get(fileEntity.getFilePath());
+
+        Path directoryPath = filePath.getParent();
+        Path thumbnailDirectoryPath = directoryPath.resolve("thumbnail");
+        Path thumbNailPath = thumbnailDirectoryPath.resolve("s_" + fileEntity.getFileId());
         try {
-            Files.deleteIfExists(filePath); // 파일이 존재하면 삭제
-            log.info("파일 삭제 성공: {}", filePath);
+            if(Files.deleteIfExists(filePath)){
+                log.info("파일 삭제 성공: {}", filePath);
+            }
+
+            if(Files.deleteIfExists(thumbNailPath)){
+                log.info("Thumbnail 파일 삭제 성공: {}", filePath);
+            }
+
         } catch (IOException e) {
             log.error("파일 삭제 실패: {}", filePath, e);
             throw new IOException("파일 삭제 중 오류가 발생했습니다: " + filePath);
@@ -205,4 +215,10 @@ public class FileServiceImpl implements FileService {
         log.info("파일 메타데이터 삭제 성공: {}", fileId);
     }
 
+    @Override
+    public String getFilePath(String fileId) throws FileNotFoundException {
+        UploadedFile fileEntity = fileRepository.findById(fileId)
+                .orElseThrow(() -> new FileNotFoundException("File not found with ID: " + fileId));
+        return fileEntity.getFilePath();
+    }
 }
