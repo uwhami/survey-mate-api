@@ -7,9 +7,7 @@ import com.surveymate.api.domain.member.dto.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -20,6 +18,16 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
+
+    @GetMapping("/check-duplicate-id")
+    public ResponseEntity<Void> checkDuplicateId(@RequestParam String userId) {
+        boolean existId = authService.checkDuplicateId(userId);
+        if (existId) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
 
     @PostMapping("/register")
     public MemberResponseDTO createMember(RegisterRequest registerRequest) throws Exception {
