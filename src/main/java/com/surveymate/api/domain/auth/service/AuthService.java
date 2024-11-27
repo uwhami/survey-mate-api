@@ -9,6 +9,8 @@ import java.util.Map;
 
 public interface AuthService {
 
+    boolean checkDuplicateId(String userId);
+
     MemberResponseDTO createMember(RegisterRequest registerRequest) throws Exception;
 
     Map<String, String> loginMember(LoginRequest loginRequest) throws Exception;

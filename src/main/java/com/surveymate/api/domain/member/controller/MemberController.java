@@ -19,15 +19,6 @@ public class MemberController {
     private final MemberService memberService;
 
 
-    @GetMapping("/check-duplicate-id")
-    public ResponseEntity<Void> checkDuplicateId(@RequestParam String userId) {
-        boolean existId = memberService.checkDuplicateId(userId);
-        if (existId) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-        return ResponseEntity.ok().build();
-    }
-
     @PatchMapping("/modify")
     public MemberResponseDTO modify(MemberRequestDTO memberRequestDTO) throws Exception{
         return memberService.modify(memberRequestDTO);

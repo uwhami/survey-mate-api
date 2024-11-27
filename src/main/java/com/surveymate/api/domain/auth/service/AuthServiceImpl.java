@@ -40,6 +40,10 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Override
+    public boolean checkDuplicateId(String userId) {
+        return memberService.checkDuplicateId(userId);
+    }
 
     @Override
     public MemberResponseDTO createMember(RegisterRequest registerRequest) throws Exception {
