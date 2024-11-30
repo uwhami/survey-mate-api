@@ -105,4 +105,30 @@ public class AuthServiceImpl implements AuthService {
         }
 
     }
+
+    public Map<String, String> refreshTokens(String authorizationHeader) {
+
+        try{
+
+            String refreshToken = authorizationHeader.replace("Bearer ", "");
+            String accessToken = null;
+
+            if(jwtTokenProvider.validateToken(refreshToken)){
+                Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
+
+                // 인증 성공 시 JWT 토큰 생성
+                accessToken = jwtTokenProvider.generateToken(authentication);
+                refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
+            }
+
+            return Map.of(
+                    "accessToken", accessToken,
+                    "refreshToken", refreshToken
+            );
+
+        } catch(Exception ex){
+            throw new RuntimeException("Authentication failed: " + ex.getMessage());
+        }
+
+    }
 }
