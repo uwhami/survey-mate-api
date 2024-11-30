@@ -1,5 +1,6 @@
 package com.surveymate.api.security;
 
+import com.surveymate.api.common.exception.CustomRuntimeException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -59,6 +60,8 @@ public class JwtTokenProvider {
             throw new RuntimeException("Unsupported JWT token");
         } catch (IllegalArgumentException ex) {
             throw new RuntimeException("Token argument is invalid or missing");
+        } catch (Exception ex){
+            throw new CustomRuntimeException("JWT Error", ex);
         }
     }
 

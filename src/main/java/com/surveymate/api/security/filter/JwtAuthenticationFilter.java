@@ -33,6 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (Exception ex) {
+            log.error("JWT 인증 오류: {}", ex.getMessage(), ex);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
         }
 

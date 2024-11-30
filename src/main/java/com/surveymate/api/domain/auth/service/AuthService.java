@@ -13,6 +13,7 @@ public interface AuthService {
 
     MemberResponseDTO createMember(RegisterRequest registerRequest) throws Exception;
 
-    Map<String, String> loginMember(LoginRequest loginRequest) throws Exception;
+    Map<String, String> loginMember(LoginRequest loginRequest);
 
+    Map<String, String> refreshTokens(String refreshToken);
 }

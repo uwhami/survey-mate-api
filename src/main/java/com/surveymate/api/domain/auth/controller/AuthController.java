@@ -35,9 +35,19 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> memberLogin(LoginRequest loginRequest) throws Exception {
+    public ResponseEntity<?> memberLogin(LoginRequest loginRequest) {
         try {
             Map<String, String> jwtResponse = authService.loginMember(loginRequest);
+            return ResponseEntity.ok(jwtResponse);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+        }
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshTokens(@RequestHeader("Authorization") String authorizationHeader) {
+        try {
+            Map<String, String> jwtResponse = authService.refreshTokens(authorizationHeader);
             return ResponseEntity.ok(jwtResponse);
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
