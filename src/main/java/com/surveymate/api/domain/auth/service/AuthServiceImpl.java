@@ -1,5 +1,6 @@
 package com.surveymate.api.domain.auth.service;
 
+import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.domain.auth.dto.LoginRequest;
 import com.surveymate.api.domain.auth.dto.RegisterRequest;
 import com.surveymate.api.domain.auth.mapper.AuthMemberMapper;
@@ -53,23 +54,29 @@ public class AuthServiceImpl implements AuthService {
             throw new UserAlreadyExistsException("이미 존재하는 ID 입니다. : " + member.getUserId());
         }
 
-        MultipartFile file = registerRequest.getProfileImage();
-        UploadedFile savedFile;
-        if(file != null && !file.isEmpty()){
-            savedFile = fileService.uploadFileAndCreateThumbnail(file, FilePath.MEMBER_PROFILE);
-            member.setProfileImageUuid(savedFile.getFileId());
-        }else{
-            savedFile = fileService.getDefaultFilePath();
+        try {
+            MultipartFile file = registerRequest.getProfileImage();
+            UploadedFile savedFile;
+            if (file != null && !file.isEmpty()) {
+                savedFile = fileService.uploadFileAndCreateThumbnail(file, FilePath.MEMBER_PROFILE);
+                member.setProfileImageUuid(savedFile.getFileId());
+            } else {
+                savedFile = fileService.getDefaultFilePath();
+            }
+
+            member.setMemNum(codeGenerator.generateCode("MU01"));
+            member.setPassword(passwordEncoder.encode(member.getPassword()));
+            member = memberRepository.save(member);
+
+            MemberResponseDTO memberResponseDTO = memberMapper.toDTO(member);
+            memberResponseDTO.setProfileImageUri(savedFile.getFilePath());
+
+            return memberResponseDTO;
+
+        }catch(RuntimeException e){
+            throw new CustomRuntimeException("회원가입 에러", e);
         }
 
-        member.setMemNum(codeGenerator.generateCode("MU01"));
-        member.setPassword(passwordEncoder.encode(member.getPassword()));
-        member = memberRepository.save(member);
-
-        MemberResponseDTO memberResponseDTO = memberMapper.toDTO(member);
-        memberResponseDTO.setProfileImageUri(savedFile.getFilePath());
-
-        return memberResponseDTO;
     }
 
 
