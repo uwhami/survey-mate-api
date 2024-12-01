@@ -27,6 +27,9 @@ public class Member {
     @Column(name = "user_name", length = 50, nullable = false)
     private String userName;
 
+    @Column(name = "user_email", length = 50, nullable = false)
+    private String userEmail;
+
     @Column(name = "profile_image_uuid", length = 200)
     private String profileImageUuid;
 

@@ -13,6 +13,7 @@ public class MemberResponseDTO {
     private String memNum;
     private String userId;
     private String userName;
+    private String userEmail;
     private String profileImageUri;
     private String joinDate;
     private String memStatus;
