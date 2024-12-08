@@ -11,6 +11,8 @@ public interface AuthService {
 
     boolean checkDuplicateId(String userId);
 
+    String sendVerificationCode(String email);
+
     MemberResponseDTO createMember(RegisterRequest registerRequest) throws Exception;
 
     Map<String, String> loginMember(LoginRequest loginRequest);
