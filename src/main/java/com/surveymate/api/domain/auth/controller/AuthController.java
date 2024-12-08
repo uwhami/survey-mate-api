@@ -28,6 +28,11 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/send-verification-code")
+    public String sendVerificationCode(@RequestParam String email) {
+        return authService.sendVerificationCode(email);
+    }
+
 
     @PostMapping("/register")
     public MemberResponseDTO createMember(RegisterRequest registerRequest) throws Exception {

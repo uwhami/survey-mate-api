@@ -6,6 +6,7 @@ import com.surveymate.api.domain.auth.dto.RegisterRequest;
 import com.surveymate.api.domain.auth.mapper.AuthMemberMapper;
 import com.surveymate.api.common.enums.FilePath;
 import com.surveymate.api.common.util.CodeGenerator;
+import com.surveymate.api.email.service.EmailService;
 import com.surveymate.api.file.entity.UploadedFile;
 import com.surveymate.api.file.service.FileService;
 import com.surveymate.api.domain.member.dto.MemberResponseDTO;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
+import java.util.Random;
 
 
 @RequiredArgsConstructor
@@ -40,11 +42,26 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private final EmailService emailService;
 
     @Override
     public boolean checkDuplicateId(String userId) {
         return memberService.checkDuplicateId(userId);
     }
+
+    @Override
+    public String sendVerificationCode(String email) {
+        String code = generateVerificationCode();
+        emailService.sendEmail(email, "회원가입 인증번호", code);
+        return code;
+    }
+
+    public static String generateVerificationCode() {
+        Random random = new Random();
+        int code = random.nextInt(10000); // 0부터 9999 사이의 숫자 생성
+        return String.format("%04d", code); // 4자리 숫자로 포맷 (예: 0001, 0234)
+    }
+
 
     @Override
     public MemberResponseDTO createMember(RegisterRequest registerRequest) throws Exception {
