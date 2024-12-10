@@ -6,10 +6,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.surveymate.api.common.enums.FilePath;
 import com.surveymate.api.common.exception.CustomRuntimeException;
+import com.surveymate.api.domain.member.dto.ChangePasswordRequestDTO;
 import com.surveymate.api.domain.member.dto.MemberRequestDTO;
 import com.surveymate.api.domain.member.dto.MemberResponseDTO;
 import com.surveymate.api.domain.member.entity.Member;
 import com.surveymate.api.domain.member.entity.QMember;
+import com.surveymate.api.domain.member.exception.PasswordMismatchException;
 import com.surveymate.api.domain.member.exception.UserNotFoundException;
 import com.surveymate.api.domain.member.mapper.MemberMapper;
 import com.surveymate.api.domain.member.repository.MemberRepository;
@@ -19,6 +21,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +40,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final MemberMapper memberMapper;
     private final FileService fileService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public boolean checkDuplicateId(String userId) {
@@ -73,7 +77,7 @@ public class MemberServiceImpl implements MemberService {
 
         Optional<Member> optionalMember = memberRepository.findByMemNum(memberRequestDTO.getMemNum());
         if (optionalMember.isEmpty()) {
-            throw new UserNotFoundException("해당 사용자가 존재하지 않습니다.");
+            throw new UserNotFoundException();
         }
 
 
@@ -140,5 +144,26 @@ public class MemberServiceImpl implements MemberService {
             responseDTO.setProfileImageUri(fileService.getFilePath(existingMember.getProfileImageUuid()));
         }
         return responseDTO;
+    }
+
+    @Transactional
+    @Override
+    public void changePasswordError(ChangePasswordRequestDTO changePasswordRequestDTO) {
+
+        QMember qMember = QMember.member;
+
+        // 사용자 조회
+        Member member = memberRepository.findByMemNum(changePasswordRequestDTO.getMemNum())
+                .orElseThrow(() -> new UserNotFoundException());
+
+        // 기존 비밀번호 검증
+        if (!passwordEncoder.matches(changePasswordRequestDTO.getOldPassword(), member.getPassword())) {
+            throw new PasswordMismatchException();
+        }
+
+        String encodedNewPassword = passwordEncoder.encode(changePasswordRequestDTO.getNewPassword());
+        member.setPassword(encodedNewPassword);
+        memberRepository.save(member);
+
     }
 }

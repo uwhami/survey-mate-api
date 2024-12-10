@@ -1,8 +1,10 @@
 package com.surveymate.api.member;
 
 
+import com.surveymate.api.domain.member.dto.ChangePasswordRequestDTO;
 import com.surveymate.api.domain.member.dto.MemberRequestDTO;
 import com.surveymate.api.domain.member.dto.MemberResponseDTO;
+import com.surveymate.api.domain.member.entity.Member;
 import com.surveymate.api.domain.member.service.MemberService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -33,6 +35,17 @@ public class MemberServiceTests {
         MemberResponseDTO responseDTO = memberService.modify(memberRequestDTO);
         System.out.println(responseDTO.toString());
 
+    }
+
+    @Test
+    void changePassword() throws Exception {
+        ChangePasswordRequestDTO changePasswordRequestDTO = ChangePasswordRequestDTO.builder()
+                .memNum("M202412100001")
+                .oldPassword("1234")
+                .newPassword("1111")
+                .build();
+
+        memberService.changePasswordError(changePasswordRequestDTO);
     }
 
 
