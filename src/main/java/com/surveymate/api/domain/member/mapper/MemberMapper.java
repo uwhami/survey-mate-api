@@ -10,6 +10,9 @@ import org.mapstruct.Mappings;
 @Mapper(componentModel = "spring")
 public interface MemberMapper {
 
+    @Mappings({
+            @Mapping(target = "profileImageUri", ignore = true)
+    })
     MemberResponseDTO toDTO(Member member);
 
 
@@ -19,6 +22,7 @@ public interface MemberMapper {
             @Mapping(target = "profileImageUuid", ignore = true),
             @Mapping(target = "passwordError", ignore = true),
             @Mapping(target = "memStatus", ignore = true),
+            @Mapping(target = "joinDate", ignore = true),
             @Mapping(target = "createDate", ignore = true),
             @Mapping(target = "updateDate", ignore = true)
     })
