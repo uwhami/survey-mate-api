@@ -35,8 +35,13 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public MemberResponseDTO createMember(RegisterRequest registerRequest) throws Exception {
-        return authService.createMember(registerRequest);
+    public ResponseEntity<Void> createMember(RegisterRequest registerRequest) throws Exception {
+        try {
+            authService.createMember(registerRequest);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @PostMapping("/login")
