@@ -1,55 +1,55 @@
 package com.surveymate.api.security;
 
 import com.surveymate.api.common.exception.CustomRuntimeException;
+import com.surveymate.api.domain.auth.model.CustomUserDetails;
+import com.surveymate.api.domain.auth.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Collections;
 import java.util.Date;
 
+@RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
 
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    private final CustomUserDetailsService userDetailsService;
 
-    public String generateToken(Authentication authentication) {
-        String username = authentication.getName();
+    public String generateToken(String uuid) {
         Date now = new Date();
         int jwtExpirationInMs = 3600000;    // 1시간
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(uuid)
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(key)
                 .compact();
     }
 
-    public String generateRefreshToken(Authentication authentication) {
-        String username = authentication.getName();
+    public String generateRefreshToken(String uuid) {
         Date now = new Date();
         int refreshTokenExpirationInMs = 86400000; // 1일 (24시간)
         Date expiryDate = new Date(now.getTime() + refreshTokenExpirationInMs);
 
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(uuid)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key)
                 .compact();
     }
 
-    public boolean validateToken(String token) {
+    public String validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+            return claims.getSubject();
         } catch (SecurityException ex) {
             throw new RuntimeException("Security exception occurred: Invalid signature");
         } catch (MalformedJwtException ex) {
@@ -67,9 +67,9 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-        String username = claims.getSubject();
+        String uuid = claims.getSubject();
 
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(username, "", Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+        CustomUserDetails userDetails = userDetailsService.loadUserByUuid(uuid);
         return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
     }
 }

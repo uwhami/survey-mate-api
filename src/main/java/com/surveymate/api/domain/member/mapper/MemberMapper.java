@@ -28,7 +28,5 @@ public interface MemberMapper {
     })
     Member toEntity(MemberRequestDTO memberRequestDTO);
 
-
-
 }
 

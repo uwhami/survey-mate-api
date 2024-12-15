@@ -10,7 +10,6 @@ import lombok.*;
 @ToString
 public class MemberResponseDTO {
 
-    private String memNum;
     private String userId;
     private String userName;
     private String userEmail;

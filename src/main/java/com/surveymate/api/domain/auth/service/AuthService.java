@@ -13,7 +13,7 @@ public interface AuthService {
 
     String sendVerificationCode(String email);
 
-    MemberResponseDTO createMember(RegisterRequest registerRequest) throws Exception;
+    void createMember(RegisterRequest registerRequest) throws Exception;
 
     Map<String, String> loginMember(LoginRequest loginRequest);
 

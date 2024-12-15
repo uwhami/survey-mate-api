@@ -3,13 +3,15 @@ package com.surveymate.api.domain.auth.service;
 import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.domain.auth.dto.LoginRequest;
 import com.surveymate.api.domain.auth.dto.RegisterRequest;
+import com.surveymate.api.domain.auth.entity.LoginHistory;
 import com.surveymate.api.domain.auth.mapper.AuthMemberMapper;
 import com.surveymate.api.common.enums.FilePath;
 import com.surveymate.api.common.util.CodeGenerator;
+import com.surveymate.api.domain.auth.model.CustomUserDetails;
+import com.surveymate.api.domain.auth.repository.LoginHistoryRepository;
 import com.surveymate.api.email.service.EmailService;
 import com.surveymate.api.file.entity.UploadedFile;
 import com.surveymate.api.file.service.FileService;
-import com.surveymate.api.domain.member.dto.MemberResponseDTO;
 import com.surveymate.api.domain.member.entity.Member;
 import com.surveymate.api.domain.member.exception.UserAlreadyExistsException;
 import com.surveymate.api.domain.member.mapper.MemberMapper;
@@ -27,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 
 @RequiredArgsConstructor
@@ -36,13 +39,13 @@ public class AuthServiceImpl implements AuthService {
     private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final AuthMemberMapper authMemberMapper;
-    private final MemberMapper memberMapper;
     private final CodeGenerator codeGenerator;
     private final FileService fileService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final EmailService emailService;
+    private final LoginHistoryRepository loginHistoryRepository;
 
     @Override
     public boolean checkDuplicateId(String userId) {
@@ -64,10 +67,10 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
-    public MemberResponseDTO createMember(RegisterRequest registerRequest) throws Exception {
+    public void createMember(RegisterRequest registerRequest) throws Exception {
         Member member = authMemberMapper.toEntity(registerRequest);
 
-        if(memberService.existsByUserId(member.getUserId())){
+        if (memberService.existsByUserId(member.getUserId())) {
             throw new UserAlreadyExistsException("이미 존재하는 ID 입니다. : " + member.getUserId());
         }
 
@@ -77,20 +80,13 @@ public class AuthServiceImpl implements AuthService {
             if (file != null && !file.isEmpty()) {
                 savedFile = fileService.uploadFileAndCreateThumbnail(file, FilePath.MEMBER_PROFILE);
                 member.setProfileImageUuid(savedFile.getFileId());
-            } else {
-                savedFile = fileService.getDefaultFilePath();
             }
 
             member.setMemNum(codeGenerator.generateCode("MU01"));
             member.setPassword(passwordEncoder.encode(member.getPassword()));
-            member = memberRepository.save(member);
+            memberRepository.save(member);
 
-            MemberResponseDTO memberResponseDTO = memberMapper.toDTO(member);
-            memberResponseDTO.setProfileImageUri(savedFile.getFilePath());
-
-            return memberResponseDTO;
-
-        }catch(RuntimeException e){
+        } catch (RuntimeException e) {
             throw new CustomRuntimeException("회원가입 에러", e);
         }
 
@@ -99,7 +95,7 @@ public class AuthServiceImpl implements AuthService {
 
     public Map<String, String> loginMember(LoginRequest loginRequest) {
 
-        try{
+        try {
 
             // 사용자 인증
             Authentication authentication = authenticationManager.authenticate(
@@ -108,15 +104,25 @@ public class AuthServiceImpl implements AuthService {
 
             memberService.resetPasswordError(loginRequest.getUserId());
 
+            UUID uuid = UUID.randomUUID();
+            String memNum = ((CustomUserDetails) authentication.getPrincipal()).getMemNum();
+            LoginHistory loginHistory = LoginHistory.builder()
+                    .uuid(uuid)
+                    .memNum(memNum)
+                    .build();
+            loginHistoryRepository.save(loginHistory);
+
             // 인증 성공 시 JWT 토큰 생성
-            String accessToken = jwtTokenProvider.generateToken(authentication);
-            String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
+
+            String accessToken = jwtTokenProvider.generateToken(uuid.toString());
+            String refreshToken = jwtTokenProvider.generateRefreshToken(uuid.toString());
 
             return Map.of(
                     "accessToken", accessToken,
                     "refreshToken", refreshToken
             );
-        }catch (BadCredentialsException ex) {   // 아이디나 비밀번호가 틀린 경우.
+
+        } catch (BadCredentialsException ex) {   // 아이디나 비밀번호가 틀린 경우.
             // 사용자 ID가 존재하는지 확인
             if (memberService.existsByUserId(loginRequest.getUserId())) {
                 // throw new UsernameNotFoundException("User not found");
@@ -124,7 +130,7 @@ public class AuthServiceImpl implements AuthService {
                 memberService.increasePasswordError(loginRequest.getUserId());
             }
             throw new RuntimeException("Authentication failed: " + ex.getMessage());
-        } catch(Exception ex){
+        } catch (Exception ex) {
             throw new RuntimeException("Authentication failed: " + ex.getMessage());
         }
 
@@ -132,25 +138,22 @@ public class AuthServiceImpl implements AuthService {
 
     public Map<String, String> refreshTokens(String authorizationHeader) {
 
-        try{
+        try {
 
             String refreshToken = authorizationHeader.replace("Bearer ", "");
-            String accessToken = null;
 
-            if(jwtTokenProvider.validateToken(refreshToken)){
-                Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
+            String uuid = jwtTokenProvider.validateToken(refreshToken);
 
-                // 인증 성공 시 JWT 토큰 생성
-                accessToken = jwtTokenProvider.generateToken(authentication);
-                refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
-            }
+            // 인증 성공 시 JWT 토큰 생성
+            String accessToken = jwtTokenProvider.generateToken(uuid);
+            String newRefreshToken = jwtTokenProvider.generateRefreshToken(uuid);
 
             return Map.of(
                     "accessToken", accessToken,
-                    "refreshToken", refreshToken
+                    "refreshToken", newRefreshToken
             );
 
-        } catch(Exception ex){
+        } catch (Exception ex) {
             throw new RuntimeException("Authentication failed: " + ex.getMessage());
         }
 
