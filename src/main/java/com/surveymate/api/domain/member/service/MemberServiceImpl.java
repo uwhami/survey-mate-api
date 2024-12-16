@@ -34,13 +34,12 @@ import java.util.Optional;
 @Service
 public class MemberServiceImpl implements MemberService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     private final MemberRepository memberRepository;
     private final MemberMapper memberMapper;
     private final FileService fileService;
     private final PasswordEncoder passwordEncoder;
+    private final JPAQueryFactory jpaQueryFactory;
+    private final EntityManager entityManager;
 
     @Override
     public boolean checkDuplicateId(String userId) {
@@ -87,7 +86,7 @@ public class MemberServiceImpl implements MemberService {
             // QueryDSL을 사용하여 동적으로 필드 업데이트
             QMember qMember = QMember.member;
 
-            JPAUpdateClause updateClause = new JPAQueryFactory(entityManager)
+            JPAUpdateClause updateClause = jpaQueryFactory
                     .update(qMember)
                     .where(qMember.memNum.eq(memberRequestDTO.getMemNum()));
 
@@ -106,14 +105,14 @@ public class MemberServiceImpl implements MemberService {
                             if (stringValue.isEmpty()) {
                                 return;
                             }
-                        }else if(value instanceof MultipartFile){
+                        } else if (value instanceof MultipartFile) {
                             MultipartFile file = (MultipartFile) value;
-                            if(!file.getName().isEmpty()){
+                            if (!file.getName().isEmpty()) {
                                 String fileId = existingMember.getProfileImageUuid();
                                 UploadedFile newFile = fileService.deleteAndSaveFile(fileId, file, FilePath.MEMBER_PROFILE);
                                 value = newFile.getFileId();
                                 existingMember.setProfileImageUuid(newFile.getFileId());
-                            }else{
+                            } else {
                                 return;
                             }
                         }
@@ -130,17 +129,19 @@ public class MemberServiceImpl implements MemberService {
             });
 
             updateClause.execute();
-            entityManager.clear(); // 영속성 컨텍스트 비우기
 
         } catch (RuntimeException e) {
             throw new CustomRuntimeException("회원정보 수정 중 에러 발생.", e);
         }
 
+        entityManager.clear();
+
+
         Member updatedMember = memberRepository.findByMemNum(memberRequestDTO.getMemNum())
                 .orElseThrow(() -> new CustomRuntimeException("업데이트 후 사용자 정보를 조회할 수 없습니다."));
 
         MemberResponseDTO responseDTO = memberMapper.toDTO(updatedMember);
-        if(existingMember.getProfileImageUuid() != null){
+        if (existingMember.getProfileImageUuid() != null) {
             responseDTO.setProfileImageUri(fileService.getFilePath(existingMember.getProfileImageUuid()));
         }
         return responseDTO;
@@ -162,8 +163,12 @@ public class MemberServiceImpl implements MemberService {
         }
 
         String encodedNewPassword = passwordEncoder.encode(changePasswordRequestDTO.getNewPassword());
-        member.setPassword(encodedNewPassword);
-        memberRepository.save(member);
+
+        jpaQueryFactory.update(qMember)
+                .set(qMember.password, encodedNewPassword)
+                .where(qMember.memNum.eq(changePasswordRequestDTO.getMemNum()))
+                .execute();
+
 
     }
 }
