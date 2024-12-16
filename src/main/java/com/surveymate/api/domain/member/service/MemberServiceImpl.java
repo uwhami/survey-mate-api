@@ -18,7 +18,6 @@ import com.surveymate.api.domain.member.repository.MemberRepository;
 import com.surveymate.api.file.entity.UploadedFile;
 import com.surveymate.api.file.service.FileService;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;

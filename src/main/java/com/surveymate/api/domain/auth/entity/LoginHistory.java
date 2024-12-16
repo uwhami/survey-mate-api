@@ -1,6 +1,5 @@
 package com.surveymate.api.domain.auth.entity;
 
-import com.surveymate.api.common.converter.UUIDBinaryConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

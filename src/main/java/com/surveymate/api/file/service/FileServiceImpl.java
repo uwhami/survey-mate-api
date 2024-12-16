@@ -1,7 +1,7 @@
 package com.surveymate.api.file.service;
 
 import com.surveymate.api.common.enums.FilePath;
-import com.surveymate.api.config.FileUploadProperties;
+import com.surveymate.api.file.config.FileUploadProperties;
 import com.surveymate.api.file.entity.UploadedFile;
 import com.surveymate.api.file.exception.FileNameTooLongException;
 import com.surveymate.api.file.exception.ThumbnailCreationException;

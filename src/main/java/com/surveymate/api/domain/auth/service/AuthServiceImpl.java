@@ -14,7 +14,6 @@ import com.surveymate.api.file.entity.UploadedFile;
 import com.surveymate.api.file.service.FileService;
 import com.surveymate.api.domain.member.entity.Member;
 import com.surveymate.api.domain.member.exception.UserAlreadyExistsException;
-import com.surveymate.api.domain.member.mapper.MemberMapper;
 import com.surveymate.api.domain.member.repository.MemberRepository;
 import com.surveymate.api.domain.member.service.MemberService;
 import com.surveymate.api.security.JwtTokenProvider;
