@@ -3,7 +3,6 @@ package com.surveymate.api.domain.auth.controller;
 import com.surveymate.api.domain.auth.dto.LoginRequest;
 import com.surveymate.api.domain.auth.dto.RegisterRequest;
 import com.surveymate.api.domain.auth.service.AuthService;
-import com.surveymate.api.domain.member.dto.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

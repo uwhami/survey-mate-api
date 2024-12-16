@@ -3,7 +3,6 @@ package com.surveymate.api.domain.auth.service;
 
 import com.surveymate.api.domain.auth.dto.LoginRequest;
 import com.surveymate.api.domain.auth.dto.RegisterRequest;
-import com.surveymate.api.domain.member.dto.MemberResponseDTO;
 
 import java.util.Map;
 

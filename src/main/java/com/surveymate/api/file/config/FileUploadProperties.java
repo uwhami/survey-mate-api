@@ -1,4 +1,4 @@
-package com.surveymate.api.config;
+package com.surveymate.api.file.config;
 
 import lombok.Getter;
 import lombok.Setter;
