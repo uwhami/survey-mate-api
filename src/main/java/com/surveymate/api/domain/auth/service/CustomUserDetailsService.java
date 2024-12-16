@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -36,7 +37,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 
     public CustomUserDetails loadUserByUuid(String uuid) throws UsernameNotFoundException {
-        LoginHistory loginInfo = loginHistoryRepository.findByUuid(UUID.fromString(uuid))
+        LocalDateTime cutoffTime = LocalDateTime.now().minusDays(1);
+        LoginHistory loginInfo = loginHistoryRepository.findByUuid(UUID.fromString(uuid), cutoffTime)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with UUID: " + uuid));
 
         return CustomUserDetails.builder()
