@@ -11,14 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChangePasswordRequestDTO implements MemnumAware {
+public class ChangePasswordRequestDTO extends MemnumAware {
 
-    private String memNum;
     private String oldPassword;  // 기존 비밀번호
     private String newPassword;  // 새 비밀번호
 
-    @Override
-    public void setMemnum(String memnum) {
-        this.memNum = memnum;
-    }
 }

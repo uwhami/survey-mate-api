@@ -9,16 +9,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberRequestDTO implements MemnumAware {
+public class MemberRequestDTO extends MemnumAware {
 
-    private String memNum;
     private String userId;
     private String userName;
     private String userEmail;
     private MultipartFile profileImageUuid;
 
-    @Override
-    public void setMemnum(String memNum) {
-        this.memNum = memNum;
-    }
 }

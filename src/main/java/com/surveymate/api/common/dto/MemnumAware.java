@@ -1,5 +1,12 @@
 package com.surveymate.api.common.dto;
 
-public interface MemnumAware {
-    void setMemnum(String memnum);
+import lombok.Getter;
+
+@Getter
+public abstract class MemnumAware {
+    private String memNum;
+
+    public void setMemnum(String memnum) {
+        this.memNum = memnum;
+    }
 }
