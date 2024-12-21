@@ -23,7 +23,7 @@ public class MemnumAspect {
 
             // DTO에 memnum 값 설정
             if (memnum != null) {
-                ((MemnumAware) dto).setMemnum(memnum);
+                ((MemnumAware) dto).setMemNum(memnum);
             }
         }
     }

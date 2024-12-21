@@ -6,7 +6,7 @@ import lombok.Getter;
 public abstract class MemnumAware {
     private String memNum;
 
-    public void setMemnum(String memnum) {
-        this.memNum = memnum;
+    public void setMemNum(String memNum) {
+        this.memNum = memNum;
     }
 }
