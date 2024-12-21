@@ -37,8 +37,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 
     public CustomUserDetails loadUserByUuid(String uuid) throws UsernameNotFoundException {
-        LocalDateTime cutoffTime = LocalDateTime.now().minusDays(1);
-        LoginHistory loginInfo = loginHistoryRepository.findByUuid(UUID.fromString(uuid), cutoffTime)
+        LoginHistory loginInfo = loginHistoryRepository.findByUuid(UUID.fromString(uuid))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with UUID: " + uuid));
 
         return CustomUserDetails.builder()
