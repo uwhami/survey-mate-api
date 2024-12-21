@@ -147,8 +147,6 @@ public class AuthServiceImpl implements AuthService {
             String accessToken = jwtTokenProvider.generateToken(uuid);
             String newRefreshToken = jwtTokenProvider.generateRefreshToken(uuid);
 
-            loginHistoryRepository.updateLastAccessTime(UUID.fromString(uuid));
-
             return Map.of(
                     "accessToken", accessToken,
                     "refreshToken", newRefreshToken

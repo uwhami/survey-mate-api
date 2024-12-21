@@ -1,18 +1,24 @@
 package com.surveymate.api.domain.member.dto;
 
 
-import lombok.*;
+import com.surveymate.api.common.dto.MemnumAware;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class ChangePasswordRequestDTO {
-    private String memNum;       // 사용자 번호
+public class ChangePasswordRequestDTO implements MemnumAware {
+
+    private String memNum;
     private String oldPassword;  // 기존 비밀번호
     private String newPassword;  // 새 비밀번호
 
-    public void setMemNum(String memNum) {
-        this.memNum = memNum;
+    @Override
+    public void setMemnum(String memnum) {
+        this.memNum = memnum;
     }
 }

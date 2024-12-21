@@ -29,8 +29,5 @@ public class LoginHistory {
     @Column(name = "created_time", nullable = false)
     private LocalDateTime createdTime;
 
-    @CreationTimestamp
-    @Column(name = "last_access_time", nullable = false)
-    private LocalDateTime lastAccessTime;
 
 }
