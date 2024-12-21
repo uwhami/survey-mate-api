@@ -26,11 +26,11 @@ public class MemberServiceTests {
     @Test
     void modify() throws Exception {
         MemberRequestDTO memberRequestDTO = MemberRequestDTO.builder()
-                .memNum("M202411200001")
                 .userId(null)
                 .userName("modifyTest2")
                 .profileImageUuid(null)
                 .build();
+        memberRequestDTO.setMemNum("M202411200001");
 
         MemberResponseDTO responseDTO = memberService.modify(memberRequestDTO);
         System.out.println(responseDTO.toString());
@@ -40,11 +40,10 @@ public class MemberServiceTests {
     @Test
     void changePassword() throws Exception {
         ChangePasswordRequestDTO changePasswordRequestDTO = ChangePasswordRequestDTO.builder()
-                .memNum("M202412100001")
                 .oldPassword("1234")
                 .newPassword("1111")
                 .build();
-
+        changePasswordRequestDTO.setMemNum("M202412100001");
         memberService.changePasswordError(changePasswordRequestDTO);
     }
 
