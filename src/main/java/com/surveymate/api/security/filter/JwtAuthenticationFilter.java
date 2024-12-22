@@ -1,5 +1,7 @@
 package com.surveymate.api.security.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.surveymate.api.common.dto.ResponseDTO;
 import com.surveymate.api.security.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,10 +37,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         } catch (Exception ex) {
             log.error("JWT 인증 오류: {}", ex.getMessage(), ex);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
+            handleAccessDenied(response, "인증에 실패했습니다.");
+
         }
 
 
+    }
+
+    public void handleAccessDenied(HttpServletResponse response, String message) throws IOException {
+        ResponseDTO<?> errorResponse = ResponseDTO.failure(message);
+
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(response.getWriter(), errorResponse);
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {
