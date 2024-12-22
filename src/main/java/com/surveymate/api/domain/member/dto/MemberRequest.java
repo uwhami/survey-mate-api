@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberRequestDTO extends MemnumAware {
+public class MemberRequest extends MemnumAware {
 
     private String userId;
     private String userName;

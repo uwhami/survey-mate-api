@@ -2,6 +2,7 @@ package com.surveymate.api.domain.auth.service;
 
 
 import com.surveymate.api.domain.auth.dto.LoginRequest;
+import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
 import com.surveymate.api.domain.auth.dto.RegisterRequest;
 
 import java.util.Map;
@@ -17,4 +18,8 @@ public interface AuthService {
     Map<String, String> loginMember(LoginRequest loginRequest);
 
     Map<String, String> refreshTokens(String refreshToken);
+
+    String findUserIdByUSerEmail(String email);
+
+    void passwordReset(PasswordResetRequest request);
 }

@@ -1,6 +1,7 @@
 package com.surveymate.api.common.exception;
 
 import com.surveymate.api.domain.member.exception.UserNotFoundException;
+import com.surveymate.api.email.exception.EmailAlreadyExistsException;
 import com.surveymate.api.file.exception.FileNameTooLongException;
 import com.surveymate.api.file.exception.ThumbnailCreationException;
 import com.surveymate.api.domain.member.exception.UserAlreadyExistsException;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomRuntimeException.class)
-    public ResponseEntity<String> CustomRuntimeExceptionHandler(CustomRuntimeException e) {
+    public ResponseEntity<String> handlerCustomRuntimeExceptionHandler(CustomRuntimeException e) {
         log.error("CustomRuntimeException 발생: {}", e.getMessage(), e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -42,6 +43,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> FileNameTooLongException(FileNameTooLongException ex) {
         log.error("FileNameTooLongException 발생: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<String> EmailAlreadyExistsException(EmailAlreadyExistsException ex) {
+        log.error("EmailAlreadyExistsException 발생: {}", ex.getMessage(), ex);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
 

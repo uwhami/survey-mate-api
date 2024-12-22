@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class ChangePasswordRequestDTO extends MemnumAware {
+public class ChangePasswordRequest extends MemnumAware {
 
     private String oldPassword;  // 기존 비밀번호
     private String newPassword;  // 새 비밀번호

@@ -1,16 +1,19 @@
 package com.surveymate.api.domain.auth.controller;
 
 import com.surveymate.api.domain.auth.dto.LoginRequest;
+import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
 import com.surveymate.api.domain.auth.dto.RegisterRequest;
 import com.surveymate.api.domain.auth.service.AuthService;
+import com.surveymate.api.email.exception.EmailAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-
+@Log4j2
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
@@ -28,8 +31,9 @@ public class AuthController {
     }
 
     @GetMapping("/send-verification-code")
-    public String sendVerificationCode(@RequestParam String email) {
-        return authService.sendVerificationCode(email);
+    public ResponseEntity<String> sendVerificationCode(@RequestParam String email) {
+        String response = authService.sendVerificationCode(email);
+        return ResponseEntity.ok(response);
     }
 
 
@@ -55,12 +59,20 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshTokens(@RequestHeader("Authorization") String authorizationHeader) {
-        try {
-            Map<String, String> jwtResponse = authService.refreshTokens(authorizationHeader);
-            return ResponseEntity.ok(jwtResponse);
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
-        }
+        Map<String, String> jwtResponse = authService.refreshTokens(authorizationHeader);
+        return ResponseEntity.ok(jwtResponse);
+    }
+
+    @GetMapping("/findIdByEmail")
+    public ResponseEntity<String> findIdByEmail(@RequestParam String email) {
+        String userId = authService.findUserIdByUSerEmail(email);
+        return ResponseEntity.ok().body(userId);
+    }
+
+    @PostMapping("/resetPassword")
+    public ResponseEntity<Void> resetPassword(@RequestBody PasswordResetRequest request) {
+        authService.passwordReset(request);
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -5,7 +5,6 @@ import com.surveymate.api.domain.auth.dto.RegisterRequest;
 import com.surveymate.api.domain.auth.entity.LoginHistory;
 import com.surveymate.api.domain.auth.repository.LoginHistoryRepository;
 import com.surveymate.api.domain.auth.service.AuthService;
-import com.surveymate.api.domain.member.dto.MemberResponseDTO;
 import com.surveymate.api.domain.member.service.MemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

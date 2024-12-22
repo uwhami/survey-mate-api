@@ -1,9 +1,9 @@
 package com.surveymate.api.domain.member.controller;
 
 
-import com.surveymate.api.domain.member.dto.ChangePasswordRequestDTO;
-import com.surveymate.api.domain.member.dto.MemberRequestDTO;
-import com.surveymate.api.domain.member.dto.MemberResponseDTO;
+import com.surveymate.api.domain.member.dto.ChangePasswordRequest;
+import com.surveymate.api.domain.member.dto.MemberRequest;
+import com.surveymate.api.domain.member.dto.MemberResponse;
 import com.surveymate.api.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -21,14 +21,14 @@ public class MemberController {
 
 
     @PatchMapping("/modify")
-    public MemberResponseDTO modify(MemberRequestDTO memberRequestDTO) throws Exception{
-        return memberService.modify(memberRequestDTO);
+    public MemberResponse modify(MemberRequest memberRequest) throws Exception{
+        return memberService.modify(memberRequest);
     }
 
     @PatchMapping("/change-password")
-    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequestDTO changePasswordRequestDTO) {
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
         try {
-            memberService.changePasswordError(changePasswordRequestDTO);
+            memberService.changePasswordError(changePasswordRequest);
             return ResponseEntity.ok().build();
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());

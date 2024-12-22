@@ -12,6 +12,7 @@ public interface AuthMemberMapper {
     @Mappings({
             @Mapping(target = "memNum", ignore = true), // memNum은 직접 설정할 것이므로 무시
             @Mapping(target = "passwordError", ignore = true),
+            @Mapping(target = "profileImageUuid", ignore = true),
             @Mapping(target = "createDate", ignore = true),
             @Mapping(target = "updateDate", ignore = true)
     })

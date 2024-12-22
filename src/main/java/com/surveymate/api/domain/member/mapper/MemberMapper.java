@@ -1,7 +1,7 @@
 package com.surveymate.api.domain.member.mapper;
 
-import com.surveymate.api.domain.member.dto.MemberRequestDTO;
-import com.surveymate.api.domain.member.dto.MemberResponseDTO;
+import com.surveymate.api.domain.member.dto.MemberRequest;
+import com.surveymate.api.domain.member.dto.MemberResponse;
 import com.surveymate.api.domain.member.entity.Member;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,7 +13,7 @@ public interface MemberMapper {
     @Mappings({
             @Mapping(target = "profileImageUri", ignore = true)
     })
-    MemberResponseDTO toDTO(Member member);
+    MemberResponse toDTO(Member member);
 
 
     @Mappings({
@@ -26,7 +26,7 @@ public interface MemberMapper {
             @Mapping(target = "createDate", ignore = true),
             @Mapping(target = "updateDate", ignore = true)
     })
-    Member toEntity(MemberRequestDTO memberRequestDTO);
+    Member toEntity(MemberRequest memberRequest);
 
 }
 

@@ -6,9 +6,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.surveymate.api.common.enums.FilePath;
 import com.surveymate.api.common.exception.CustomRuntimeException;
-import com.surveymate.api.domain.member.dto.ChangePasswordRequestDTO;
-import com.surveymate.api.domain.member.dto.MemberRequestDTO;
-import com.surveymate.api.domain.member.dto.MemberResponseDTO;
+import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
+import com.surveymate.api.domain.member.dto.ChangePasswordRequest;
+import com.surveymate.api.domain.member.dto.MemberRequest;
+import com.surveymate.api.domain.member.dto.MemberResponse;
 import com.surveymate.api.domain.member.entity.Member;
 import com.surveymate.api.domain.member.entity.QMember;
 import com.surveymate.api.domain.member.exception.PasswordMismatchException;
@@ -51,6 +52,18 @@ public class MemberServiceImpl implements MemberService {
         return existId.isPresent();
     }
 
+    @Override
+    public boolean checkDuplicatedEmail(String email) {
+        try {
+            Optional<Member> existEmail = memberRepository.findByUserEmail(email);
+            return existEmail.isPresent();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new CustomRuntimeException("이메일 확인 도중 에러가 발생했습니다.");
+        }
+
+    }
+
     @Transactional
     @Override
     public void increasePasswordError(String userId) {
@@ -71,9 +84,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public MemberResponseDTO modify(MemberRequestDTO memberRequestDTO) throws Exception {
+    public MemberResponse modify(MemberRequest memberRequest) throws Exception {
 
-        Optional<Member> optionalMember = memberRepository.findByMemNum(memberRequestDTO.getMemNum());
+        Optional<Member> optionalMember = memberRepository.findByMemNum(memberRequest.getMemNum());
         if (optionalMember.isEmpty()) {
             throw new UserNotFoundException();
         }
@@ -87,9 +100,9 @@ public class MemberServiceImpl implements MemberService {
 
             JPAUpdateClause updateClause = jpaQueryFactory
                     .update(qMember)
-                    .where(qMember.memNum.eq(memberRequestDTO.getMemNum()));
+                    .where(qMember.memNum.eq(memberRequest.getMemNum()));
 
-            Arrays.stream(MemberRequestDTO.class.getDeclaredFields()).forEach(field -> {
+            Arrays.stream(MemberRequest.class.getDeclaredFields()).forEach(field -> {
                 try {
                     field.setAccessible(true); // private 필드 접근 가능하게 설정
 
@@ -97,7 +110,7 @@ public class MemberServiceImpl implements MemberService {
                         return; // 다음 필드로 넘어감
                     }
 
-                    Object value = field.get(memberRequestDTO); // 필드 값 가져오기
+                    Object value = field.get(memberRequest); // 필드 값 가져오기
                     if (value != null) {
                         if (value instanceof String) {
                             String stringValue = ((String) value).trim();
@@ -136,10 +149,10 @@ public class MemberServiceImpl implements MemberService {
         entityManager.clear();
 
 
-        Member updatedMember = memberRepository.findByMemNum(memberRequestDTO.getMemNum())
+        Member updatedMember = memberRepository.findByMemNum(memberRequest.getMemNum())
                 .orElseThrow(() -> new CustomRuntimeException("업데이트 후 사용자 정보를 조회할 수 없습니다."));
 
-        MemberResponseDTO responseDTO = memberMapper.toDTO(updatedMember);
+        MemberResponse responseDTO = memberMapper.toDTO(updatedMember);
         if (existingMember.getProfileImageUuid() != null) {
             responseDTO.setProfileImageUri(fileService.getFilePath(existingMember.getProfileImageUuid()));
         }
@@ -148,26 +161,54 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public void changePasswordError(ChangePasswordRequestDTO changePasswordRequestDTO) {
+    public void changePasswordError(ChangePasswordRequest changePasswordRequest) {
 
         QMember qMember = QMember.member;
 
-        // 사용자 조회
-        Member member = memberRepository.findByMemNum(changePasswordRequestDTO.getMemNum())
+        Member member = memberRepository.findByMemNum(changePasswordRequest.getMemNum())
                 .orElseThrow(() -> new UserNotFoundException());
 
         // 기존 비밀번호 검증
-        if (!passwordEncoder.matches(changePasswordRequestDTO.getOldPassword(), member.getPassword())) {
+        if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), member.getPassword())) {
             throw new PasswordMismatchException();
         }
 
-        String encodedNewPassword = passwordEncoder.encode(changePasswordRequestDTO.getNewPassword());
+        String encodedNewPassword = passwordEncoder.encode(changePasswordRequest.getNewPassword());
 
-        jpaQueryFactory.update(qMember)
-                .set(qMember.password, encodedNewPassword)
-                .where(qMember.memNum.eq(changePasswordRequestDTO.getMemNum()))
-                .execute();
+        try {
+            jpaQueryFactory.update(qMember)
+                    .set(qMember.password, encodedNewPassword)
+                    .where(qMember.memNum.eq(changePasswordRequest.getMemNum()))
+                    .execute();
+        } catch (Exception e) {
+            throw new CustomRuntimeException("비밀번호 변경을 실패했습니다.", e);
+        }
 
+
+    }
+
+    @Transactional
+    @Override
+    public void passwordReset(PasswordResetRequest request) {
+        QMember qMember = QMember.member;
+
+        try {
+            // 사용자 조회
+            Member member = memberRepository.findByUserEmail(request.getUserEmail())
+                    .orElseThrow(() -> new UserNotFoundException());
+
+            String encodedNewPassword = passwordEncoder.encode(request.getNewPassword());
+
+            jpaQueryFactory.update(qMember)
+                    .set(qMember.password, encodedNewPassword)
+                    .set(qMember.passwordError, 0)
+                    .where(qMember.memNum.eq(member.getMemNum()))
+                    .execute();
+        } catch (UserNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new CustomRuntimeException("비밀번호 재설정을 실패했습니다.", e);
+        }
 
     }
 }
