@@ -7,8 +7,6 @@ import com.surveymate.api.domain.member.dto.MemberResponse;
 import com.surveymate.api.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Log4j2
@@ -26,13 +24,8 @@ public class MemberController {
     }
 
     @PatchMapping("/change-password")
-    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
-        try {
-            memberService.changePasswordError(changePasswordRequest);
-            return ResponseEntity.ok().build();
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
-        }
+    public void changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) throws Exception{
+        memberService.changePasswordError(changePasswordRequest);
     }
 
 }

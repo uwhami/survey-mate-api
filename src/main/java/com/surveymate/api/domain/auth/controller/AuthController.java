@@ -4,11 +4,9 @@ import com.surveymate.api.domain.auth.dto.LoginRequest;
 import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
 import com.surveymate.api.domain.auth.dto.RegisterRequest;
 import com.surveymate.api.domain.auth.service.AuthService;
-import com.surveymate.api.email.exception.EmailAlreadyExistsException;
+import com.surveymate.api.domain.member.exception.UserAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -22,57 +20,42 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping("/check-duplicate-id")
-    public ResponseEntity<Void> checkDuplicateId(@RequestParam String userId) {
+    public void checkDuplicateId(@RequestParam String userId) {
         boolean existId = authService.checkDuplicateId(userId);
         if (existId) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            throw new UserAlreadyExistsException(userId);
         }
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/send-verification-code")
-    public ResponseEntity<String> sendVerificationCode(@RequestParam String email) {
-        String response = authService.sendVerificationCode(email);
-        return ResponseEntity.ok(response);
+    public String sendVerificationCode(@RequestParam String email) {
+        return authService.sendVerificationCode(email);
     }
 
 
     @PostMapping("/register")
-    public ResponseEntity<Void> createMember(RegisterRequest registerRequest) throws Exception {
-        try {
-            authService.createMember(registerRequest);
-            return ResponseEntity.ok().build();
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public void createMember(RegisterRequest registerRequest) throws Exception {
+        authService.createMember(registerRequest);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> memberLogin(LoginRequest loginRequest) {
-        try {
-            Map<String, String> jwtResponse = authService.loginMember(loginRequest);
-            return ResponseEntity.ok(jwtResponse);
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
-        }
+    public Map<String, String> memberLogin(LoginRequest loginRequest) {
+        return authService.loginMember(loginRequest);
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refreshTokens(@RequestHeader("Authorization") String authorizationHeader) {
-        Map<String, String> jwtResponse = authService.refreshTokens(authorizationHeader);
-        return ResponseEntity.ok(jwtResponse);
+    public Map<String, String> refreshTokens(@RequestHeader("Authorization") String authorizationHeader) {
+        return authService.refreshTokens(authorizationHeader);
     }
 
     @GetMapping("/findIdByEmail")
-    public ResponseEntity<String> findIdByEmail(@RequestParam String email) {
-        String userId = authService.findUserIdByUSerEmail(email);
-        return ResponseEntity.ok().body(userId);
+    public String findIdByEmail(@RequestParam String email) {
+        return authService.findUserIdByUSerEmail(email);
     }
 
     @PostMapping("/resetPassword")
-    public ResponseEntity<Void> resetPassword(@RequestBody PasswordResetRequest request) {
+    public void resetPassword(@RequestBody PasswordResetRequest request) {
         authService.passwordReset(request);
-        return ResponseEntity.ok().build();
     }
 
 }
