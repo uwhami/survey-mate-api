@@ -14,6 +14,8 @@ public interface MemberRepository extends JpaRepository<Member, String> {
 
     Optional<Member> findByUserId(String userId);
 
+    Optional<Member> findByUserEmail(String email);
+
     @Query("SELECT NVL(MAX(CAST(SUBSTRING(m.memNum, 10) AS integer)), 0) FROM Member m WHERE m.memNum LIKE CONCAT('M', :today, '%') ORDER BY m.memNum DESC LIMIT 1")
     int findTopMemNumByToday(@Param("today") String today);
 
@@ -25,7 +27,8 @@ public interface MemberRepository extends JpaRepository<Member, String> {
     @Query("UPDATE Member m SET m.passwordError = 0 WHERE m.userId = :userId")
     void resetPasswordError(@Param("userId") String userId);
 
-
     int findPasswordErrorByUserId(String userId);
+
+    String findUserIdByUserEmail(String email);
 
 }

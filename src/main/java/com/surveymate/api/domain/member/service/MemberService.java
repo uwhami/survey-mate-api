@@ -1,13 +1,16 @@
 package com.surveymate.api.domain.member.service;
 
 
-import com.surveymate.api.domain.member.dto.ChangePasswordRequestDTO;
-import com.surveymate.api.domain.member.dto.MemberRequestDTO;
-import com.surveymate.api.domain.member.dto.MemberResponseDTO;
+import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
+import com.surveymate.api.domain.member.dto.ChangePasswordRequest;
+import com.surveymate.api.domain.member.dto.MemberRequest;
+import com.surveymate.api.domain.member.dto.MemberResponse;
 
 public interface MemberService {
 
     boolean checkDuplicateId(String userId);
+
+    boolean checkDuplicatedEmail(String email);
 
     boolean existsByUserId(String userId);
 
@@ -17,8 +20,10 @@ public interface MemberService {
 
     int findPasswordErrorByUserId(String userId);
 
-    MemberResponseDTO modify(MemberRequestDTO memberRequestDTO) throws Exception;
+    MemberResponse modify(MemberRequest memberRequest) throws Exception;
 
-    void changePasswordError(ChangePasswordRequestDTO changePasswordRequestDTO) throws Exception;
+    void changePasswordError(ChangePasswordRequest changePasswordRequest) throws Exception;
+
+    void passwordReset(PasswordResetRequest request);
 
 }

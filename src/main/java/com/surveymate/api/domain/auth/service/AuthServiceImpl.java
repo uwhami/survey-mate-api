@@ -2,6 +2,7 @@ package com.surveymate.api.domain.auth.service;
 
 import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.domain.auth.dto.LoginRequest;
+import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
 import com.surveymate.api.domain.auth.dto.RegisterRequest;
 import com.surveymate.api.domain.auth.entity.LoginHistory;
 import com.surveymate.api.domain.auth.mapper.AuthMemberMapper;
@@ -9,6 +10,8 @@ import com.surveymate.api.common.enums.FilePath;
 import com.surveymate.api.common.util.CodeGenerator;
 import com.surveymate.api.domain.auth.model.CustomUserDetails;
 import com.surveymate.api.domain.auth.repository.LoginHistoryRepository;
+import com.surveymate.api.domain.member.exception.UserNotFoundException;
+import com.surveymate.api.email.exception.EmailAlreadyExistsException;
 import com.surveymate.api.email.service.EmailService;
 import com.surveymate.api.file.entity.UploadedFile;
 import com.surveymate.api.file.service.FileService;
@@ -29,7 +32,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
-
 
 @RequiredArgsConstructor
 @Service
@@ -53,9 +55,19 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String sendVerificationCode(String email) {
-        String code = generateVerificationCode();
-        emailService.sendEmail(email, "회원가입 인증번호", code);
-        return code;
+        try{
+            if(memberService.checkDuplicatedEmail(email)) {
+                throw new EmailAlreadyExistsException();
+            }
+            String code = generateVerificationCode();
+            emailService.sendEmail(email, "회원가입 인증번호", code);
+            return code;
+        }catch (EmailAlreadyExistsException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new CustomRuntimeException("이메일 인증코드 발송 중 에러가 발생했습니다.", e);
+        }
+
     }
 
     public static String generateVerificationCode() {
@@ -130,7 +142,7 @@ public class AuthServiceImpl implements AuthService {
             }
             throw new RuntimeException("Authentication failed: " + ex.getMessage());
         } catch (Exception ex) {
-            throw new RuntimeException("Authentication failed: " + ex.getMessage());
+            throw new CustomRuntimeException(ex.getMessage(), ex);
         }
 
     }
@@ -153,8 +165,25 @@ public class AuthServiceImpl implements AuthService {
             );
 
         } catch (Exception ex) {
-            throw new RuntimeException("Authentication failed: " + ex.getMessage());
+            throw new CustomRuntimeException(ex.getMessage(), ex);
+        }
+    }
+
+
+    public String findUserIdByUSerEmail(String email) {
+        try{
+            Member member = memberRepository.findByUserEmail(email)
+                    .orElseThrow(() -> new UserNotFoundException());
+
+            return member.getUserId();
+        } catch (Exception ex) {
+            throw new CustomRuntimeException("회원 아이디 찾기에서 에러가 발생했습니다.", ex);
         }
 
+    }
+
+    @Override
+    public void passwordReset(PasswordResetRequest request) {
+        memberService.passwordReset(request);
     }
 }

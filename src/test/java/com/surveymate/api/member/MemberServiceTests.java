@@ -1,10 +1,9 @@
 package com.surveymate.api.member;
 
 
-import com.surveymate.api.domain.member.dto.ChangePasswordRequestDTO;
-import com.surveymate.api.domain.member.dto.MemberRequestDTO;
-import com.surveymate.api.domain.member.dto.MemberResponseDTO;
-import com.surveymate.api.domain.member.entity.Member;
+import com.surveymate.api.domain.member.dto.ChangePasswordRequest;
+import com.surveymate.api.domain.member.dto.MemberRequest;
+import com.surveymate.api.domain.member.dto.MemberResponse;
 import com.surveymate.api.domain.member.service.MemberService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -25,26 +24,26 @@ public class MemberServiceTests {
     @Transactional
     @Test
     void modify() throws Exception {
-        MemberRequestDTO memberRequestDTO = MemberRequestDTO.builder()
+        MemberRequest memberRequest = MemberRequest.builder()
                 .userId(null)
                 .userName("modifyTest2")
                 .profileImageUuid(null)
                 .build();
-        memberRequestDTO.setMemNum("M202411200001");
+        memberRequest.setMemNum("M202411200001");
 
-        MemberResponseDTO responseDTO = memberService.modify(memberRequestDTO);
+        MemberResponse responseDTO = memberService.modify(memberRequest);
         System.out.println(responseDTO.toString());
 
     }
 
     @Test
     void changePassword() throws Exception {
-        ChangePasswordRequestDTO changePasswordRequestDTO = ChangePasswordRequestDTO.builder()
+        ChangePasswordRequest changePasswordRequest = ChangePasswordRequest.builder()
                 .oldPassword("1234")
                 .newPassword("1111")
                 .build();
-        changePasswordRequestDTO.setMemNum("M202412100001");
-        memberService.changePasswordError(changePasswordRequestDTO);
+        changePasswordRequest.setMemNum("M202412100001");
+        memberService.changePasswordError(changePasswordRequest);
     }
 
 
