@@ -17,6 +17,10 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    @GetMapping("/getMemInfo")
+    public MemberResponse getMemInfo(MemberRequest request) throws Exception{
+        return memberService.getMemInfo(request);
+    }
 
     @PatchMapping("/modify")
     public MemberResponse modify(MemberRequest memberRequest) throws Exception{

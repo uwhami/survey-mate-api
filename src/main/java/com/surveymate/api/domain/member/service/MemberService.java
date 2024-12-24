@@ -20,9 +20,11 @@ public interface MemberService {
 
     int findPasswordErrorByUserId(String userId);
 
-    MemberResponse modify(MemberRequest memberRequest) throws Exception;
+    MemberResponse getMemInfo(MemberRequest request);
 
-    void changePasswordError(ChangePasswordRequest changePasswordRequest) throws Exception;
+    MemberResponse modify(MemberRequest request) throws Exception;
+
+    void changePasswordError(ChangePasswordRequest request) throws Exception;
 
     void passwordReset(PasswordResetRequest request);
 
