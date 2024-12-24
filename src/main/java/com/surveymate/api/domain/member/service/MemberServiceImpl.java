@@ -81,6 +81,14 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findPasswordErrorByUserId(userId);
     }
 
+    @Override
+    public MemberResponse getMemInfo(MemberRequest request) {
+        Optional<Member> member = memberRepository.findByMemNum(request.getMemNum());
+        if(member.isEmpty()) {
+            throw new UserNotFoundException();
+        }
+        return memberMapper.toDTO(member.get());
+    }
 
     @Transactional
     @Override
