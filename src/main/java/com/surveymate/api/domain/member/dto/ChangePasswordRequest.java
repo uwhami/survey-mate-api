@@ -5,7 +5,6 @@ import com.surveymate.api.common.dto.MemnumAware;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @Builder

@@ -1,6 +1,7 @@
 package com.surveymate.api.common.exception;
 
 import com.surveymate.api.common.dto.ResponseDTO;
+import com.surveymate.api.domain.member.exception.PasswordMismatchException;
 import com.surveymate.api.domain.member.exception.UserNotFoundException;
 import com.surveymate.api.email.exception.EmailAlreadyExistsException;
 import com.surveymate.api.file.exception.FileNameTooLongException;
@@ -51,6 +52,13 @@ public class GlobalExceptionHandler {
         log.error("EmailAlreadyExistsException 발생: {}", e.getMessage(), e);
         return new ResponseEntity<>(ResponseDTO.failure(e.getMessage()), HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(PasswordMismatchException.class)
+    public ResponseEntity<ResponseDTO<?>> PasswordMismatchException(PasswordMismatchException e) {
+        log.error("PasswordMismatchException 발생: {}", e.getMessage(), e);
+        return new ResponseEntity<>(ResponseDTO.failure(e.getMessage()), HttpStatus.CONFLICT);
+    }
+
 
 
 }

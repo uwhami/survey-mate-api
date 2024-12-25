@@ -47,6 +47,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final EmailService emailService;
     private final LoginHistoryRepository loginHistoryRepository;
+    private final GuavaCacheService cacheService;
 
     @Override
     public boolean checkDuplicateId(String userId) {
@@ -123,8 +124,9 @@ public class AuthServiceImpl implements AuthService {
                     .build();
             loginHistoryRepository.save(loginHistory);
 
-            // 인증 성공 시 JWT 토큰 생성
+            cacheService.saveToCache(uuid.toString(), memNum);
 
+            // 인증 성공 시 JWT 토큰 생성
             String accessToken = jwtTokenProvider.generateToken(uuid.toString());
             String refreshToken = jwtTokenProvider.generateRefreshToken(uuid.toString());
 
@@ -176,6 +178,8 @@ public class AuthServiceImpl implements AuthService {
                     .orElseThrow(() -> new UserNotFoundException());
 
             return member.getUserId();
+        } catch (UserNotFoundException e){
+            throw e;
         } catch (Exception ex) {
             throw new CustomRuntimeException("회원 아이디 찾기에서 에러가 발생했습니다.", ex);
         }

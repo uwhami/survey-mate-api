@@ -8,21 +8,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import java.util.List;
-
 @Component
 public class MemnumInterceptor implements HandlerInterceptor {
 
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
-        String requestUri = request.getRequestURI();
-
-        List<String> excludedUrls = List.of("/api/auth/**");
-        if (excludedUrls.contains(requestUri)) {
-            return true;
-        }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
