@@ -20,6 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final LoginHistoryRepository loginHistoryRepository;
+    private final GuavaCacheService cacheService;
 
     @Override
     public CustomUserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
@@ -36,11 +37,17 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 
     public CustomUserDetails loadUserByUuid(String uuid) throws UsernameNotFoundException {
-        LoginHistory loginInfo = loginHistoryRepository.findByUuid(UUID.fromString(uuid))
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with UUID: " + uuid));
+
+        String memnum = cacheService.getFromCache(uuid);
+        if (memnum == null) {
+            LoginHistory loginInfo = loginHistoryRepository.findByUuid(UUID.fromString(uuid))
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found with UUID: " + uuid));
+            memnum = loginInfo.getMemNum();
+            cacheService.saveToCache(uuid, memnum);
+        }
 
         return CustomUserDetails.builder()
-                .memNum(loginInfo.getMemNum())
+                .memNum(memnum)
                 .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")))
                 .build();
     }
