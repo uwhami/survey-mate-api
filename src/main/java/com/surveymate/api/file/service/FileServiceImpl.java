@@ -217,6 +217,9 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public String getFilePath(String fileId) throws FileNotFoundException {
+        if(fileId == null || "".equals(fileId)) {
+            return null;
+        }
         UploadedFile fileEntity = fileRepository.findById(fileId)
                 .orElseThrow(() -> new FileNotFoundException("File not found with ID: " + fileId));
         return fileEntity.getFilePath();

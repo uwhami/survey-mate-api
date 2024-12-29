@@ -16,6 +16,6 @@ public class RegisterRequest {
     private String userEmail;
     private MultipartFile profileImage;
     private String joinDate;
-    private String memStatus;
+    private String memRole;
 
 }

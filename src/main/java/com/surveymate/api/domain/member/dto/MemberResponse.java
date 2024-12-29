@@ -16,4 +16,6 @@ public class MemberResponse {
     private String profileImageUri;
     private String joinDate;
     private String memStatus;
+    private String memRole;
+
 }

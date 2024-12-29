@@ -1,6 +1,8 @@
 spring:
   application:
     name: "Survey Mate API"
+  profiles:
+    active: dev
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
