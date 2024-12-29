@@ -82,12 +82,17 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberResponse getMemInfo(MemberRequest request) {
-        Optional<Member> member = memberRepository.findByMemNum(request.getMemNum());
-        if(member.isEmpty()) {
+    public MemberResponse getMemInfo(MemberRequest request) throws Exception {
+        Optional<Member> optionalMember = memberRepository.findByMemNum(request.getMemNum());
+        if(optionalMember.isEmpty()) {
             throw new UserNotFoundException();
         }
-        return memberMapper.toDTO(member.get());
+
+        /* 프로필 이미지 경로 따로 넣어주기. */
+        Member member = optionalMember.get();
+        MemberResponse memberResponse = memberMapper.toDTO(member);
+        memberResponse.setProfileImageUri(fileService.getFilePath(member.getProfileImageUuid()));
+        return memberResponse;
     }
 
     @Transactional

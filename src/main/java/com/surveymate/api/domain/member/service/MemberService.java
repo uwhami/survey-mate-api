@@ -20,7 +20,7 @@ public interface MemberService {
 
     int findPasswordErrorByUserId(String userId);
 
-    MemberResponse getMemInfo(MemberRequest request);
+    MemberResponse getMemInfo(MemberRequest request) throws Exception;
 
     MemberResponse modify(MemberRequest request) throws Exception;
 
