@@ -21,18 +21,23 @@ import com.surveymate.api.domain.member.exception.UserAlreadyExistsException;
 import com.surveymate.api.domain.member.repository.MemberRepository;
 import com.surveymate.api.domain.member.service.MemberService;
 import com.surveymate.api.security.JwtTokenProvider;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -132,9 +137,10 @@ public class AuthServiceImpl implements AuthService {
 
             cacheService.saveToCache(uuid.toString(), memNum);
 
+            List<GrantedAuthority> authorities = authentication.getAuthorities().stream().collect(Collectors.toList());
             // 인증 성공 시 JWT 토큰 생성
-            String accessToken = jwtTokenProvider.generateToken(uuid.toString());
-            String refreshToken = jwtTokenProvider.generateRefreshToken(uuid.toString());
+            String accessToken = jwtTokenProvider.generateToken(uuid.toString(), authorities);
+            String refreshToken = jwtTokenProvider.generateRefreshToken(uuid.toString(), authorities);
 
             return Map.of(
                     "accessToken", accessToken,
@@ -161,11 +167,14 @@ public class AuthServiceImpl implements AuthService {
 
             String refreshToken = authorizationHeader.replace("Bearer ", "");
 
-            String uuid = jwtTokenProvider.validateToken(refreshToken);
+            Claims claims = jwtTokenProvider.validateToken(refreshToken);
+            String uuid = claims.getSubject();
+            List<GrantedAuthority> authorities = getAuthoritiesFromToken(claims);
+
 
             // 인증 성공 시 JWT 토큰 생성
-            String accessToken = jwtTokenProvider.generateToken(uuid);
-            String newRefreshToken = jwtTokenProvider.generateRefreshToken(uuid);
+            String accessToken = jwtTokenProvider.generateToken(uuid, authorities);
+            String newRefreshToken = jwtTokenProvider.generateRefreshToken(uuid, authorities);
 
             return Map.of(
                     "accessToken", accessToken,
@@ -175,6 +184,17 @@ public class AuthServiceImpl implements AuthService {
         } catch (Exception ex) {
             throw new CustomRuntimeException(ex.getMessage(), ex);
         }
+    }
+
+    public List<GrantedAuthority> getAuthoritiesFromToken(Claims claims) {
+
+        // roles 클레임 추출
+        List<String> roles = claims.get("roles", List.class);
+
+        // SimpleGrantedAuthority 리스트로 변환
+        return roles.stream()
+                .map(SimpleGrantedAuthority::new) // ROLE_USER, ROLE_MANAGER 등을 SimpleGrantedAuthority로 매핑
+                .collect(Collectors.toList());
     }
 
 

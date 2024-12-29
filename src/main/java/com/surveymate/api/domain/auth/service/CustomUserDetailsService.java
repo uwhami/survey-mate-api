@@ -31,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .userId(member.getUserId())
                 .password(member.getPassword())
                 .memNum(member.getMemNum())
-                .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")))
+                .authorities(Collections.singletonList(new SimpleGrantedAuthority(member.getMemRole().getAuthority())))
                 .build();
     }
 
