@@ -1,5 +1,6 @@
 package com.surveymate.api.domain.auth.service;
 
+import com.surveymate.api.common.enums.MemberStatus;
 import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.domain.auth.dto.LoginRequest;
 import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
@@ -86,6 +87,10 @@ public class AuthServiceImpl implements AuthService {
             throw new UserAlreadyExistsException("이미 존재하는 ID 입니다. : " + member.getUserId());
         }
 
+        if(memberService.checkDuplicatedEmail(member.getUserEmail())){
+            throw new EmailAlreadyExistsException();
+        }
+
         try {
             MultipartFile file = registerRequest.getProfileImage();
             UploadedFile savedFile;
@@ -96,6 +101,7 @@ public class AuthServiceImpl implements AuthService {
 
             member.setMemNum(codeGenerator.generateCode("MU01"));
             member.setPassword(passwordEncoder.encode(member.getPassword()));
+            member.setMemStatus(MemberStatus.ACTIVE);
             memberRepository.save(member);
 
         } catch (RuntimeException e) {
