@@ -35,7 +35,7 @@ public class AuthServiceTests {
                 .userEmail("aaa@aaa.com")
                 .profileImage(null)
                 .joinDate("20241215")
-                .memStatus("1")
+                .memRole("0")
                 .build();
 
         authService.createMember(registerRequest);
