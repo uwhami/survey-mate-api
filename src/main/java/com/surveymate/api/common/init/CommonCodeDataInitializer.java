@@ -11,11 +11,11 @@ import java.util.List;
 
 @Profile("dev")
 @Component
-public class DataInitializer implements CommandLineRunner {
+public class CommonCodeDataInitializer implements CommandLineRunner {
 
     private final CommonCodeMstRepository commonCodeMstRepository;
 
-    public DataInitializer(CommonCodeMstRepository commonCodeMstRepository) {
+    public CommonCodeDataInitializer(CommonCodeMstRepository commonCodeMstRepository) {
         this.commonCodeMstRepository = commonCodeMstRepository;
     }
 
