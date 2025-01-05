@@ -11,7 +11,8 @@ import org.mapstruct.Mappings;
 public interface MemberMapper {
 
     @Mappings({
-            @Mapping(target = "profileImageUri", ignore = true)
+            @Mapping(target = "profileImageUri", ignore = true),
+            @Mapping(target = "userName", source = "userName")
     })
     MemberResponse toDTO(Member member);
 
