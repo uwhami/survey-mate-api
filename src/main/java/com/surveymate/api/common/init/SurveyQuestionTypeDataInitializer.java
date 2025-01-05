@@ -2,6 +2,7 @@ package com.surveymate.api.common.init;
 
 import com.surveymate.api.domain.survey.entity.SurveyQuestionType;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionTypeRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -10,14 +11,12 @@ import java.util.Arrays;
 import java.util.List;
 
 @Profile("dev")
+@RequiredArgsConstructor
 @Component
 public class SurveyQuestionTypeDataInitializer implements CommandLineRunner {
 
     private final SurveyQuestionTypeRepository questionTypeRepository;
 
-    public SurveyQuestionTypeDataInitializer(SurveyQuestionTypeRepository questionTypeRepository) {
-        this.questionTypeRepository = questionTypeRepository;
-    }
 
     @Override
     public void run(String... args) {

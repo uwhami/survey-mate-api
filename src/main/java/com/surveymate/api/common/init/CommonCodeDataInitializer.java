@@ -3,6 +3,7 @@ package com.surveymate.api.common.init;
 import com.surveymate.api.common.code.entity.CommonCodeDtl;
 import com.surveymate.api.common.code.entity.CommonCodeMst;
 import com.surveymate.api.common.code.repository.CommonCodeMstRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -10,14 +11,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Profile("dev")
+@RequiredArgsConstructor
 @Component
 public class CommonCodeDataInitializer implements CommandLineRunner {
 
     private final CommonCodeMstRepository commonCodeMstRepository;
-
-    public CommonCodeDataInitializer(CommonCodeMstRepository commonCodeMstRepository) {
-        this.commonCodeMstRepository = commonCodeMstRepository;
-    }
 
     @Override
     public void run(String... args) throws Exception {

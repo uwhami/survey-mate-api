@@ -71,6 +71,10 @@ public class Member implements UserDetails {
         return List.of(new SimpleGrantedAuthority(memRole.getAuthority()));
     }
 
+    public String getUserName(){
+        return this.userName;
+    }
+
     @Override
     public String getUsername() {
         return this.userId;
