@@ -1,5 +1,6 @@
 package com.surveymate.api.domain.auth.service;
 
+import com.surveymate.api.common.enums.MemberStatus;
 import com.surveymate.api.domain.auth.entity.LoginHistory;
 import com.surveymate.api.domain.auth.model.CustomUserDetails;
 import com.surveymate.api.domain.auth.repository.LoginHistoryRepository;
@@ -24,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public CustomUserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        Member member = memberRepository.findByUserId(userId)
+        Member member = memberRepository.findByUserId(userId, MemberStatus.ACTIVE)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return CustomUserDetails.builder()

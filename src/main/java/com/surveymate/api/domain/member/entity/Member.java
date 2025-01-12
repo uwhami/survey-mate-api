@@ -11,7 +11,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -28,7 +27,7 @@ public class Member implements UserDetails {
     @Column(name = "mem_num", nullable = false)
     private String memNum;
 
-    @Column(name = "user_id", length = 20, nullable = false, unique = true)
+    @Column(name = "user_id", length = 30, nullable = false, unique = true)
     private String userId;
 
     @Column(name = "password", length = 60, nullable = false)
@@ -54,17 +53,28 @@ public class Member implements UserDetails {
     @Column(name = "mem_status", length = 1, nullable = false)
     private MemberStatus memStatus;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_date", nullable = false, updatable = false)
-    private Date createDate;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "update_date")
-    private Date updateDate;
-
     @Convert(converter = MemberRoleConverter.class)
     @Column(name = "mem_role", length = 1, nullable = false)
     private MemberRole memRole;
+
+
+    @Column(name = "create_date", nullable = false, updatable = false)
+    private java.time.LocalDateTime createDate;
+
+    @Column(name = "update_date")
+    private java.time.LocalDateTime updateDate;
+
+
+    @PrePersist
+    protected void onCreate() {
+        this.createDate = java.time.LocalDateTime.now();
+        this.updateDate = java.time.LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updateDate = java.time.LocalDateTime.now();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -98,11 +108,6 @@ public class Member implements UserDetails {
     @Override
     public boolean isEnabled() {
         return this.memStatus == MemberStatus.ACTIVE;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        this.createDate = new Date();
     }
 
 

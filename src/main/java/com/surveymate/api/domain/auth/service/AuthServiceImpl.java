@@ -1,25 +1,25 @@
 package com.surveymate.api.domain.auth.service;
 
+import com.surveymate.api.common.enums.FilePath;
 import com.surveymate.api.common.enums.MemberStatus;
 import com.surveymate.api.common.exception.CustomRuntimeException;
+import com.surveymate.api.common.util.CodeGenerator;
 import com.surveymate.api.domain.auth.dto.LoginRequest;
 import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
 import com.surveymate.api.domain.auth.dto.RegisterRequest;
 import com.surveymate.api.domain.auth.entity.LoginHistory;
 import com.surveymate.api.domain.auth.mapper.AuthMemberMapper;
-import com.surveymate.api.common.enums.FilePath;
-import com.surveymate.api.common.util.CodeGenerator;
 import com.surveymate.api.domain.auth.model.CustomUserDetails;
 import com.surveymate.api.domain.auth.repository.LoginHistoryRepository;
+import com.surveymate.api.domain.member.entity.Member;
+import com.surveymate.api.domain.member.exception.UserAlreadyExistsException;
 import com.surveymate.api.domain.member.exception.UserNotFoundException;
+import com.surveymate.api.domain.member.repository.MemberRepository;
+import com.surveymate.api.domain.member.service.MemberService;
 import com.surveymate.api.email.exception.EmailAlreadyExistsException;
 import com.surveymate.api.email.service.EmailService;
 import com.surveymate.api.file.entity.UploadedFile;
 import com.surveymate.api.file.service.FileService;
-import com.surveymate.api.domain.member.entity.Member;
-import com.surveymate.api.domain.member.exception.UserAlreadyExistsException;
-import com.surveymate.api.domain.member.repository.MemberRepository;
-import com.surveymate.api.domain.member.service.MemberService;
 import com.surveymate.api.security.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -28,15 +28,16 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.security.SecureRandom;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -83,7 +84,47 @@ public class AuthServiceImpl implements AuthService {
         return String.format("%04d", code); // 4자리 숫자로 포맷 (예: 0001, 0234)
     }
 
+    public String generatePassword() {
 
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+        SecureRandom random = new SecureRandom();
+        StringBuilder password = new StringBuilder();
+
+        for (int i = 0; i < 16; i++) {
+            int index = random.nextInt(characters.length());
+            password.append(characters.charAt(index));
+        }
+
+        return password.toString();
+    }
+
+    @Transactional
+    @Override
+    public Map<String, String> socialLoginOrRegisterUser(Map<String,Object> userInfo) throws Exception {
+        String socialEmail = String.valueOf(userInfo.get("email"));
+        String userId = String.valueOf(userInfo.get("id"));
+        String userName = String.valueOf(userInfo.get("name"));
+        try{
+            userId = findUserIdByUSerEmail(socialEmail);
+        }catch (UserNotFoundException e){
+            RegisterRequest registerRequest = RegisterRequest.builder()
+                    .userId(userId)
+                    .password(generatePassword())
+                    .userName(userName)
+                    .userEmail(socialEmail)
+                    .joinDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))
+                    .memRole("0")
+                    .build();
+            createMember(registerRequest);
+        }catch (Exception e){
+            throw new CustomRuntimeException("소셜 로그인 중 에러 밣생.", e);
+        }
+
+        LoginRequest loginRequest = LoginRequest.builder().userId(userId).build();
+        return loginMember(loginRequest, true);
+    }
+
+    @Transactional
     @Override
     public void createMember(RegisterRequest registerRequest) throws Exception {
         Member member = authMemberMapper.toEntity(registerRequest);
@@ -115,20 +156,39 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
-
+    @Override
     public Map<String, String> loginMember(LoginRequest loginRequest) {
+        return loginMember(loginRequest, false);
+    }
+
+    @Override
+    public Map<String, String> loginMember(LoginRequest loginRequest, boolean social) {
 
         try {
 
-            // 사용자 인증
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequest.getUserId(), loginRequest.getPassword())
-            );
+            String memNum = null;
+            List<GrantedAuthority> authorities = null;
+            if(!social){
+                // 사용자 인증
+                Authentication authentication = authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(loginRequest.getUserId(), loginRequest.getPassword())
+                );
+                memNum = ((CustomUserDetails) authentication.getPrincipal()).getMemNum();
+                authorities = authentication.getAuthorities().stream().collect(Collectors.toList());
+            }else{
+                Optional<Member> optionalMember = memberRepository.findByUserId(loginRequest.getUserId(), MemberStatus.ACTIVE);
+                if(optionalMember.isEmpty()){
+                    throw new UserNotFoundException();
+                }
+                memNum = optionalMember.get().getMemNum();
+                authorities = optionalMember.get().getAuthorities().stream().collect(Collectors.toList());
+            }
+
 
             memberService.resetPasswordError(loginRequest.getUserId());
 
             UUID uuid = UUID.randomUUID();
-            String memNum = ((CustomUserDetails) authentication.getPrincipal()).getMemNum();
+//            String memNum = ((CustomUserDetails) authentication.getPrincipal()).getMemNum();
             LoginHistory loginHistory = LoginHistory.builder()
                     .uuid(uuid)
                     .memNum(memNum)
@@ -137,7 +197,7 @@ public class AuthServiceImpl implements AuthService {
 
             cacheService.saveToCache(uuid.toString(), memNum);
 
-            List<GrantedAuthority> authorities = authentication.getAuthorities().stream().collect(Collectors.toList());
+//            List<GrantedAuthority> authorities = authentication.getAuthorities().stream().collect(Collectors.toList());
             // 인증 성공 시 JWT 토큰 생성
             String accessToken = jwtTokenProvider.generateToken(uuid.toString(), authorities);
             String refreshToken = jwtTokenProvider.generateRefreshToken(uuid.toString(), authorities);
@@ -200,7 +260,7 @@ public class AuthServiceImpl implements AuthService {
 
     public String findUserIdByUSerEmail(String email) {
         try{
-            Member member = memberRepository.findByUserEmail(email)
+            Member member = memberRepository.findByUserEmail(email, MemberStatus.ACTIVE)
                     .orElseThrow(() -> new UserNotFoundException());
 
             return member.getUserId();
