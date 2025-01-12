@@ -2,6 +2,7 @@ package com.surveymate.api.domain.auth.service;
 
 import com.surveymate.api.common.enums.FilePath;
 import com.surveymate.api.common.enums.MemberStatus;
+import com.surveymate.api.common.enums.SocialType;
 import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.common.util.CodeGenerator;
 import com.surveymate.api.domain.auth.dto.LoginRequest;
@@ -100,7 +101,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public Map<String, String> socialLoginOrRegisterUser(Map<String,Object> userInfo) throws Exception {
+    public Map<String, String> socialLoginOrRegisterUser(Map<String,Object> userInfo, SocialType socialType) throws Exception {
         String socialEmail = String.valueOf(userInfo.get("email"));
         String userId = String.valueOf(userInfo.get("id"));
         String userName = String.valueOf(userInfo.get("name"));
@@ -115,7 +116,7 @@ public class AuthServiceImpl implements AuthService {
                     .joinDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))
                     .memRole("0")
                     .build();
-            createMember(registerRequest);
+            createMember(registerRequest, socialType);
         }catch (Exception e){
             throw new CustomRuntimeException("소셜 로그인 중 에러 밣생.", e);
         }
@@ -124,9 +125,14 @@ public class AuthServiceImpl implements AuthService {
         return loginMember(loginRequest, true);
     }
 
-    @Transactional
     @Override
     public void createMember(RegisterRequest registerRequest) throws Exception {
+        createMember(registerRequest, SocialType.HOMEPAGE);
+    }
+
+    @Transactional
+    @Override
+    public void createMember(RegisterRequest registerRequest, SocialType socialType) throws Exception {
         Member member = authMemberMapper.toEntity(registerRequest);
 
         if (memberService.existsByUserId(member.getUserId())) {
@@ -148,6 +154,7 @@ public class AuthServiceImpl implements AuthService {
             member.setMemNum(codeGenerator.generateCode("MU01"));
             member.setPassword(passwordEncoder.encode(member.getPassword()));
             member.setMemStatus(MemberStatus.ACTIVE);
+            member.setSocialType(socialType);
             memberRepository.save(member);
 
         } catch (RuntimeException e) {
