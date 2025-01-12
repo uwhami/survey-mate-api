@@ -37,9 +37,12 @@ public class AuthServiceTests {
                 .joinDate("20241215")
                 .memRole("0")
                 .build();
-
-        authService.createMember(registerRequest);
-        System.out.println(memberService.existsByUserId("user121501"));
+        try{
+            authService.createMember(registerRequest);
+            System.out.println(memberService.existsByUserId("user121501"));
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
     @Test

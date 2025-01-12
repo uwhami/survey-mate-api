@@ -28,4 +28,5 @@ public interface MemberService {
 
     void passwordReset(PasswordResetRequest request);
 
+    void deleteMember(MemberRequest request);
 }

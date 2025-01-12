@@ -15,14 +15,14 @@ public class SurveyQuestionSdtl {
     private Long id; // 선택지 ID (PK)
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "detail_id", nullable = false)
+    @JoinColumn(name = "questionDtl_id", nullable = false)
     private SurveyQuestionDtl detail; // 질문 디테일과의 관계
 
     @Column(nullable = false)
     private String optionText; // 선택지 내용
 
     @Column(nullable = false)
-    private Integer order; // 선택지 순서
+    private Integer questionSdtlOrder; // 선택지 순서
 
     @Column(name = "create_date", nullable = false, updatable = false)
     private java.time.LocalDateTime createDate;

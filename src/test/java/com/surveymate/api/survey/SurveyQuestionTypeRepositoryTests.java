@@ -18,15 +18,15 @@ public class SurveyQuestionTypeRepositoryTests {
     @Test
     public void test() {
         List<SurveyQuestionType> questionTypes = Arrays.asList(
-                new SurveyQuestionType("RADIO", "단일 선택형 질문"),
-                new SurveyQuestionType("CHECKBOX", "다중 선택형 질문"),
-                new SurveyQuestionType("TEXT", "단일 텍스트 입력형 질문"),
-                new SurveyQuestionType("TEXTAREA", "여러 줄 텍스트 입력형 질문"),
-                new SurveyQuestionType("NUMBER", "숫자 입력형 질문"),
-                new SurveyQuestionType("DATE", "날짜 선택형 질문"),
-                new SurveyQuestionType("TIME", "시간 선택형 질문"),
-                new SurveyQuestionType("RANGE", "범위 선택형 질문 (예: 1~10)"),
-                new SurveyQuestionType("DROPDOWN", "드롭다운 선택형 질문")
+                new SurveyQuestionType("SQT001","RADIO", "단일 선택형 질문"),
+                new SurveyQuestionType("SQT002","CHECKBOX", "다중 선택형 질문"),
+                new SurveyQuestionType("SQT003","TEXT", "단일 텍스트 입력형 질문"),
+                new SurveyQuestionType("SQT004","TEXTAREA", "여러 줄 텍스트 입력형 질문"),
+                new SurveyQuestionType("SQT005","NUMBER", "숫자 입력형 질문"),
+                new SurveyQuestionType("SQT006","DATE", "날짜 선택형 질문"),
+                new SurveyQuestionType("SQT007","TIME", "시간 선택형 질문"),
+                new SurveyQuestionType("SQT008","RANGE", "범위 선택형 질문 (예: 1~10)"),
+                new SurveyQuestionType("SQT009","DROPDOWN", "드롭다운 선택형 질문")
         );
         if (surveyQuestionTypeRepository.count() == 0) {
             surveyQuestionTypeRepository.saveAll(questionTypes);

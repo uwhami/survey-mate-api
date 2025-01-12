@@ -65,6 +65,7 @@ public class Member implements UserDetails {
     @Convert(converter = SocialTypeConverter.class)
     @Column(name = "social_type", length = 1, nullable = false)
     @Comment("0:HOMEPAGE, 2:GOOGLE")
+    @Builder.Default
     private SocialType socialType = SocialType.HOMEPAGE;
 
     @Column(name = "create_date", nullable = false, updatable = false)
@@ -72,6 +73,10 @@ public class Member implements UserDetails {
 
     @Column(name = "update_date")
     private java.time.LocalDateTime updateDate;
+
+    @Column(name = "deactivated_date")
+    private java.time.LocalDateTime deactivatedDate;
+
 
 
     @PrePersist

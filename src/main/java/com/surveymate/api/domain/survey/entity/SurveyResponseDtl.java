@@ -20,7 +20,7 @@ public class SurveyResponseDtl {
     private SurveyResponseMst response; // 응답 마스터와의 관계
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id", nullable = false)
+    @JoinColumn(name = "questionDtl_id", nullable = false)
     private SurveyQuestionDtl question; // 질문 디테일과의 관계
 
     @Column(nullable = true)

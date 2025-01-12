@@ -15,8 +15,10 @@ public interface AuthMemberMapper {
             @Mapping(target = "passwordError", ignore = true),
             @Mapping(target = "profileImageUuid", ignore = true),
             @Mapping(target = "memStatus", ignore = true),
+            @Mapping(target = "socialType", ignore = true),
             @Mapping(target = "createDate", ignore = true),
             @Mapping(target = "updateDate", ignore = true),
+            @Mapping(target = "deactivatedDate", ignore = true),
             @Mapping(target = "memRole", expression = "java(toMemberRole(registerRequest.getMemRole()))")
     })
     Member toEntity(RegisterRequest registerRequest);

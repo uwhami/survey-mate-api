@@ -15,7 +15,7 @@ public class SurveyQuestionDtl {
     private Long id; // 질문 ID (PK)
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "master_id", nullable = false)
+    @JoinColumn(name = "question_id", nullable = false)
     private SurveyQuestionMst master; // 설문조사 마스터와의 관계
 
     @Column(nullable = false)
@@ -25,7 +25,7 @@ public class SurveyQuestionDtl {
     private String questionText; // 질문 내용
 
     @Column(nullable = false)
-    private Integer order; // 질문 순서
+    private Integer questionDtlOrder; // 질문 순서
 
     @Column(name = "create_date", nullable = false, updatable = false)
     private java.time.LocalDateTime createDate;
