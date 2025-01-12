@@ -2,10 +2,13 @@ package com.surveymate.api.domain.member.entity;
 
 import com.surveymate.api.common.converter.MemberRoleConverter;
 import com.surveymate.api.common.converter.MemberStatusConverter;
+import com.surveymate.api.common.converter.SocialTypeConverter;
 import com.surveymate.api.common.enums.MemberRole;
 import com.surveymate.api.common.enums.MemberStatus;
+import com.surveymate.api.common.enums.SocialType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Comment;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,12 +54,18 @@ public class Member implements UserDetails {
 
     @Convert(converter = MemberStatusConverter.class)
     @Column(name = "mem_status", length = 1, nullable = false)
+    @Comment("1:ACTIVE, 2:DEACTIVATED")
     private MemberStatus memStatus;
 
     @Convert(converter = MemberRoleConverter.class)
     @Column(name = "mem_role", length = 1, nullable = false)
+    @Comment("0:ROLE_USER, 1:ROLE_MANAGER, 2:ROLE_ADMIN")
     private MemberRole memRole;
 
+    @Convert(converter = SocialTypeConverter.class)
+    @Column(name = "social_type", length = 1, nullable = false)
+    @Comment("0:HOMEPAGE, 2:GOOGLE")
+    private SocialType socialType = SocialType.HOMEPAGE;
 
     @Column(name = "create_date", nullable = false, updatable = false)
     private java.time.LocalDateTime createDate;

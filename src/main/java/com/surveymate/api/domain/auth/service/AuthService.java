@@ -1,6 +1,7 @@
 package com.surveymate.api.domain.auth.service;
 
 
+import com.surveymate.api.common.enums.SocialType;
 import com.surveymate.api.domain.auth.dto.LoginRequest;
 import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
 import com.surveymate.api.domain.auth.dto.RegisterRequest;
@@ -13,9 +14,11 @@ public interface AuthService {
 
     String sendVerificationCode(String email);
 
-    Map<String,String> socialLoginOrRegisterUser(Map<String,Object> userInfo) throws Exception;
+    Map<String,String> socialLoginOrRegisterUser(Map<String,Object> userInfo, SocialType socialType) throws Exception;
 
     void createMember(RegisterRequest registerRequest) throws Exception;
+
+    void createMember(RegisterRequest registerRequest, SocialType socialType) throws Exception;
 
     Map<String, String> loginMember(LoginRequest loginRequest);
 

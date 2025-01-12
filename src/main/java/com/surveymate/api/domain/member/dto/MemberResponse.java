@@ -17,5 +17,6 @@ public class MemberResponse {
     private String joinDate;
     private String memStatus;
     private String memRole;
+    private String socialType;
 
 }

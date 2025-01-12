@@ -1,6 +1,7 @@
 package com.surveymate.api.domain.auth.controller;
 
 
+import com.surveymate.api.common.enums.SocialType;
 import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.domain.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,7 @@ public class GoogleController {
 
 
 
-            return authService.socialLoginOrRegisterUser(userInfo);
+            return authService.socialLoginOrRegisterUser(userInfo, SocialType.GOOGLE);
 
         } catch (Exception e) {
             throw new CustomRuntimeException(e.getMessage(), e);
