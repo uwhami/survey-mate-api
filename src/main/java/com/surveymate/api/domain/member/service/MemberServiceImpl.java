@@ -224,4 +224,20 @@ public class MemberServiceImpl implements MemberService {
         }
 
     }
+
+    @Transactional
+    @Override
+    public void deleteMember(MemberRequest request) {
+        QMember qMember = QMember.member;
+        try{
+            Member member = memberRepository.findByMemNum(request.getMemNum()).get();
+            jpaQueryFactory.update(qMember)
+                    .set(qMember.memStatus, MemberStatus.DEACTIVATED)
+                    .set(qMember.deactivatedDate, java.time.LocalDateTime.now())
+                    .where(qMember.memNum.eq(member.getMemNum()))
+                    .execute();
+        }catch(Exception e){
+            throw new CustomRuntimeException("회원탈퇴 중 에러 발생.", e);
+        }
+    }
 }

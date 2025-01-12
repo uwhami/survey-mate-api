@@ -32,4 +32,9 @@ public class MemberController {
         memberService.changePasswordError(changePasswordRequest);
     }
 
+    @DeleteMapping
+    public void deleteMember(MemberRequest memberRequest) throws Exception {
+        memberService.deleteMember(memberRequest);
+    }
+
 }
