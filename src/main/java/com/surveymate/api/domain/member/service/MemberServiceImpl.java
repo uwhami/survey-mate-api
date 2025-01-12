@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.surveymate.api.common.enums.FilePath;
+import com.surveymate.api.common.enums.MemberStatus;
 import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
 import com.surveymate.api.domain.member.dto.ChangePasswordRequest;
@@ -130,8 +131,7 @@ public class MemberServiceImpl implements MemberService {
                             if (stringValue.isEmpty()) {
                                 return;
                             }
-                        } else if (value instanceof MultipartFile) {
-                            MultipartFile file = (MultipartFile) value;
+                        } else if (value instanceof MultipartFile file) {
                             if (!file.getName().isEmpty()) {
                                 String fileId = existingMember.getProfileImageUuid();
                                 UploadedFile newFile = fileService.deleteAndSaveFile(fileId, file, FilePath.MEMBER_PROFILE);
@@ -207,7 +207,7 @@ public class MemberServiceImpl implements MemberService {
 
         try {
             // 사용자 조회
-            Member member = memberRepository.findByUserEmail(request.getUserEmail())
+            Member member = memberRepository.findByUserEmail(request.getUserEmail(), MemberStatus.ACTIVE)
                     .orElseThrow(() -> new UserNotFoundException());
 
             String encodedNewPassword = passwordEncoder.encode(request.getNewPassword());

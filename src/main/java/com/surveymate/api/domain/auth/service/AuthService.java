@@ -13,9 +13,13 @@ public interface AuthService {
 
     String sendVerificationCode(String email);
 
+    Map<String,String> socialLoginOrRegisterUser(Map<String,Object> userInfo) throws Exception;
+
     void createMember(RegisterRequest registerRequest) throws Exception;
 
     Map<String, String> loginMember(LoginRequest loginRequest);
+
+    Map<String, String> loginMember(LoginRequest loginRequest, boolean social);
 
     Map<String, String> refreshTokens(String refreshToken);
 
