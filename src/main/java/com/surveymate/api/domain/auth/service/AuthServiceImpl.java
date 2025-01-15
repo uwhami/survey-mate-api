@@ -122,9 +122,10 @@ public class AuthServiceImpl implements AuthService {
         }
 
         LoginRequest loginRequest = LoginRequest.builder().userId(userId).build();
-        return loginMember(loginRequest, true);
+        return loginMember(loginRequest, socialType.getValue());
     }
 
+    @Transactional
     @Override
     public void createMember(RegisterRequest registerRequest) throws Exception {
         createMember(registerRequest, SocialType.HOMEPAGE);
@@ -165,17 +166,17 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Map<String, String> loginMember(LoginRequest loginRequest) {
-        return loginMember(loginRequest, false);
+        return loginMember(loginRequest, 0);
     }
 
     @Override
-    public Map<String, String> loginMember(LoginRequest loginRequest, boolean social) {
+    public Map<String, String> loginMember(LoginRequest loginRequest, int social) {
 
         try {
 
             String memNum = null;
             List<GrantedAuthority> authorities = null;
-            if(!social){
+            if(social == 0){
                 // 사용자 인증
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(loginRequest.getUserId(), loginRequest.getPassword())
@@ -206,8 +207,8 @@ public class AuthServiceImpl implements AuthService {
 
 //            List<GrantedAuthority> authorities = authentication.getAuthorities().stream().collect(Collectors.toList());
             // 인증 성공 시 JWT 토큰 생성
-            String accessToken = jwtTokenProvider.generateToken(uuid.toString(), authorities);
-            String refreshToken = jwtTokenProvider.generateRefreshToken(uuid.toString(), authorities);
+            String accessToken = jwtTokenProvider.generateToken(uuid.toString(), authorities, social);
+            String refreshToken = jwtTokenProvider.generateRefreshToken(uuid.toString(), authorities, social);
 
             return Map.of(
                     "accessToken", accessToken,
@@ -236,12 +237,15 @@ public class AuthServiceImpl implements AuthService {
 
             Claims claims = jwtTokenProvider.validateToken(refreshToken);
             String uuid = claims.getSubject();
-            List<GrantedAuthority> authorities = getAuthoritiesFromToken(claims);
+//            List<GrantedAuthority> authorities = getAuthoritiesFromToken(claims);
 
+            Map<String,Object> tokenInfo = getInfoFromToken(claims);
+            List<GrantedAuthority> authorities = (List<GrantedAuthority>) tokenInfo.get("roles");
+            int social = (int) tokenInfo.get("social");
 
             // 인증 성공 시 JWT 토큰 생성
-            String accessToken = jwtTokenProvider.generateToken(uuid, authorities);
-            String newRefreshToken = jwtTokenProvider.generateRefreshToken(uuid, authorities);
+            String accessToken = jwtTokenProvider.generateToken(uuid, authorities, social);
+            String newRefreshToken = jwtTokenProvider.generateRefreshToken(uuid, authorities, social);
 
             return Map.of(
                     "accessToken", accessToken,
@@ -253,15 +257,18 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-    public List<GrantedAuthority> getAuthoritiesFromToken(Claims claims) {
 
+    public Map<String,Object> getInfoFromToken(Claims claims){
         // roles 클레임 추출
         List<String> roles = claims.get("roles", List.class);
-
-        // SimpleGrantedAuthority 리스트로 변환
-        return roles.stream()
+        List<GrantedAuthority> authorities = roles.stream()
                 .map(SimpleGrantedAuthority::new) // ROLE_USER, ROLE_MANAGER 등을 SimpleGrantedAuthority로 매핑
                 .collect(Collectors.toList());
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("roles", authorities);
+        map.put("social", claims.get("social", Integer.class));
+        return map;
     }
 
 

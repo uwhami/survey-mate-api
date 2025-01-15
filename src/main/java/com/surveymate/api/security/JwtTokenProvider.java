@@ -23,7 +23,7 @@ public class JwtTokenProvider {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
     private final CustomUserDetailsService userDetailsService;
 
-    public String generateToken(String uuid, List<GrantedAuthority> authorities) {
+    public String generateToken(String uuid, List<GrantedAuthority> authorities, int social) {
         Date now = new Date();
         int jwtExpirationInMs = 3600000;    // 1시간
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
@@ -36,13 +36,14 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setSubject(uuid)
                 .claim("roles", roles)
+                .claim("social", social)
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(key)
                 .compact();
     }
 
-    public String generateRefreshToken(String uuid, List<GrantedAuthority> authorities) {
+    public String generateRefreshToken(String uuid, List<GrantedAuthority> authorities, int social) {
         Date now = new Date();
         int refreshTokenExpirationInMs = 86400000; // 1일 (24시간)
         Date expiryDate = new Date(now.getTime() + refreshTokenExpirationInMs);
@@ -56,6 +57,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setSubject(uuid)
                 .claim("roles", roles)
+                .claim("social", social)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key)
