@@ -22,7 +22,7 @@ public interface AuthService {
 
     Map<String, String> loginMember(LoginRequest loginRequest);
 
-    Map<String, String> loginMember(LoginRequest loginRequest, boolean social);
+    Map<String, String> loginMember(LoginRequest loginRequest, int social);
 
     Map<String, String> refreshTokens(String refreshToken);
 
