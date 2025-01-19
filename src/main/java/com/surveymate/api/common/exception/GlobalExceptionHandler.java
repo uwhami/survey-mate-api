@@ -2,11 +2,11 @@ package com.surveymate.api.common.exception;
 
 import com.surveymate.api.common.dto.ResponseDTO;
 import com.surveymate.api.domain.member.exception.PasswordMismatchException;
+import com.surveymate.api.domain.member.exception.UserAlreadyExistsException;
 import com.surveymate.api.domain.member.exception.UserNotFoundException;
 import com.surveymate.api.email.exception.EmailAlreadyExistsException;
 import com.surveymate.api.file.exception.FileNameTooLongException;
 import com.surveymate.api.file.exception.ThumbnailCreationException;
-import com.surveymate.api.domain.member.exception.UserAlreadyExistsException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ResponseDTO<?>> handleUserAlreadyExistsException(UserNotFoundException e) {
+    public ResponseEntity<ResponseDTO<?>> handleUserNotFoundException(UserNotFoundException e) {
         log.error("UserNotFoundException 발생: {}", e.getMessage(), e);
         return new ResponseEntity<>(ResponseDTO.failure(e.getMessage()), HttpStatus.NOT_FOUND);
     }
