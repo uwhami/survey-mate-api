@@ -59,6 +59,23 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ResponseDTO.failure(e.getMessage()), HttpStatus.CONFLICT);
     }
 
+    // RuntimeException 처리
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ResponseDTO<?>> handleRuntimeException(RuntimeException ex) {
+        log.error("RuntimeException 발생: {}",ex.getMessage(), ex);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR) // 500 에러
+                .body(ResponseDTO.failure("Unexpected error occurred"));
+    }
+
+    // 기타 모든 예외 처리
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ResponseDTO<?>> handleGenericException(Exception ex) {
+        log.error("Exception 발생: {}",ex.getMessage(), ex);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR) // 500 에러
+                .body(ResponseDTO.failure("An error occurred"));
+    }
 
 
 }
