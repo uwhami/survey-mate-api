@@ -7,7 +7,6 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -19,37 +18,42 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
 
     @CreatedBy
-    @Column(name = "createId", updatable = false, nullable = false, length = 50)
+    @Column(name = "create_id", updatable = false, nullable = false, length = 50)
     private String createId;
 
     @CreatedDate
     @Column(name = "create_date", updatable = false, nullable = false)
-    private LocalDateTime create_date;
+    private LocalDateTime createDate;
 
     @LastModifiedBy
     @Column(name = "update_id", nullable = false, length = 50)
-    private String update_id;
+    private String updateId;
 
     @LastModifiedDate
     @Column(name = "update_date", nullable = false)
-    private LocalDateTime update_date;
+    private LocalDateTime updateDate;
 
     @PrePersist
     public void prePersist() {
         if (this.createId == null) {
             this.createId = "System"; // 기본값
         }
-        if (this.create_date == null) {
-            this.create_date = LocalDateTime.now();
+        if (this.createDate == null) {
+            this.createDate = LocalDateTime.now();
         }
+
+        if (this.updateId == null) {
+            this.updateId = "System"; // 기본값
+        }
+        this.updateDate = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        if (this.update_id == null) {
-            this.update_id = "System"; // 기본값
+        if (this.updateId == null) {
+            this.updateId = "System"; // 기본값
         }
-        this.update_date = LocalDateTime.now();
+        this.updateDate = LocalDateTime.now();
     }
 
 }
