@@ -22,9 +22,12 @@ public class AuditorAwareImpl implements AuditorAware<String> {
             return Optional.empty();
         }
 
-        //사용자 환경에 맞게 로그인한 사용자의 정보를 불러온다.
-        CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
+        Object principal = authentication.getPrincipal();
 
-        return Optional.ofNullable(userDetails.getMemNum());
+        if (principal instanceof CustomUserDetails userDetails) {
+            return Optional.ofNullable(userDetails.getMemNum());
+        }
+
+        return Optional.empty();
     }
 }
