@@ -17,5 +17,8 @@ public class RegisterRequest {
     private MultipartFile profileImage;
     private String joinDate;
     private String memRole;
+    private String groupName;
+    private String groupCode;
+    private String groupAuthCode;
 
 }

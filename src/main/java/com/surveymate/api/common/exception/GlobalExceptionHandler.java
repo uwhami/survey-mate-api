@@ -36,25 +36,25 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ThumbnailCreationException.class)
-    public ResponseEntity<ResponseDTO<?>> ThumbnailCreationException(ThumbnailCreationException e) {
+    public ResponseEntity<ResponseDTO<?>> handleThumbnailCreationException(ThumbnailCreationException e) {
         log.error("ThumbnailCreationException 발생: {}", e.getMessage(), e);
         return new ResponseEntity<>(ResponseDTO.failure(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(FileNameTooLongException.class)
-    public ResponseEntity<ResponseDTO<?>> FileNameTooLongException(FileNameTooLongException e) {
+    public ResponseEntity<ResponseDTO<?>> handleFileNameTooLongException(FileNameTooLongException e) {
         log.error("FileNameTooLongException 발생: {}", e.getMessage(), e);
         return new ResponseEntity<>(ResponseDTO.failure(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<ResponseDTO<?>> EmailAlreadyExistsException(EmailAlreadyExistsException e) {
+    public ResponseEntity<ResponseDTO<?>> handleEmailAlreadyExistsException(EmailAlreadyExistsException e) {
         log.error("EmailAlreadyExistsException 발생: {}", e.getMessage(), e);
         return new ResponseEntity<>(ResponseDTO.failure(e.getMessage()), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(PasswordMismatchException.class)
-    public ResponseEntity<ResponseDTO<?>> PasswordMismatchException(PasswordMismatchException e) {
+    public ResponseEntity<ResponseDTO<?>> handlePasswordMismatchException(PasswordMismatchException e) {
         log.error("PasswordMismatchException 발생: {}", e.getMessage(), e);
         return new ResponseEntity<>(ResponseDTO.failure(e.getMessage()), HttpStatus.CONFLICT);
     }
