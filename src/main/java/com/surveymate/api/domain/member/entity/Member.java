@@ -1,11 +1,14 @@
 package com.surveymate.api.domain.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.surveymate.api.common.converter.MemberRoleConverter;
 import com.surveymate.api.common.converter.MemberStatusConverter;
 import com.surveymate.api.common.converter.SocialTypeConverter;
+import com.surveymate.api.common.entity.BaseEntity;
 import com.surveymate.api.common.enums.MemberRole;
 import com.surveymate.api.common.enums.MemberStatus;
 import com.surveymate.api.common.enums.SocialType;
+import com.surveymate.api.domain.group.entity.Group;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
@@ -13,6 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,7 +28,7 @@ import java.util.List;
 @Builder
 @ToString
 @Table(name = "member")
-public class Member implements UserDetails {
+public class Member extends BaseEntity implements UserDetails {
 
     @Id
     @Column(name = "mem_num", nullable = false)
@@ -52,15 +56,15 @@ public class Member implements UserDetails {
     @Builder.Default
     private Integer passwordError = 0;
 
-    @Convert(converter = MemberStatusConverter.class)
-    @Column(name = "mem_status", length = 1, nullable = false)
-    @Comment("1:ACTIVE, 2:DEACTIVATED")
-    private MemberStatus memStatus;
-
     @Convert(converter = MemberRoleConverter.class)
     @Column(name = "mem_role", length = 1, nullable = false)
     @Comment("0:ROLE_USER, 1:ROLE_MANAGER, 2:ROLE_ADMIN")
     private MemberRole memRole;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "group_id", nullable = true)
+    @JsonIgnore
+    private Group group;
 
     @Convert(converter = SocialTypeConverter.class)
     @Column(name = "social_type", length = 1, nullable = false)
@@ -68,27 +72,15 @@ public class Member implements UserDetails {
     @Builder.Default
     private SocialType socialType = SocialType.HOMEPAGE;
 
-    @Column(name = "create_date", nullable = false, updatable = false)
-    private java.time.LocalDateTime createDate;
+    @Convert(converter = MemberStatusConverter.class)
+    @Column(name = "mem_status", length = 1, nullable = false)
+    @Comment("1:ACTIVE, 2:DEACTIVATED")
+    private MemberStatus memStatus;
 
-    @Column(name = "update_date")
-    private java.time.LocalDateTime updateDate;
 
     @Column(name = "deactivated_date")
-    private java.time.LocalDateTime deactivatedDate;
+    private LocalDateTime deactivatedDate;
 
-
-
-    @PrePersist
-    protected void onCreate() {
-        this.createDate = java.time.LocalDateTime.now();
-        this.updateDate = java.time.LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updateDate = java.time.LocalDateTime.now();
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

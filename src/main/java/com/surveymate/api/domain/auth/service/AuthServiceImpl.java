@@ -1,6 +1,7 @@
 package com.surveymate.api.domain.auth.service;
 
 import com.surveymate.api.common.enums.FilePath;
+import com.surveymate.api.common.enums.MemberRole;
 import com.surveymate.api.common.enums.MemberStatus;
 import com.surveymate.api.common.enums.SocialType;
 import com.surveymate.api.common.exception.CustomRuntimeException;
@@ -12,6 +13,8 @@ import com.surveymate.api.domain.auth.entity.LoginHistory;
 import com.surveymate.api.domain.auth.mapper.AuthMemberMapper;
 import com.surveymate.api.domain.auth.model.CustomUserDetails;
 import com.surveymate.api.domain.auth.repository.LoginHistoryRepository;
+import com.surveymate.api.domain.group.entity.Group;
+import com.surveymate.api.domain.group.service.GroupService;
 import com.surveymate.api.domain.member.entity.Member;
 import com.surveymate.api.domain.member.exception.UserAlreadyExistsException;
 import com.surveymate.api.domain.member.exception.UserNotFoundException;
@@ -33,6 +36,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.SecureRandom;
@@ -56,6 +60,7 @@ public class AuthServiceImpl implements AuthService {
     private final EmailService emailService;
     private final LoginHistoryRepository loginHistoryRepository;
     private final GuavaCacheService cacheService;
+    private final GroupService groupService;
 
     @Override
     public boolean checkDuplicateId(String userId) {
@@ -64,14 +69,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String sendVerificationCode(String email) {
-        try{
-            if(memberService.checkDuplicatedEmail(email)) {
+        try {
+            if (memberService.checkDuplicatedEmail(email)) {
                 throw new EmailAlreadyExistsException();
             }
             String code = generateVerificationCode();
             emailService.sendEmail(email, "회원가입 인증번호", code);
             return code;
-        }catch (EmailAlreadyExistsException e) {
+        } catch (EmailAlreadyExistsException e) {
             throw e;
         } catch (Exception e) {
             throw new CustomRuntimeException("이메일 인증코드 발송 중 에러가 발생했습니다.", e);
@@ -101,24 +106,28 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public Map<String, String> socialLoginOrRegisterUser(Map<String,Object> userInfo, SocialType socialType) throws Exception {
+    public Map<String, String> socialLoginOrRegisterUser(Map<String, Object> userInfo, SocialType socialType) throws Exception {
         String socialEmail = String.valueOf(userInfo.get("email"));
         String userId = String.valueOf(userInfo.get("id"));
         String userName = String.valueOf(userInfo.get("name"));
-        try{
-            userId = findUserIdByUSerEmail(socialEmail);
-        }catch (UserNotFoundException e){
-            RegisterRequest registerRequest = RegisterRequest.builder()
-                    .userId(userId)
-                    .password(generatePassword())
-                    .userName(userName)
-                    .userEmail(socialEmail)
-                    .joinDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))
-                    .memRole("0")
-                    .build();
-            createMember(registerRequest, socialType);
-        }catch (Exception e){
-            throw new CustomRuntimeException("소셜 로그인 중 에러 밣생.", e);
+        try {
+            Optional<Member> member = memberRepository.findByUserEmail(socialEmail, MemberStatus.ACTIVE);
+            if (member.isPresent()) {
+                userId = member.get().getUserId();
+            } else {
+                RegisterRequest registerRequest = RegisterRequest.builder()
+                        .userId(userId)
+                        .password(generatePassword())
+                        .userName(userName)
+                        .userEmail(socialEmail)
+                        .joinDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))
+                        .memRole("0")
+                        .build();
+                createMember(registerRequest, socialType);
+            }
+
+        } catch (Exception e) {
+            throw new CustomRuntimeException("소셜 로그인 중 에러 발생.", e);
         }
 
         LoginRequest loginRequest = LoginRequest.builder().userId(userId).build();
@@ -140,8 +149,8 @@ public class AuthServiceImpl implements AuthService {
             throw new UserAlreadyExistsException("이미 존재하는 ID 입니다. : " + member.getUserId());
         }
 
-        if(memberService.checkDuplicatedEmail(member.getUserEmail())){
-            throw new EmailAlreadyExistsException();
+        if (memberService.checkDuplicatedEmail(member.getUserEmail())) {
+            throw new EmailAlreadyExistsException(member.getUserEmail());
         }
 
         try {
@@ -156,10 +165,21 @@ public class AuthServiceImpl implements AuthService {
             member.setPassword(passwordEncoder.encode(member.getPassword()));
             member.setMemStatus(MemberStatus.ACTIVE);
             member.setSocialType(socialType);
+            member.setMemRole(MemberRole.USER);
+
+            if(StringUtils.hasText(registerRequest.getGroupName())){
+                Group group = groupService.createGroup(registerRequest.getGroupName(), registerRequest.getGroupAuthCode(), member.getUserId());
+                member.setGroup(group);
+                member.setMemRole(MemberRole.MANAGER);
+            }else if(StringUtils.hasText(registerRequest.getGroupCode())){
+                Group group = groupService.validateGroupCodeAndGroupAuthCode(registerRequest.getGroupCode(), registerRequest.getGroupAuthCode());
+                member.setGroup(group);
+            }
+
             memberRepository.save(member);
 
-        } catch (RuntimeException e) {
-            throw new CustomRuntimeException("회원가입 에러", e);
+        } catch (Exception ex) {
+            throw new CustomRuntimeException(ex.getMessage(), ex);
         }
 
     }
@@ -176,16 +196,16 @@ public class AuthServiceImpl implements AuthService {
 
             String memNum = null;
             List<GrantedAuthority> authorities = null;
-            if(social == 0){
+            if (social == 0) {
                 // 사용자 인증
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(loginRequest.getUserId(), loginRequest.getPassword())
                 );
                 memNum = ((CustomUserDetails) authentication.getPrincipal()).getMemNum();
                 authorities = authentication.getAuthorities().stream().collect(Collectors.toList());
-            }else{
+            } else {
                 Optional<Member> optionalMember = memberRepository.findByUserId(loginRequest.getUserId(), MemberStatus.ACTIVE);
-                if(optionalMember.isEmpty()){
+                if (optionalMember.isEmpty()) {
                     throw new UserNotFoundException();
                 }
                 memNum = optionalMember.get().getMemNum();
@@ -239,7 +259,7 @@ public class AuthServiceImpl implements AuthService {
             String uuid = claims.getSubject();
 //            List<GrantedAuthority> authorities = getAuthoritiesFromToken(claims);
 
-            Map<String,Object> tokenInfo = getInfoFromToken(claims);
+            Map<String, Object> tokenInfo = getInfoFromToken(claims);
             List<GrantedAuthority> authorities = (List<GrantedAuthority>) tokenInfo.get("roles");
             int social = (int) tokenInfo.get("social");
 
@@ -258,7 +278,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
-    public Map<String,Object> getInfoFromToken(Claims claims){
+    public Map<String, Object> getInfoFromToken(Claims claims) {
         // roles 클레임 추출
         List<String> roles = claims.get("roles", List.class);
         List<GrantedAuthority> authorities = roles.stream()
@@ -273,12 +293,12 @@ public class AuthServiceImpl implements AuthService {
 
 
     public String findUserIdByUSerEmail(String email) {
-        try{
+        try {
             Member member = memberRepository.findByUserEmail(email, MemberStatus.ACTIVE)
                     .orElseThrow(() -> new UserNotFoundException());
 
             return member.getUserId();
-        } catch (UserNotFoundException e){
+        } catch (UserNotFoundException e) {
             throw e;
         } catch (Exception ex) {
             throw new CustomRuntimeException("회원 아이디 찾기에서 에러가 발생했습니다.", ex);

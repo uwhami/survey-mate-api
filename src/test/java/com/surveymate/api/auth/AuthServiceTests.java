@@ -29,17 +29,39 @@ public class AuthServiceTests {
     public void createMember() throws Exception {
 
         RegisterRequest registerRequest = RegisterRequest.builder()
-                .userId("test121501")
+                .userId("test250201")
                 .password("1234")
                 .userName("user121501")
-                .userEmail("aaa@aaa.com")
+                .userEmail("aaa0201@aaa.com")
                 .profileImage(null)
-                .joinDate("20241215")
+                .joinDate("20250201")
                 .memRole("0")
                 .build();
         try{
             authService.createMember(registerRequest);
             System.out.println(memberService.existsByUserId("user121501"));
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
+    public void createMemberWithGroup() throws Exception {
+
+        RegisterRequest registerRequest = RegisterRequest.builder()
+                .userId("test250203")
+                .password("1234")
+                .userName("test250203")
+                .userEmail("aaa0203@aaa.com")
+                .profileImage(null)
+                .joinDate("20250201")
+                .memRole("0")
+                .groupName("테스트그룹")
+                .groupAuthCode("1234")
+                .build();
+        try{
+            authService.createMember(registerRequest);
+            System.out.println(memberService.existsByUserId("test250202"));
         }catch(Exception e){
             System.out.println(e.getMessage());
         }

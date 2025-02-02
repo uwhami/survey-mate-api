@@ -25,9 +25,8 @@ public interface MemberMapper {
             @Mapping(target = "memStatus", ignore = true),
             @Mapping(target = "memRole", ignore = true),
             @Mapping(target = "socialType", ignore = true),
+            @Mapping(target = "group", ignore = true),
             @Mapping(target = "joinDate", ignore = true),
-            @Mapping(target = "createDate", ignore = true),
-            @Mapping(target = "updateDate", ignore = true),
             @Mapping(target = "deactivatedDate", ignore = true)
     })
     Member toEntity(MemberRequest memberRequest);
