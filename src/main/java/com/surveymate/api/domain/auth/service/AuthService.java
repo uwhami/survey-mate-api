@@ -12,7 +12,7 @@ public interface AuthService {
 
     boolean checkDuplicateId(String userId);
 
-    String sendVerificationCode(String email);
+    String sendVerificationCode(String email) throws Exception;
 
     Map<String,String> socialLoginOrRegisterUser(Map<String,Object> userInfo, SocialType socialType) throws Exception;
 

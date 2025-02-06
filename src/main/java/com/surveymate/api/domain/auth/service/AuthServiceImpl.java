@@ -68,18 +68,16 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String sendVerificationCode(String email) {
+    public String sendVerificationCode(String email) throws Exception {
         try {
             if (memberService.checkDuplicatedEmail(email)) {
-                throw new EmailAlreadyExistsException();
+                throw new EmailAlreadyExistsException(email);
             }
             String code = generateVerificationCode();
             emailService.sendEmail(email, "회원가입 인증번호", code);
             return code;
-        } catch (EmailAlreadyExistsException e) {
-            throw e;
         } catch (Exception e) {
-            throw new CustomRuntimeException("이메일 인증코드 발송 중 에러가 발생했습니다.", e);
+            throw new CustomRuntimeException(e.getMessage(), e);
         }
 
     }

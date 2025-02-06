@@ -1,6 +1,5 @@
 package com.surveymate.api.domain.auth.controller;
 
-import com.surveymate.api.common.dto.ResponseDTO;
 import com.surveymate.api.domain.auth.dto.LoginRequest;
 import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
 import com.surveymate.api.domain.auth.dto.RegisterRequest;
@@ -20,23 +19,12 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping("/check-duplicate-id")
-    public ResponseDTO<?> checkDuplicateId(@RequestParam String userId) {
-        boolean existId = authService.checkDuplicateId(userId);
-        if (existId) {
-            return ResponseDTO.<Void>builder()
-                    .result(false)
-                    .message("이미 사용 중인 아이디 입니다.")
-                    .build();
-        } else {
-            return ResponseDTO.<Void>builder()
-                    .result(true)
-                    .message("사용 가능한 아이디 입니다.")
-                    .build();
-        }
+    public boolean checkDuplicateId(@RequestParam String userId) {
+        return authService.checkDuplicateId(userId);
     }
 
     @GetMapping("/send-verification-code")
-    public String sendVerificationCode(@RequestParam String email) {
+    public String sendVerificationCode(@RequestParam String email) throws Exception{
         return authService.sendVerificationCode(email);
     }
 
