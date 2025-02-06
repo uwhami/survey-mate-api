@@ -59,7 +59,6 @@ public class MemberServiceImpl implements MemberService {
             Optional<Member> existEmail = memberRepository.findByUserEmail(email);
             return existEmail.isPresent();
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
             throw new CustomRuntimeException("이메일 확인 도중 에러가 발생했습니다.");
         }
 
