@@ -24,7 +24,7 @@ public class AuthController {
     }
 
     @GetMapping("/send-verification-code")
-    public String sendVerificationCode(@RequestParam String email) throws Exception{
+    public String sendVerificationCode(@RequestParam String email){
         return authService.sendVerificationCode(email);
     }
 

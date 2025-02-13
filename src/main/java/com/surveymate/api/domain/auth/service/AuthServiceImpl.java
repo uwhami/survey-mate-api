@@ -68,7 +68,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String sendVerificationCode(String email) throws Exception {
+    public String sendVerificationCode(String email) {
         try {
             if (memberService.checkDuplicatedEmail(email)) {
                 throw new EmailAlreadyExistsException(email);
