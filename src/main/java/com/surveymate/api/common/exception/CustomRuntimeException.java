@@ -1,15 +1,13 @@
 package com.surveymate.api.common.exception;
 
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public class CustomRuntimeException extends RuntimeException{
 
     private final HttpStatus status;
-
-    public HttpStatus getStatus() {
-        return status;
-    }
 
     public CustomRuntimeException(String message) {
         super(message);

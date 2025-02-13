@@ -29,17 +29,17 @@ public class AuthServiceTests {
     public void createMember() throws Exception {
 
         RegisterRequest registerRequest = RegisterRequest.builder()
-                .userId("test250201")
+                .userId("user")
                 .password("1234")
-                .userName("user121501")
-                .userEmail("aaa0201@aaa.com")
+                .userName("user")
+                .userEmail("user@aaa.com")
                 .profileImage(null)
                 .joinDate("20250201")
                 .memRole("0")
                 .build();
         try{
             authService.createMember(registerRequest);
-            System.out.println(memberService.existsByUserId("user121501"));
+            System.out.println(memberService.existsByUserId("user"));
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
