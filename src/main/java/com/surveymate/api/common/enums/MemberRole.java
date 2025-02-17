@@ -31,4 +31,16 @@ public enum MemberRole {
         throw new IllegalArgumentException("Invalid role code: " + code);
     }
 
+    /**
+     * 권한 문자열 기반으로 MemberRole 반환
+     */
+    public static MemberRole fromAuthority(String authority) {
+        for (MemberRole role : values()) {
+            if (role.authority.equalsIgnoreCase(authority)) {
+                return role;
+            }
+        }
+        throw new IllegalArgumentException("Invalid role authority: " + authority);
+    }
+
 }
