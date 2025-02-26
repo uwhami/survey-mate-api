@@ -1,18 +1,22 @@
 package com.surveymate.api.domain.group.service;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.surveymate.api.common.exception.CustomRuntimeException;
+import com.surveymate.api.domain.group.dto.GroupReponse;
+import com.surveymate.api.domain.group.dto.GroupRequest;
 import com.surveymate.api.domain.group.entity.Group;
 import com.surveymate.api.domain.group.entity.QGroup;
 import com.surveymate.api.domain.group.exception.GroupCodeGenerationException;
 import com.surveymate.api.domain.group.exception.GroupNotFoundException;
+import com.surveymate.api.domain.group.mapper.GroupMapper;
 import com.surveymate.api.domain.group.repository.GroupRepository;
+import com.surveymate.api.domain.member.entity.QMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.security.SecureRandom;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -20,6 +24,7 @@ public class GroupServiceImpl implements GroupService {
 
     private final GroupRepository groupRepository;
     private final JPAQueryFactory jpaQueryFactory;
+    private final GroupMapper groupMapper;
 
     private static final String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final SecureRandom random = new SecureRandom();
@@ -72,35 +77,69 @@ public class GroupServiceImpl implements GroupService {
             group.setUpdateId(userId);
         }
 
-        groupRepository.save(group);
+        try{
+            groupRepository.save(group);
+        }catch(Exception e){
+            throw new CustomRuntimeException("GROUP_SAVE_ERROR", e);
+        }
         return group;
     }
 
     @Override
     public boolean isExistsGroupCode(String groupCode) {
-        return groupRepository.findByGroupCode(groupCode).isPresent();
+        return groupRepository.findByGroupCode(groupCode) != null;
     }
 
     @Override
     public void setGroupAuthCode(String groupCode, String authCode) {
         QGroup qGroup = QGroup.group;
 
-        Group group = groupRepository.findByGroupCode(groupCode)
-                .orElseThrow(GroupNotFoundException::new);
+        Group group = groupRepository.findByGroupCode(groupCode);
+        if (group == null) {
+            throw new GroupNotFoundException();
+        }
 
-        jpaQueryFactory
-                .update(qGroup)
-                .set(qGroup.groupAuthCode, authCode) // authCode 업데이트
-                .where(qGroup.id.eq(group.getId())) // groupId 기준
-                .execute();
+        try{
+            long appectedRows =  jpaQueryFactory
+                    .update(qGroup)
+                    .set(qGroup.groupAuthCode, authCode) // authCode 업데이트
+                    .where(qGroup.id.eq(group.getId())) // groupId 기준
+                    .execute();
+            if(appectedRows == 0){
+                throw new GroupNotFoundException();
+            }
+        }catch(Exception e){
+            throw new CustomRuntimeException(e.getMessage(), e);
+        }
+
+
     }
 
     @Override
     public Group validateGroupCodeAndGroupAuthCode(String groupCode, String groupAuthCode) {
-        Optional<Group> group = groupRepository.findByGroupCodeAndGroupAuthCode(groupCode, groupAuthCode);
-        if(group.isEmpty()){
+        Group group = groupRepository.findByGroupCodeAndGroupAuthCode(groupCode, groupAuthCode);
+        if(group == null){
             throw new GroupNotFoundException();
         }
-        return group.get();
+        return group;
+    }
+
+    @Override
+    public GroupReponse selectGroupByUserId(GroupRequest request) {
+        QMember member = QMember.member;
+        try{
+            Group group = jpaQueryFactory
+                    .select(member.group)
+                    .from(member)
+                    .where(member.memNum.eq(request.getMemNum()))
+                    .fetchOne();
+            if (group == null) {
+                throw new GroupNotFoundException();
+            }
+            return groupMapper.toDto(group);
+
+        }catch (Exception e){
+            throw new CustomRuntimeException("INTERNAL_SERVER_ERROR", e);
+        }
     }
 }

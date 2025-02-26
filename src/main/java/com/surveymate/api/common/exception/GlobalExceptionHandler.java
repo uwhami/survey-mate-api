@@ -14,7 +14,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomRuntimeException.class)
     public ResponseEntity<ResponseDTO<?>> handlerCustomRuntimeExceptionHandler(CustomRuntimeException e) {
         log.error("CustomRuntimeException 발생: {}", e.getMessage(), e);
-        return new ResponseEntity<>(ResponseDTO.failure(e.getMessage()), e.getStatus());
+        return new ResponseEntity<>(ResponseDTO.failure(e.getCause().getMessage()), e.getStatus());
     }
 
 
