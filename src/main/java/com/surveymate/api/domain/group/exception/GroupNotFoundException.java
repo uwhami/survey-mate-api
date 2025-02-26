@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 public class GroupNotFoundException extends CustomRuntimeException {
 
-    private static final String DEFAULT_MESSAGE = "해당 그룹이 존재하지 않습니다.";
+    private static final String DEFAULT_MESSAGE = "GROUP_NOT_FOUND";
 
     public GroupNotFoundException() {
         super(DEFAULT_MESSAGE, HttpStatus.NOT_FOUND);

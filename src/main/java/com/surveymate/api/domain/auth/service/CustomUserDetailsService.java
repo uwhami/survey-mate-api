@@ -41,8 +41,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         String memnum = cacheService.getFromCache(uuid);
         if (memnum == null) {
-            LoginHistory loginInfo = loginHistoryRepository.findByUuid(UUID.fromString(uuid))
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found with UUID: " + uuid));
+            LoginHistory loginInfo = loginHistoryRepository.findByUuid(UUID.fromString(uuid));
+            if(loginInfo == null){
+                throw new UsernameNotFoundException("USER_NOT_FOUND");
+            }
+
             memnum = loginInfo.getMemNum();
             cacheService.saveToCache(uuid, memnum);
         }
