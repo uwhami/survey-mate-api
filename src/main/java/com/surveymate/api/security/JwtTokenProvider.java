@@ -3,6 +3,7 @@ package com.surveymate.api.security;
 import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.domain.auth.model.CustomUserDetails;
 import com.surveymate.api.domain.auth.service.CustomUserDetailsService;
+import com.surveymate.api.domain.member.entity.Member;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -23,41 +24,42 @@ public class JwtTokenProvider {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
     private final CustomUserDetailsService userDetailsService;
 
-    public String generateToken(String uuid, List<GrantedAuthority> authorities, int social) {
+    public String generateToken(String uuid, Member member) {
         Date now = new Date();
         int jwtExpirationInMs = 3600000;    // 1시간
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         // 권한 리스트를 문자열로 변환
-        List<String> roles = authorities.stream()
+        List<String> roles = member.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority) // ROLE_USER, ROLE_MANAGER 등을 추출
                 .collect(Collectors.toList());
 
         return Jwts.builder()
                 .setSubject(uuid)
                 .claim("roles", roles)
-                .claim("social", social)
+                .claim("social", member.getSocialType().getValue())
+                .claim("groupCode", member.getGroup().getId())
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(key)
                 .compact();
     }
 
-    public String generateRefreshToken(String uuid, List<GrantedAuthority> authorities, int social) {
+    public String generateRefreshToken(String uuid, Member member) {
         Date now = new Date();
         int refreshTokenExpirationInMs = 86400000; // 1일 (24시간)
         Date expiryDate = new Date(now.getTime() + refreshTokenExpirationInMs);
 
         // 권한 리스트를 문자열로 변환
-        List<String> roles = authorities.stream()
+        List<String> roles = member.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority) // ROLE_USER, ROLE_MANAGER 등을 추출
                 .collect(Collectors.toList());
-
 
         return Jwts.builder()
                 .setSubject(uuid)
                 .claim("roles", roles)
-                .claim("social", social)
+                .claim("social", member.getSocialType().getValue())
+                .claim("groupCode", member.getGroup().getId())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key)

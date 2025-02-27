@@ -5,8 +5,10 @@ import com.surveymate.api.common.enums.SocialType;
 import com.surveymate.api.domain.auth.dto.LoginRequest;
 import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
 import com.surveymate.api.domain.auth.dto.RegisterRequest;
+import com.surveymate.api.domain.member.entity.Member;
 
 import java.util.Map;
+import java.util.UUID;
 
 public interface AuthService {
 
@@ -29,4 +31,6 @@ public interface AuthService {
     String findUserIdByUSerEmail(String email);
 
     void passwordReset(PasswordResetRequest request);
+
+    Member findMemberByLoginHistoryUuid(UUID uuid);
 }
