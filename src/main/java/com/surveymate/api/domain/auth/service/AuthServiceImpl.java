@@ -1,5 +1,6 @@
 package com.surveymate.api.domain.auth.service;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.surveymate.api.common.enums.FilePath;
 import com.surveymate.api.common.enums.MemberRole;
 import com.surveymate.api.common.enums.MemberStatus;
@@ -10,12 +11,13 @@ import com.surveymate.api.domain.auth.dto.LoginRequest;
 import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
 import com.surveymate.api.domain.auth.dto.RegisterRequest;
 import com.surveymate.api.domain.auth.entity.LoginHistory;
+import com.surveymate.api.domain.auth.entity.QLoginHistory;
 import com.surveymate.api.domain.auth.mapper.AuthMemberMapper;
-import com.surveymate.api.domain.auth.model.CustomUserDetails;
 import com.surveymate.api.domain.auth.repository.LoginHistoryRepository;
 import com.surveymate.api.domain.group.entity.Group;
 import com.surveymate.api.domain.group.service.GroupService;
 import com.surveymate.api.domain.member.entity.Member;
+import com.surveymate.api.domain.member.entity.QMember;
 import com.surveymate.api.domain.member.exception.UserAlreadyExistsException;
 import com.surveymate.api.domain.member.exception.UserNotFoundException;
 import com.surveymate.api.domain.member.repository.MemberRepository;
@@ -31,8 +33,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,8 +42,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -61,6 +63,7 @@ public class AuthServiceImpl implements AuthService {
     private final LoginHistoryRepository loginHistoryRepository;
     private final GuavaCacheService cacheService;
     private final GroupService groupService;
+    private final JPAQueryFactory queryFactory;
 
     @Override
     public boolean checkDuplicateId(String userId) {
@@ -192,41 +195,32 @@ public class AuthServiceImpl implements AuthService {
 
         try {
 
-            String memNum = null;
-            List<GrantedAuthority> authorities = null;
             if (social == 0) {
                 // 사용자 인증
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(loginRequest.getUserId(), loginRequest.getPassword())
                 );
-                memNum = ((CustomUserDetails) authentication.getPrincipal()).getMemNum();
-                authorities = authentication.getAuthorities().stream().collect(Collectors.toList());
-            } else {
-                Optional<Member> optionalMember = memberRepository.findByUserId(loginRequest.getUserId(), MemberStatus.ACTIVE);
-                if (optionalMember.isEmpty()) {
-                    throw new UserNotFoundException();
-                }
-                memNum = optionalMember.get().getMemNum();
-                authorities = optionalMember.get().getAuthorities().stream().collect(Collectors.toList());
             }
 
-
+            Optional<Member> optionalMember = memberRepository.findByUserId(loginRequest.getUserId(), MemberStatus.ACTIVE);
+            if (optionalMember.isEmpty()) {
+                throw new UserNotFoundException();
+            }
+            Member member = optionalMember.get();
             memberService.resetPasswordError(loginRequest.getUserId());
 
             UUID uuid = UUID.randomUUID();
-//            String memNum = ((CustomUserDetails) authentication.getPrincipal()).getMemNum();
             LoginHistory loginHistory = LoginHistory.builder()
                     .uuid(uuid)
-                    .memNum(memNum)
+                    .memNum(member.getMemNum())
                     .build();
             loginHistoryRepository.save(loginHistory);
 
-            cacheService.saveToCache(uuid.toString(), memNum);
+            cacheService.saveToCache(uuid.toString(), member.getMemNum());
 
-//            List<GrantedAuthority> authorities = authentication.getAuthorities().stream().collect(Collectors.toList());
             // 인증 성공 시 JWT 토큰 생성
-            String accessToken = jwtTokenProvider.generateToken(uuid.toString(), authorities, social);
-            String refreshToken = jwtTokenProvider.generateRefreshToken(uuid.toString(), authorities, social);
+            String accessToken = jwtTokenProvider.generateToken(uuid.toString(), member);
+            String refreshToken = jwtTokenProvider.generateRefreshToken(uuid.toString(), member);
 
             return Map.of(
                     "accessToken", accessToken,
@@ -255,15 +249,11 @@ public class AuthServiceImpl implements AuthService {
 
             Claims claims = jwtTokenProvider.validateToken(refreshToken);
             String uuid = claims.getSubject();
-//            List<GrantedAuthority> authorities = getAuthoritiesFromToken(claims);
-
-            Map<String, Object> tokenInfo = getInfoFromToken(claims);
-            List<GrantedAuthority> authorities = (List<GrantedAuthority>) tokenInfo.get("roles");
-            int social = (int) tokenInfo.get("social");
+            Member member = findMemberByLoginHistoryUuid(UUID.fromString(uuid));
 
             // 인증 성공 시 JWT 토큰 생성
-            String accessToken = jwtTokenProvider.generateToken(uuid, authorities, social);
-            String newRefreshToken = jwtTokenProvider.generateRefreshToken(uuid, authorities, social);
+            String accessToken = jwtTokenProvider.generateToken(uuid, member);
+            String newRefreshToken = jwtTokenProvider.generateRefreshToken(uuid, member);
 
             return Map.of(
                     "accessToken", accessToken,
@@ -273,20 +263,6 @@ public class AuthServiceImpl implements AuthService {
         } catch (Exception ex) {
             throw new CustomRuntimeException(ex.getMessage(), ex);
         }
-    }
-
-
-    public Map<String, Object> getInfoFromToken(Claims claims) {
-        // roles 클레임 추출
-        List<String> roles = claims.get("roles", List.class);
-        List<GrantedAuthority> authorities = roles.stream()
-                .map(SimpleGrantedAuthority::new) // ROLE_USER, ROLE_MANAGER 등을 SimpleGrantedAuthority로 매핑
-                .collect(Collectors.toList());
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("roles", authorities);
-        map.put("social", claims.get("social", Integer.class));
-        return map;
     }
 
 
@@ -308,4 +284,21 @@ public class AuthServiceImpl implements AuthService {
     public void passwordReset(PasswordResetRequest request) {
         memberService.passwordReset(request);
     }
+
+    @Override
+    public Member findMemberByLoginHistoryUuid(UUID uuid) {
+        QMember qMember = QMember.member;
+        QLoginHistory qLoginHistory = QLoginHistory.loginHistory;
+        Member member = queryFactory
+                        .select(qMember)
+                        .from(qMember)
+                        .join(qLoginHistory).on(qMember.memNum.eq(qLoginHistory.memNum))
+                        .where(qLoginHistory.uuid.eq(uuid))
+                        .fetchOne();
+        if(member == null){
+            throw new UserNotFoundException();
+        }
+        return member;
+    }
+
 }
