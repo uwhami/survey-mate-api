@@ -6,6 +6,7 @@ import com.surveymate.api.domain.menu.dto.MenuResponse;
 import com.surveymate.api.domain.menu.entity.Menu;
 import com.surveymate.api.domain.menu.mapper.MenuMapper;
 import com.surveymate.api.domain.menu.repository.MenuRepository;
+import com.surveymate.api.domain.menu.service.MenuService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
