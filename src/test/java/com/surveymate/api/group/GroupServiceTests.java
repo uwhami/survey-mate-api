@@ -1,7 +1,6 @@
 package com.surveymate.api.group;
 
 import com.surveymate.api.domain.group.dto.GroupReponse;
-import com.surveymate.api.domain.group.dto.GroupRequest;
 import com.surveymate.api.domain.group.service.GroupService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +14,7 @@ public class GroupServiceTests {
 
     @Test
     public void selectGroupInfoByUSer() throws Exception {
-        GroupRequest request = new GroupRequest();
-        request.setMemNum("M202502020003");
-        GroupReponse groupReponse = groupService.selectGroupByUserId(request);
+        GroupReponse groupReponse = groupService.selectGroupByUserId(2);
         System.out.println("selectGroupInfoByUSer===========" + groupReponse);
     }
 

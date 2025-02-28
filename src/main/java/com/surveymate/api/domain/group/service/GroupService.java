@@ -1,7 +1,6 @@
 package com.surveymate.api.domain.group.service;
 
 import com.surveymate.api.domain.group.dto.GroupReponse;
-import com.surveymate.api.domain.group.dto.GroupRequest;
 import com.surveymate.api.domain.group.entity.Group;
 
 
@@ -15,5 +14,5 @@ public interface GroupService {
 
     Group validateGroupCodeAndGroupAuthCode(String groupCode, String groupAuthCode);
 
-    GroupReponse selectGroupByUserId(GroupRequest request);
+    GroupReponse selectGroupByUserId(long groupId);
 }

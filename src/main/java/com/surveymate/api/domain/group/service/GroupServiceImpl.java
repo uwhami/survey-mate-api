@@ -3,20 +3,19 @@ package com.surveymate.api.domain.group.service;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.domain.group.dto.GroupReponse;
-import com.surveymate.api.domain.group.dto.GroupRequest;
 import com.surveymate.api.domain.group.entity.Group;
 import com.surveymate.api.domain.group.entity.QGroup;
 import com.surveymate.api.domain.group.exception.GroupCodeGenerationException;
 import com.surveymate.api.domain.group.exception.GroupNotFoundException;
 import com.surveymate.api.domain.group.mapper.GroupMapper;
 import com.surveymate.api.domain.group.repository.GroupRepository;
-import com.surveymate.api.domain.member.entity.QMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.security.SecureRandom;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -125,19 +124,13 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public GroupReponse selectGroupByUserId(GroupRequest request) {
-        QMember member = QMember.member;
+    public GroupReponse selectGroupByUserId(long groupId) {
         try{
-            Group group = jpaQueryFactory
-                    .select(member.group)
-                    .from(member)
-                    .where(member.memNum.eq(request.getMemNum()))
-                    .fetchOne();
-            if (group == null) {
+            Optional<Group> group = groupRepository.findById(groupId);
+            if(group.isEmpty()){
                 throw new GroupNotFoundException();
             }
-            return groupMapper.toDto(group);
-
+            return groupMapper.toDto(group.get());
         }catch (Exception e){
             throw new CustomRuntimeException("INTERNAL_SERVER_ERROR", e);
         }
