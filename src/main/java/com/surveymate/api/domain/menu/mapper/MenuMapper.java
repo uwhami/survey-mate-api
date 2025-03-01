@@ -14,32 +14,43 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface MenuMapper {
 
-    // Menu -> MenuResponse
+    // ✅ Menu → MenuResponse 변환 (Enum & 리스트 변환 포함)
     @Mapping(source = "memRole", target = "memRole", qualifiedByName = "roleToString")
-    @Mapping(source = "subMenus", target = "subMenus", qualifiedByName = "mapSubMenus") // ✅ 리스트 변환 적용
+    @Mapping(source = "subMenus", target = "subMenus", qualifiedByName = "mapSubMenus")
     MenuResponse toDTO(Menu menu);
 
-    // MenuRequest -> Menu (Enum 변환 강제 적용)
-    @Mapping(source = "memRole", target = "memRole", qualifiedByName = "stringToRole") // ✅ 여기 수정
+    // ✅ MenuRequest → Menu 변환 (Enum 변환 포함)
+    @Mapping(source = "memRole", target = "memRole", qualifiedByName = "stringToRole")
     Menu toEntity(MenuRequest menuRequest);
 
-    // 하위 메뉴 리스트 변환
-    @Named("mapSubMenus")
-    default List<MenuResponse> mapSubMenus(List<Menu> subMenus) {
-        return subMenus == null ? null : subMenus.stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    // Enum -> String 변환 (올바르게 적용 중)
+    // ✅ Enum → String 변환
     @Named("roleToString")
     static String roleToString(MemberRole role) {
-        return role.getAuthority();
+        return role != null ? role.getAuthority() : null;
     }
 
-    // String -> Enum 변환 (올바르게 적용되도록 강제)
+    // ✅ String → Enum 변환
     @Named("stringToRole")
     static MemberRole stringToRole(String role) {
-        return MemberRole.fromAuthority(role); // ✅ MapStruct가 강제로 사용하도록 수정
+        return role != null ? MemberRole.fromAuthority(role) : null;
+    }
+
+    // ✅ List<Menu> → List<MenuResponse> 변환
+    @Named("mapSubMenus")
+    static List<MenuResponse> mapSubMenus(List<Menu> subMenus) {
+        return subMenus == null ? null : subMenus.stream()
+                .map(menu -> new MenuResponse(
+                        menu.getMenuNo(),
+                        menu.getParentMenuNo(),
+                        menu.getMenuKorName(),
+                        menu.getMenuEngName(),
+                        menu.getMenuDescription(),
+                        menu.getMenuPath(),
+                        menu.getSequence(),
+                        roleToString(menu.getMemRole()),
+                        menu.getUseYn(),
+                        mapSubMenus(menu.getSubMenus()) // 재귀 호출로 하위 메뉴 변환
+                ))
+                .collect(Collectors.toList());
     }
 }
