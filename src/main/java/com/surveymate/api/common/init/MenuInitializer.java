@@ -1,7 +1,6 @@
 package com.surveymate.api.common.init;
 
 import com.surveymate.api.common.enums.MemberRole;
-import com.surveymate.api.domain.menu.dto.MenuRequest;
 import com.surveymate.api.domain.menu.entity.Menu;
 import com.surveymate.api.domain.menu.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +29,7 @@ public class MenuInitializer implements CommandLineRunner {
                 new Menu("MN001002000000", "MN003000000000", "설문조사 응답보기", "View Survey Response", "설문조사 응답보기", "/survey/view", MemberRole.USER, 2, "Y"),
                 new Menu("MN004000000000", null, "그룹", "Group", "Group", null, MemberRole.USER, 4, "Y"),
                 new Menu("MN004001000000", "MN004000000000", "그룹 정보", "Group Info", "그룹 정보", "/group/info", MemberRole.USER, 1, "Y"),
-                new Menu("MN004002000000", "MN004000000000", "그룹 수정", "Group Update", "그룹 수정", "/group/update", MemberRole.USER, 2, "Y"),
+                new Menu("MN004002000000", "MN004000000000", "그룹 수정", "Group Update", "그룹 수정", "/group/edit", MemberRole.USER, 2, "Y"),
                 new Menu("MN004003000000", "MN004000000000", "그룹 사용자", "Group User", "그룹 사용자", "/group/user", MemberRole.USER, 3, "Y")
                 );
 
