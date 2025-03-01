@@ -10,7 +10,9 @@ import com.surveymate.api.domain.menu.service.MenuService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -88,9 +90,57 @@ public class MenuServiceImpl implements MenuService {
     @Override
     @Transactional(readOnly = true)
     public List<MenuResponse> getMenusByRole(String memberRole) {
-        return menuRepository.findByMemRole(MemberRole.fromAuthority(memberRole)).stream()
+        List<Menu> menus = menuRepository.findByMemRole(MemberRole.fromAuthority(memberRole));
+
+        /*return menuRepository.findByMemRole(MemberRole.fromAuthority(memberRole)).stream()
+                .map(menuMapper::toDTO)
+                .collect(Collectors.toList());*/
+        // 2. DTO로 매핑
+        List<MenuResponse> menuResponses = menus.stream()
                 .map(menuMapper::toDTO)
                 .collect(Collectors.toList());
+
+        // 3. 메뉴 트리 재구성
+        return buildMenuTree(menuResponses);
+    }
+
+    private List<MenuResponse> buildMenuTree(List<MenuResponse> menus) {
+        Map<String, MenuResponse> menuMap = menus.stream()
+                .filter(menu -> menu.getMenuNo() != null) // Null 방지
+                .collect(Collectors.toMap(MenuResponse::getMenuNo, menu -> menu));
+
+        List<MenuResponse> tree = new ArrayList<>();
+
+        for (MenuResponse menu : menus) {
+            if (menu.getParentMenuNo() == null || menu.getParentMenuNo().isEmpty()) {
+                // 최상위 메뉴라면 트리에 추가
+                tree.add(menu);
+            } else {
+                // 부모 메뉴를 찾아서 자식으로 추가
+                MenuResponse parentMenu = menuMap.get(menu.getParentMenuNo());
+                if (parentMenu != null) {
+                    parentMenu.getSubMenus().add(menu);
+                }
+            }
+        }
+
+        // 4계층 이상도 자동으로 반영되도록 정렬
+        for (MenuResponse rootMenu : tree) {
+            buildSubMenus(rootMenu, menuMap);
+        }
+
+        return tree;
+    }
+
+    private void buildSubMenus(MenuResponse parent, Map<String, MenuResponse> menuMap) {
+        List<MenuResponse> subMenus = parent.getSubMenus();
+
+        for (MenuResponse child : subMenus) {
+            // 자식 메뉴가 더 있는지 확인하고 재귀적으로 추가
+            if (menuMap.containsKey(child.getMenuNo())) {
+                buildSubMenus(child, menuMap);
+            }
+        }
     }
 
     @Override

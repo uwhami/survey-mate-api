@@ -33,7 +33,7 @@ public class Menu extends BaseEntity {
     @Column(name = "menu_description", length = 255, nullable = false)
     private String menuDescription;
 
-    @Column(name = "menu_path", length = 100, nullable = false)
+    @Column(name = "menu_path", length = 100)
     private String menuPath;
 
     @Convert(converter = MemberRoleConverter.class)
