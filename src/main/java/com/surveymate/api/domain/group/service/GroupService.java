@@ -1,12 +1,15 @@
 package com.surveymate.api.domain.group.service;
 
 import com.surveymate.api.domain.group.dto.GroupReponse;
+import com.surveymate.api.domain.group.dto.GroupRequest;
 import com.surveymate.api.domain.group.entity.Group;
 
 
 public interface GroupService {
 
     Group createGroup(String groupName, String groupAuthCode, String userId);
+
+    GroupReponse createGroupFromRequest(GroupRequest groupRequest) throws Exception;
 
     boolean isExistsGroupCode(String groupCode);
 
@@ -15,4 +18,6 @@ public interface GroupService {
     Group validateGroupCodeAndGroupAuthCode(String groupCode, String groupAuthCode);
 
     GroupReponse selectGroupByUserId(long groupId);
+
+    GroupReponse updateGroup(GroupRequest request);
 }
