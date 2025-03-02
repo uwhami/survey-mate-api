@@ -10,6 +10,7 @@ import lombok.ToString;
 @ToString
 public class GroupReponse {
 
+    private final Long groupId;
     private final String groupCode;     // 초대 코드 (유니크)
     private final String groupName;     // 그룹 이름
     private final String groupAuthCode; // 그룹 인증번호

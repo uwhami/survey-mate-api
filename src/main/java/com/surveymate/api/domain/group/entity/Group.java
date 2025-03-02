@@ -7,7 +7,6 @@ import lombok.*;
 
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -18,7 +17,7 @@ public class Group extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 그룹 ID (PK)
+    private Long groupId; // 그룹 ID (PK)
 
     @Column(nullable = false, length = 100)
     private String groupName; // 그룹 이름
@@ -29,5 +28,9 @@ public class Group extends BaseEntity {
     @Column(nullable = false, length = 20)
     private String groupAuthCode; // 그룹 인증번호
 
+    public void updateGroup(String groupName, String groupAuthCode) {
+        this.groupName = groupName;
+        this.groupAuthCode = groupAuthCode;
+    }
 
 }
