@@ -169,7 +169,7 @@ public class AuthServiceImpl implements AuthService {
             member.setMemRole(MemberRole.USER);
 
             if(StringUtils.hasText(registerRequest.getGroupName())){
-                Group group = groupService.createGroup(registerRequest.getGroupName(), registerRequest.getGroupAuthCode(), member.getUserId());
+                Group group = groupService.createGroup(registerRequest.getGroupName(), registerRequest.getGroupAuthCode(), member.getMemNum());
                 member.setGroup(group);
                 member.setMemRole(MemberRole.MANAGER);
             }else if(StringUtils.hasText(registerRequest.getGroupCode())){

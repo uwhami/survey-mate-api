@@ -8,6 +8,7 @@ import com.surveymate.api.common.enums.FilePath;
 import com.surveymate.api.common.enums.MemberStatus;
 import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
+import com.surveymate.api.domain.group.entity.Group;
 import com.surveymate.api.domain.member.dto.ChangePasswordRequest;
 import com.surveymate.api.domain.member.dto.MemberRequest;
 import com.surveymate.api.domain.member.dto.MemberResponse;
@@ -169,6 +170,13 @@ public class MemberServiceImpl implements MemberService {
             responseDTO.setProfileImageUri(fileService.getFilePath(existingMember.getProfileImageUuid()));
         }
         return responseDTO;
+    }
+
+    @Override
+    public void assignGroupToMember(String memnum, Group group) {
+        Member member = memberRepository.findByMemNum(memnum).orElseThrow(UserNotFoundException::new);
+        member.setGroup(group);
+        memberRepository.save(member);
     }
 
     @Transactional
