@@ -18,16 +18,16 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
 
     @CreatedBy
-    @Column(name = "create_id", updatable = false, nullable = false, length = 50)
-    private String createId;
+    @Column(name = "create_mem_num", updatable = false, nullable = false, length = 50)
+    private String createMemNum;
 
     @CreatedDate
     @Column(name = "create_date", updatable = false, nullable = false)
     private LocalDateTime createDate;
 
     @LastModifiedBy
-    @Column(name = "update_id", nullable = false, length = 50)
-    private String updateId;
+    @Column(name = "update_mem_num", nullable = false, length = 50)
+    private String updateMemNum;
 
     @LastModifiedDate
     @Column(name = "update_date", nullable = false)
@@ -35,23 +35,22 @@ public abstract class BaseEntity {
 
     @PrePersist
     public void prePersist() {
-        if (this.createId == null) {
-            this.createId = "System"; // 기본값
+        if (this.createMemNum == null) {
+            this.createMemNum = "System"; // 기본값
         }
         if (this.createDate == null) {
             this.createDate = LocalDateTime.now();
         }
-
-        if (this.updateId == null) {
-            this.updateId = "System"; // 기본값
+        if (this.updateMemNum == null) {
+            this.updateMemNum = "System"; // 기본값
         }
         this.updateDate = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        if (this.updateId == null) {
-            this.updateId = "System"; // 기본값
+        if (this.updateMemNum == null) {
+            this.updateMemNum = "System"; // 기본값
         }
         this.updateDate = LocalDateTime.now();
     }
