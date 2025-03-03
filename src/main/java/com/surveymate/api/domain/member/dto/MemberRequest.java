@@ -15,6 +15,5 @@ public class MemberRequest extends MemnumAware {
     private String userName;
     private String userEmail;
     private MultipartFile profileImageUuid;
-    private long groupId;
 
 }
