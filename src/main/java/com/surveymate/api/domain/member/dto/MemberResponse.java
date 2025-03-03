@@ -18,5 +18,6 @@ public class MemberResponse {
     private String memStatus;
     private String memRole;
     private String socialType;
+    private Long groupId;
 
 }

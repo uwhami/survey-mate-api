@@ -33,8 +33,7 @@ public class MemberController {
     }
 
     @DeleteMapping
-    public void deleteMember(MemberRequest memberRequest) throws Exception {
+    public void deleteMember(MemberRequest memberRequest) {
         memberService.deleteMember(memberRequest);
     }
-
 }

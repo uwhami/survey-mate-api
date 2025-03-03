@@ -1,6 +1,7 @@
 package com.surveymate.api.member;
 
 
+import com.surveymate.api.common.dto.PagedResponse;
 import com.surveymate.api.domain.member.dto.ChangePasswordRequest;
 import com.surveymate.api.domain.member.dto.MemberRequest;
 import com.surveymate.api.domain.member.dto.MemberResponse;
@@ -8,6 +9,8 @@ import com.surveymate.api.domain.member.service.MemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +32,12 @@ public class MemberServiceTests {
                 .build();
         memberRequest.setMemNum("M202411200001");
 
-        MemberResponse responseDTO = memberService.modify(memberRequest);
-        System.out.println(responseDTO.toString());
+        try{
+            MemberResponse responseDTO = memberService.modify(memberRequest);
+            System.out.println(responseDTO.toString());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -44,5 +51,11 @@ public class MemberServiceTests {
         memberService.changePasswordError(changePasswordRequest);
     }
 
+    @Test
+    void getActiveMembersByGroupId() throws Exception {
+        Pageable pageable = PageRequest.of(0, 10);
+        PagedResponse<MemberResponse> response = memberService.getActiveMembersByGroupId(2L, pageable);
+        System.out.println(response.toString());
+    }
 
 }

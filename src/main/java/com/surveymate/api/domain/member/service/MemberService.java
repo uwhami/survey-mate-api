@@ -1,11 +1,13 @@
 package com.surveymate.api.domain.member.service;
 
 
+import com.surveymate.api.common.dto.PagedResponse;
 import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
 import com.surveymate.api.domain.group.entity.Group;
 import com.surveymate.api.domain.member.dto.ChangePasswordRequest;
 import com.surveymate.api.domain.member.dto.MemberRequest;
 import com.surveymate.api.domain.member.dto.MemberResponse;
+import org.springframework.data.domain.Pageable;
 
 public interface MemberService {
 
@@ -32,4 +34,6 @@ public interface MemberService {
     void passwordReset(PasswordResetRequest request);
 
     void deleteMember(MemberRequest request);
+
+    PagedResponse<MemberResponse> getActiveMembersByGroupId(Long groupId, Pageable pageable);
 }
