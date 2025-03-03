@@ -116,5 +116,9 @@ public class Member extends BaseEntity implements UserDetails {
         return this.memStatus == MemberStatus.ACTIVE;
     }
 
+    public Long getGroupId() {
+        return group != null ? group.getGroupId() : null;
+    }
+
 
 }

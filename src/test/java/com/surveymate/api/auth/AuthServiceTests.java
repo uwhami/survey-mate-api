@@ -69,7 +69,7 @@ public class AuthServiceTests {
 
     @Test
     public void login() {
-        LoginRequest loginRequest = LoginRequest.builder().userId("test121001").password("1111").build();
+        LoginRequest loginRequest = LoginRequest.builder().userId("user").password("1234").build();
         try {
             Map<String, String> jwtResponse = authService.loginMember(loginRequest);
             for (Map.Entry<String, String> entry : jwtResponse.entrySet()) {
