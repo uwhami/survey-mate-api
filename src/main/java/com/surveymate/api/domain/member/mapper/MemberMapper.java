@@ -3,18 +3,22 @@ package com.surveymate.api.domain.member.mapper;
 import com.surveymate.api.domain.member.dto.MemberRequest;
 import com.surveymate.api.domain.member.dto.MemberResponse;
 import com.surveymate.api.domain.member.entity.Member;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface MemberMapper {
 
     @Mappings({
             @Mapping(target = "profileImageUri", ignore = true),
-            @Mapping(target = "userName", source = "userName")
+            @Mapping(target = "userName", source = "userName"),
+            @Mapping(target = "groupId", ignore = true)
     })
     MemberResponse toDTO(Member member);
+
+    @AfterMapping
+    default void setGroupId(@MappingTarget MemberResponse response, Member member) {
+        response.setGroupId(member.getGroup() != null ? member.getGroup().getGroupId() : null);
+    }
 
 
     @Mappings({

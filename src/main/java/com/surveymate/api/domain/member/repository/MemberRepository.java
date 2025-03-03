@@ -2,6 +2,8 @@ package com.surveymate.api.domain.member.repository;
 
 import com.surveymate.api.common.enums.MemberStatus;
 import com.surveymate.api.domain.member.entity.Member;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -37,5 +39,8 @@ public interface MemberRepository extends JpaRepository<Member, String> {
     int findPasswordErrorByUserId(String userId);
 
     String findUserIdByUserEmail(String email);
+
+    @Query("SELECT m FROM Member m WHERE m.group.groupId = :groupId AND m.memStatus = :status")
+    Page<Member> findActiveMembersByGroupId(@Param("groupId") Long groupId, @Param("status") MemberStatus status, Pageable pageable);
 
 }

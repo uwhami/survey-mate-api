@@ -34,6 +34,7 @@ public class GoogleController {
             }
 
             // Google API 호출
+            @SuppressWarnings("unchecked")
             Map<String, Object> userInfo = webClient.get()
                     .uri(GOOGLE_USERINFO_URL)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
