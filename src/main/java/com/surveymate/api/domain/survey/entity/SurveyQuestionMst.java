@@ -17,7 +17,6 @@ import lombok.Setter;
 public class SurveyQuestionMst extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String sqMstId; // 설문 마스터 ID (PK)
 
     @NotNull(message = "Title cannot be null")

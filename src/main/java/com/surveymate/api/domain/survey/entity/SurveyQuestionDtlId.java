@@ -11,10 +11,10 @@ import java.util.Objects;
 public class SurveyQuestionDtlId implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sqMstId", nullable = false)
-    private SurveyQuestionMst master; // 설문조사 마스터 ID
+    @JoinColumn(name = "sqMstId", nullable = false) // ⚠ FK 명확하게 매핑
+    private SurveyQuestionMst master; // 설문조사 마스터 ID (PK의 일부)
 
-    private Integer questionDtlOrder; // 질문 순서 (복합 키)
+    private Integer questionDtlOrder; // 질문 순서 (PK의 일부)
 
     public SurveyQuestionDtlId() {}
 
@@ -23,7 +23,6 @@ public class SurveyQuestionDtlId implements Serializable {
         this.questionDtlOrder = questionDtlOrder;
     }
 
-    // equals & hashCode 오버라이드 (필수)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
