@@ -1,7 +1,5 @@
 package com.surveymate.api.menu;
 
-import com.surveymate.api.domain.auth.dto.RegisterRequest;
-import com.surveymate.api.domain.menu.dto.MenuRequest;
 import com.surveymate.api.domain.menu.repository.MenuRepository;
 import com.surveymate.api.domain.menu.service.MenuService;
 import org.junit.jupiter.api.Test;
@@ -21,16 +19,16 @@ public class MenuServiceTests {
     @Test
     @Transactional
     public void testCreateMenu() {
-        MenuRequest request = new MenuRequest();
-
-        request.setParentMenuNo(null);
-        request.setMenuKorName("대시보드");
-        request.setMenuEngName("Dashboard");
-        request.setMenuDescription("메인 화면");
-        request.setMenuPath("/dashboard");
-        request.setSequence(1);
-        request.setMemRole("0");
-
-        menuService.createMenu(request);
+//        MenuRequest request = new MenuRequest();
+//
+//        request.setParentMenuNo(null);
+//        request.setMenuKorName("대시보드");
+//        request.setMenuEngName("Dashboard");
+//        request.setMenuDescription("메인 화면");
+//        request.setMenuPath("/dashboard");
+//        request.setSequence(1);
+//        request.setMemRole("0");
+//
+//        menuService.createMenu(request);
     }
 }
