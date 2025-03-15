@@ -34,8 +34,8 @@ public class SurveyServiceTests {
         surveyQuestionMstRepository.save(mst);
 
         SurveyQuestionDtlId dtlId = new SurveyQuestionDtlId(mst, 1);
-        SurveyQuestionType type1 = new SurveyQuestionType("SQT001", "RADIO", "단일 선택형 질문");
-        SurveyQuestionDtl dtl = new SurveyQuestionDtl(dtlId, type1, "질문1");
+//        SurveyQuestionType type1 = new SurveyQuestionType("SQT001", "RADIO", "단일 선택형 질문");
+        SurveyQuestionDtl dtl = new SurveyQuestionDtl(dtlId, "SQT001", "질문1");
         surveyQuestionDtlRepository.save(dtl);
 
         SurveyQuestionSdtlId sdtlId = new SurveyQuestionSdtlId(dtl, 1);
