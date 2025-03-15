@@ -1,20 +1,21 @@
 package com.surveymate.api.domain.survey.entity;
 
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
 public class SurveyQuestionSdtlId implements Serializable {
 
-    @ManyToOne(fetch = FetchType.LAZY) // 외래 키 관계
-    @JoinColumn(name = "sqDtlId", nullable = false)
-    private SurveyQuestionDtl sqDtl;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name = "sqMstId", referencedColumnName = "sqMstId", nullable = false),
+            @JoinColumn(name = "questionDtlOrder", referencedColumnName = "questionDtlOrder", nullable = false)
+    })
+    private SurveyQuestionDtl sqDtl; // ⚠ SurveyQuestionDtl의 복합키를 정확하게 참조
 
-    private Integer questionSdtlOrder;
+    private Integer questionSdtlOrder; // 질문 상세 순서 (PK의 일부)
 
     public SurveyQuestionSdtlId() {}
 
@@ -23,7 +24,6 @@ public class SurveyQuestionSdtlId implements Serializable {
         this.questionSdtlOrder = questionSdtlOrder;
     }
 
-    // equals & hashCode 오버라이드 (필수)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
