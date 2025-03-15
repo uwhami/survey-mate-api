@@ -9,6 +9,7 @@ import com.surveymate.api.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class GroupController {
         return groupService.selectGroupByUserId(groupId);
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER')")
     @PutMapping()
     public GroupReponse updateGroup(@RequestBody GroupRequest request) throws Exception{
         if(request.getGroupId() == null) {
