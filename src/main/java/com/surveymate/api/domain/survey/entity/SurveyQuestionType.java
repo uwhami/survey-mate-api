@@ -1,5 +1,6 @@
 package com.surveymate.api.domain.survey.entity;
 
+import com.surveymate.api.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -11,11 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "survey_question_type")
-public class SurveyQuestionType {
+public class SurveyQuestionType extends BaseEntity {
 
     @Id
     @Column(nullable = false, unique = true)
-    private String id;
+    private String typeId;
 
     @Column(nullable = false, unique = true)
     private String name; // 질문 유형 이름 (예: RADIO, CHECKBOX, TEXT)
@@ -23,8 +24,8 @@ public class SurveyQuestionType {
     @Column(nullable = false)
     private String description; // 질문 유형 설명 (예: "단일 선택형 질문")
 
-    public SurveyQuestionType(String id, String name, String description) {
-        this.id = id;
+    public SurveyQuestionType(String typeId, String name, String description) {
+        this.typeId = typeId;
         this.name = name;
         this.description = description;
     }
