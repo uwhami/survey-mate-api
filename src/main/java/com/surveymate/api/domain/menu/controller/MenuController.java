@@ -19,30 +19,25 @@ public class MenuController {
 
     private final MenuService menuService;
 
+    //메뉴 레이아웃 조회
+    @GetMapping("/getMenusByRole/{role}")
+    public ResponseEntity<List<MenuResponse>> getMenusByRole(@PathVariable String  role) {
+        return ResponseEntity.ok(menuService.getMenusByRole(role));
+    }
+    //메뉴생성
     @PostMapping("/createMenu")
     public ResponseEntity<String> createMenu(@RequestBody MenuRequest menuRequest) {
         menuService.createMenu(menuRequest);
         return ResponseEntity.ok("Menu created successfully.");
     }
-
+    //모든 메뉴 조회
     @GetMapping("/getAllMenus")
     public ResponseEntity<List<MenuResponse>> getAllMenus() {
         return ResponseEntity.ok(menuService.getAllMenus());
     }
 
-    @GetMapping("/getAllMenusByRole")
-    public ResponseEntity<List<MenuResponse>> getAllMenusByRole(@RequestBody MenuRequest menuRequest) {
-        MemberRole role = MemberRole.fromAuthority(menuRequest.getMemRole());
-        return ResponseEntity.ok(menuService.getAllMenusByRole(role));
-    }
 
-    @GetMapping("/getMenuHierarchy")
-    public ResponseEntity<List<MenuResponse>> getMenuHierarchy() {
-        return ResponseEntity.ok(menuService.getMenuHierarchy());
-    }
-
-
-    @PutMapping("/updateMenu/{menuNo}")
+    @PutMapping("/update/{menuNo}")
     public ResponseEntity<String> updateMenu(@PathVariable String menuNo, @RequestBody MenuRequest menuRequest) {
         menuService.updateMenu(menuNo, menuRequest);
         return ResponseEntity.ok("Menu updated successfully.");
@@ -54,8 +49,5 @@ public class MenuController {
         return ResponseEntity.ok("Menu deleted successfully.");
     }
 
-    @GetMapping("/getMenusByRole/{role}")
-    public ResponseEntity<List<MenuResponse>> getMenusByRole(@PathVariable String  role) {
-        return ResponseEntity.ok(menuService.getMenusByRole(role));
-    }
+
 }
