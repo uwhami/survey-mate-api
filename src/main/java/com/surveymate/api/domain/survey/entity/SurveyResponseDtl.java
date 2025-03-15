@@ -1,6 +1,7 @@
 package com.surveymate.api.domain.survey.entity;
 
 
+import com.surveymate.api.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "survey_response_dtl")
 @Getter
 @NoArgsConstructor
-public class SurveyResponseDtl {
+public class SurveyResponseDtl extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,21 +31,4 @@ public class SurveyResponseDtl {
     @JoinColumn(name = "option_id", nullable = true)
     private SurveyQuestionSdtl option; // 선택된 옵션 (객관식의 경우)
 
-    @Column(name = "create_date", nullable = false, updatable = false)
-    private java.time.LocalDateTime createDate;
-
-    @Column(name = "update_date")
-    private java.time.LocalDateTime updateDate;
-
-
-    @PrePersist
-    protected void onCreate() {
-        this.createDate = java.time.LocalDateTime.now();
-        this.updateDate = java.time.LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updateDate = java.time.LocalDateTime.now();
-    }
 }

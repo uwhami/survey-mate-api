@@ -11,8 +11,6 @@ public interface MenuService {
 
     void createMenu(MenuRequest menuRequest);
     List<MenuResponse> getAllMenus();
-    List<MenuResponse> getAllMenusByRole(MemberRole role);
-    List<MenuResponse> getMenuHierarchy();
     List<MenuResponse> getMenusByRole(String memberRole);
     void updateMenu(String menuNo, MenuRequest menuRequest);
     void deleteMenu(String menuNo);

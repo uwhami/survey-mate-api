@@ -1,5 +1,6 @@
 package com.surveymate.api.domain.survey.entity;
 
+import com.surveymate.api.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "survey_response_mst")
 @Getter
 @NoArgsConstructor
-public class SurveyResponseMst {
+public class SurveyResponseMst extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,21 +23,4 @@ public class SurveyResponseMst {
     @Column(nullable = false)
     private Long userId; // 사용자 ID
 
-    @Column(name = "create_date", nullable = false, updatable = false)
-    private java.time.LocalDateTime createDate;
-
-    @Column(name = "update_date")
-    private java.time.LocalDateTime updateDate;
-
-
-    @PrePersist
-    protected void onCreate() {
-        this.createDate = java.time.LocalDateTime.now();
-        this.updateDate = java.time.LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updateDate = java.time.LocalDateTime.now();
-    }
 }
