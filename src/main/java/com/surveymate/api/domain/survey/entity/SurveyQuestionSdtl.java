@@ -11,18 +11,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SurveyQuestionSdtl extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long sqSdtlId; // 선택지 ID (PK)
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sqDtlId", nullable = false)
-    private SurveyQuestionDtl sqDtl; // 질문 디테일과의 관계
+    @EmbeddedId
+    private SurveyQuestionSdtlId id; // 복합 키
 
     @Column(nullable = false)
     private String optionText; // 선택지 내용
 
-    @Column(nullable = false)
-    private Integer questionSdtlOrder; // 선택지 순서
-
+    public SurveyQuestionSdtl(SurveyQuestionSdtlId id, String optionText) {
+        this.id = id;
+        this.optionText = optionText;
+    }
 }
