@@ -1,7 +1,6 @@
 package com.surveymate.api.domain.survey.entity;
 
 import com.surveymate.api.common.entity.BaseEntity;
-import com.surveymate.api.domain.survey.repository.SurveyQuestionMstRepository;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
