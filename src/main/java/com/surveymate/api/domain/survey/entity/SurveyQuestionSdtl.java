@@ -1,5 +1,7 @@
 package com.surveymate.api.domain.survey.entity;
 
+import com.surveymate.api.common.entity.BaseEntity;
+import com.surveymate.api.domain.survey.repository.SurveyQuestionDtlRepository;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,15 +10,15 @@ import lombok.NoArgsConstructor;
 @Table(name = "survey_question_sdtl")
 @Getter
 @NoArgsConstructor
-public class SurveyQuestionSdtl {
+public class SurveyQuestionSdtl extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 선택지 ID (PK)
+    private Long sqSdtlId; // 선택지 ID (PK)
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "questionDtl_id", nullable = false)
-    private SurveyQuestionDtl detail; // 질문 디테일과의 관계
+    @JoinColumn(name = "sqDtlId", nullable = false)
+    private SurveyQuestionDtl sqDtl; // 질문 디테일과의 관계
 
     @Column(nullable = false)
     private String optionText; // 선택지 내용
@@ -24,21 +26,4 @@ public class SurveyQuestionSdtl {
     @Column(nullable = false)
     private Integer questionSdtlOrder; // 선택지 순서
 
-    @Column(name = "create_date", nullable = false, updatable = false)
-    private java.time.LocalDateTime createDate;
-
-    @Column(name = "update_date")
-    private java.time.LocalDateTime updateDate;
-
-
-    @PrePersist
-    protected void onCreate() {
-        this.createDate = java.time.LocalDateTime.now();
-        this.updateDate = java.time.LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updateDate = java.time.LocalDateTime.now();
-    }
 }

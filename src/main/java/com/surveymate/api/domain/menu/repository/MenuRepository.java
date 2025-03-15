@@ -14,16 +14,6 @@ import java.util.List;
 
 public interface MenuRepository extends JpaRepository<Menu, String> {
 
-    // 최상위 메뉴 조회
-    List<Menu> findByParentMenuNoIsNullOrderBySequence();
-
-    // 특정 부모 메뉴의 자식 메뉴 조회
-    List<Menu> findByParentMenuNoOrderBySequence(String parentMenuNo);
-
-    // 사용자 권한에 따른 메뉴 조회
-    @Query("SELECT m FROM Menu m WHERE m.memRole = :role AND m.useYn = 'Y'")
-    List<Menu> findByRole(@Param("role") MemberRole role);
-
     // 특정 접두사로 시작하는 메뉴 번호 중 가장 큰 번호 조회
     @Query("SELECT MAX(m.menuNo) FROM Menu m WHERE m.menuNo LIKE 'MN%' AND m.parentMenuNo IS NULL")
     String findMaxMenuNoByPrefix(@Param("prefix") String prefix);
@@ -33,6 +23,10 @@ public interface MenuRepository extends JpaRepository<Menu, String> {
     String findMaxMenuNoByParentMenuNo(@Param("parentMenuNo") String parentMenuNo);
 
     // 관리자가 사용자 권한기준으로 사용중인 메뉴 조회 (메뉴 레이아웃 조회)
-    @Query("SELECT m FROM Menu m WHERE m.memRole = :role AND m.useYn = 'Y'")
+    @Query("SELECT m FROM Menu m WHERE m.memRole = :role AND m.useYn = 'Y' ORDER BY m.menuNo,m.sequence")
     List<Menu> findByMemRole(@Param("role") MemberRole role);
+
+    // 모든 메뉴 조회
+    @Query("SELECT m FROM Menu m ORDER BY m.menuNo,m.sequence")
+    List<Menu> findAllMenus();
 }

@@ -4,9 +4,9 @@ import com.surveymate.api.common.enums.MemberRole;
 import com.surveymate.api.domain.menu.dto.MenuRequest;
 import com.surveymate.api.domain.menu.dto.MenuResponse;
 import com.surveymate.api.domain.menu.entity.Menu;
+import com.surveymate.api.domain.menu.exception.MenuNotFoundException;
 import com.surveymate.api.domain.menu.mapper.MenuMapper;
 import com.surveymate.api.domain.menu.repository.MenuRepository;
-import com.surveymate.api.domain.menu.service.MenuService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,80 +27,21 @@ public class MenuServiceImpl implements MenuService {
         this.menuMapper = menuMapper;
     }
 
-    @Override
-    @Transactional
-    public void createMenu(MenuRequest menuRequest) {
-
-        // 부모 메뉴 ID가 null이 아닌 경우, 존재 여부 확인
-        if (menuRequest.getParentMenuNo() != null) {
-            boolean parentMenuExists = menuRepository.existsById(menuRequest.getParentMenuNo());
-            if (!parentMenuExists) {
-                throw new IllegalArgumentException("부모 메뉴 ID가 존재하지 않습니다: " + menuRequest.getParentMenuNo());
-            }
-        }
-
-        Menu menu = Menu.builder()
-                .menuNo(generateMenuNo(menuRequest)) // 고유 메뉴 번호 생성
-                .parentMenuNo(menuRequest.getParentMenuNo())
-                .menuKorName(menuRequest.getMenuKorName())
-                .menuEngName(menuRequest.getMenuEngName())
-                .menuDescription(menuRequest.getMenuDescription())
-                .menuPath(menuRequest.getMenuPath())
-                .sequence(menuRequest.getSequence())
-                .memRole(MemberRole.fromAuthority(menuRequest.getMemRole()))
-                .useYn("Y")
-                .build();
-        menuRepository.save(menu);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<MenuResponse> getAllMenus() {
-        return menuRepository.findAll().stream()
-                .map(menuMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<MenuResponse> getAllMenusByRole(MemberRole role) {
-        return menuRepository.findByMemRole(role).stream()
-                .map(menuMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<MenuResponse> getMenuHierarchy() {
-        List<Menu> topMenus = menuRepository.findByParentMenuNoIsNullOrderBySequence();
-        return topMenus.stream()
-                .map(this::buildMenuHierarchy)
-                .collect(Collectors.toList());
-    }
-
-    private MenuResponse buildMenuHierarchy(Menu parentMenu) {
-        MenuResponse response = menuMapper.toDTO(parentMenu);
-        List<Menu> childMenus = menuRepository.findByParentMenuNoOrderBySequence(parentMenu.getMenuNo());
-        response.setSubMenus(childMenus.stream()
-                .map(this::buildMenuHierarchy)
-                .collect(Collectors.toList()));
-        return response;
-    }
-
+    // 관리자가 사용자 권한기준으로 사용중인 메뉴 조회 (메뉴 레이아웃 조회)
     @Override
     @Transactional(readOnly = true)
     public List<MenuResponse> getMenusByRole(String memberRole) {
         List<Menu> menus = menuRepository.findByMemRole(MemberRole.fromAuthority(memberRole));
 
-        /*return menuRepository.findByMemRole(MemberRole.fromAuthority(memberRole)).stream()
-                .map(menuMapper::toDTO)
-                .collect(Collectors.toList());*/
-        // 2. DTO로 매핑
+        // DTO로 매핑
         List<MenuResponse> menuResponses = menus.stream()
                 .map(menuMapper::toDTO)
                 .collect(Collectors.toList());
+        if(menuResponses.isEmpty()) {
+            throw new MenuNotFoundException();
+        }
 
-        // 3. 메뉴 트리 재구성
+        // 메뉴 트리 재구성
         return buildMenuTree(menuResponses);
     }
 
@@ -141,6 +82,46 @@ public class MenuServiceImpl implements MenuService {
                 buildSubMenus(child, menuMap);
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public void createMenu(MenuRequest menuRequest) {
+
+        // 부모 메뉴 ID가 null이 아닌 경우, 존재 여부 확인
+        if (menuRequest.getParentMenuNo() != null) {
+            boolean parentMenuExists = menuRepository.existsById(menuRequest.getParentMenuNo());
+            if (!parentMenuExists) {
+                throw new IllegalArgumentException("부모 메뉴 ID가 존재하지 않습니다: " + menuRequest.getParentMenuNo());
+            }
+        }
+
+        Menu menu = Menu.builder()
+                .menuNo(generateMenuNo(menuRequest)) // 고유 메뉴 번호 생성
+                .parentMenuNo(menuRequest.getParentMenuNo())
+                .menuKorName(menuRequest.getMenuKorName())
+                .menuEngName(menuRequest.getMenuEngName())
+                .menuDescription(menuRequest.getMenuDescription())
+                .menuPath(menuRequest.getMenuPath())
+                .sequence(menuRequest.getSequence())
+                .memRole(MemberRole.fromAuthority(menuRequest.getMemRole()))
+                .useYn("Y")
+                .build();
+        menuRepository.save(menu);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MenuResponse> getAllMenus() {
+        List<Menu> menus = menuRepository.findAllMenus();
+
+        // DTO로 매핑
+        List<MenuResponse> menuResponses = menus.stream()
+                .map(menuMapper::toDTO)
+                .collect(Collectors.toList());
+
+        // 메뉴 트리 재구성
+        return buildMenuTree(menuResponses);
     }
 
     @Override
