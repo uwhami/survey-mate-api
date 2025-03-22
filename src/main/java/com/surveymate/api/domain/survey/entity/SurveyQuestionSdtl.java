@@ -19,8 +19,16 @@ public class SurveyQuestionSdtl extends BaseEntity {
     @Column(nullable = false)
     private String optionText; // 선택지 내용
 
-    public SurveyQuestionSdtl(SurveyQuestionSdtlId id, String optionText) {
-        this.id = id;
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(name = "sqMstId", referencedColumnName = "sqMstId", nullable = false, insertable = false, updatable = false),
+            @JoinColumn(name = "questionDtlOrder", referencedColumnName = "questionDtlOrder", nullable = false, insertable = false, updatable = false)
+    })
+    private SurveyQuestionDtl surveyQuestionDtl; // 복합 키에 맞는 외래 키 설정
+
+
+    public SurveyQuestionSdtl(SurveyQuestionDtl surveyQuestionDtl, int questionSdtlOrder, String optionText) {
+        this.id = new SurveyQuestionSdtlId(surveyQuestionDtl, questionSdtlOrder);
         this.optionText = optionText;
     }
 }
