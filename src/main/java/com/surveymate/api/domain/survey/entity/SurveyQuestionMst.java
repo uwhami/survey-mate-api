@@ -38,7 +38,7 @@ public class SurveyQuestionMst extends BaseEntity {
     @Column
     private String groupId; //그룹아이디
 
-    @OneToMany(mappedBy = "SurveyQuestionMst", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "surveyQuestionMst", cascade = CascadeType.ALL)
     private List<SurveyQuestionDtl> questions = new ArrayList<>();  // 설문에 포함된 질문들
 
 
