@@ -27,10 +27,16 @@ public class SurveyQuestionDtl extends BaseEntity {
     @Column(nullable = false)
     private String questionText; // 질문 내용
 
-    @OneToMany(mappedBy = "SurveyQuestionDtl", cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "sqMstId", insertable = false, updatable = false)
+    private SurveyQuestionMst surveyQuestionMst;  // 'surveyQuestionMst'라는 필드를 참조
+
+    @OneToMany(mappedBy = "surveyQuestionDtl", cascade = CascadeType.ALL)
     private List<SurveyQuestionSdtl> options = new ArrayList<>();  // 설문에 포함된 질문들
 
-    public SurveyQuestionDtl(SurveyQuestionDtlId dtlId, String sqt001, String 질문1) {
-        super();
+    public SurveyQuestionDtl(SurveyQuestionMst surveyQuestionMst, int questionDtlOrder, String typeId, String questionText) {
+        this.id = new SurveyQuestionDtlId(surveyQuestionMst, questionDtlOrder);
+        this.typeId = typeId;
+        this.questionText = questionText;
     }
 }
