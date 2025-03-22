@@ -1,5 +1,6 @@
 package com.surveymate.api.domain.survey.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class SurveyQuestionMstRequest {
 
     @NotNull(message = "Title cannot be null")
@@ -21,4 +23,6 @@ public class SurveyQuestionMstRequest {
     private String description; // 설문 설명
 
     private List<SurveyQuestionDtlRequest> questions; // 질문 목록
+
+    private String groupId; //그룹아이디
 }
