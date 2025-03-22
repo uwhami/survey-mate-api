@@ -4,10 +4,12 @@ import com.surveymate.api.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "survey_question_sdtl")
 @Getter
+@Setter
 @NoArgsConstructor
 public class SurveyQuestionSdtl extends BaseEntity {
 

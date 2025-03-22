@@ -4,9 +4,13 @@ import com.surveymate.api.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -14,6 +18,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class SurveyQuestionMst extends BaseEntity {
 
     @Id
@@ -32,6 +37,9 @@ public class SurveyQuestionMst extends BaseEntity {
 
     @Column
     private String groupId; //그룹아이디
+
+    @OneToMany(mappedBy = "SurveyQuestionMst", cascade = CascadeType.ALL)
+    private List<SurveyQuestionDtl> questions = new ArrayList<>();  // 설문에 포함된 질문들
 
 
 }

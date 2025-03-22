@@ -1,11 +1,15 @@
 package com.surveymate.api.domain.survey.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
+@Getter
+@Setter
 public class SurveyQuestionSdtlId implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
