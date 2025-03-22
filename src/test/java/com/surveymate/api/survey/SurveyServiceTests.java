@@ -26,6 +26,7 @@ public class SurveyServiceTests {
 
     @Test
     public void dataInsert(){
+        // 설문 마스터 저장
         SurveyQuestionMst mst = new SurveyQuestionMst();
         mst.setSqMstId(codeGenerator.generateCode("SQ01"));
         mst.setUrl("test012345");
@@ -33,6 +34,7 @@ public class SurveyServiceTests {
         mst.setTitle("QUESTION TEST");
         surveyQuestionMstRepository.save(mst);
 
+        // 설문 질문 저장
         SurveyQuestionDtlId dtlId = new SurveyQuestionDtlId(mst, 1);
         SurveyQuestionDtlId dtlId2 = new SurveyQuestionDtlId(mst, 2);
         SurveyQuestionDtl dtl = new SurveyQuestionDtl(dtlId, "SQT001", "질문1");
@@ -40,20 +42,16 @@ public class SurveyServiceTests {
         surveyQuestionDtlRepository.save(dtl);
         surveyQuestionDtlRepository.save(dtl2);
 
-        SurveyQuestionSdtlId sdtlId = new SurveyQuestionSdtlId(dtl, 1);
-        SurveyQuestionSdtlId sdtlId2 = new SurveyQuestionSdtlId(dtl, 2);
-        SurveyQuestionSdtl sdtl = new SurveyQuestionSdtl(sdtlId, "radio1");
-        SurveyQuestionSdtl sdtl2 = new SurveyQuestionSdtl(sdtlId2, "radio2");
+        // 설문 선택지 저장
+        SurveyQuestionSdtl sdtl = new SurveyQuestionSdtl(new SurveyQuestionSdtlId(dtl, 1), "radio1");
+        SurveyQuestionSdtl sdtl2 = new SurveyQuestionSdtl(new SurveyQuestionSdtlId(dtl, 2), "radio2");
         surveyQuestionSdtlRepository.save(sdtl);
         surveyQuestionSdtlRepository.save(sdtl2);
 
-        SurveyQuestionSdtlId sdtlId2_1 = new SurveyQuestionSdtlId(dtl2, 1);
-        SurveyQuestionSdtlId sdtlId2_2 = new SurveyQuestionSdtlId(dtl2, 2);
-        SurveyQuestionSdtlId sdtlId2_3 = new SurveyQuestionSdtlId(dtl2, 2);
-
-        SurveyQuestionSdtl sdtl2_1 = new SurveyQuestionSdtl(sdtlId2_1, "check1");
-        SurveyQuestionSdtl sdtl2_2 = new SurveyQuestionSdtl(sdtlId2_2, "check2");
-        SurveyQuestionSdtl sdtl2_3 = new SurveyQuestionSdtl(sdtlId2_3, "check3");
+        // 두 번째 설문 질문에 대한 선택지 저장
+        SurveyQuestionSdtl sdtl2_1 = new SurveyQuestionSdtl(new SurveyQuestionSdtlId(dtl2, 1), "check1");
+        SurveyQuestionSdtl sdtl2_2 = new SurveyQuestionSdtl(new SurveyQuestionSdtlId(dtl2, 2), "check2");
+        SurveyQuestionSdtl sdtl2_3 = new SurveyQuestionSdtl(new SurveyQuestionSdtlId(dtl2, 3), "check3");
         surveyQuestionSdtlRepository.save(sdtl2_1);
         surveyQuestionSdtlRepository.save(sdtl2_2);
         surveyQuestionSdtlRepository.save(sdtl2_3);
