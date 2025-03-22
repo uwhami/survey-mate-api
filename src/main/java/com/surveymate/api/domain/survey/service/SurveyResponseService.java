@@ -1,10 +1,9 @@
 package com.surveymate.api.domain.survey.service;
 
-import com.surveymate.api.domain.survey.dto.SurveyResponseForm;
+import com.surveymate.api.domain.survey.dto.SurveyQuestionMstResponse;
 
-import java.util.List;
 
 public interface SurveyResponseService {
 
-    List<SurveyResponseForm> getSurveyForm(String surveyUrl);
+    SurveyQuestionMstResponse getSurveyForm(String surveyUrl);
 }
