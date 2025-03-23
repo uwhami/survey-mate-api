@@ -1,7 +1,9 @@
 package com.surveymate.api.domain.survey.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -10,35 +12,31 @@ import java.util.Objects;
 @Embeddable
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SurveyQuestionSdtlId implements Serializable {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
-            @JoinColumn(name = "sqMstId", referencedColumnName = "sqMstId", nullable = false),
-            @JoinColumn(name = "questionDtlOrder", referencedColumnName = "questionDtlOrder", nullable = false)
-    })
-    private SurveyQuestionDtl sqDtl; // ⚠ SurveyQuestionDtl의 복합키를 정확하게 참조
+    @Column(name = "sq_mst_id")
+    private String sqMstId;
 
-    private Integer questionSdtlOrder; // 질문 상세 순서 (PK의 일부)
+    @Column(name = "question_dtl_order")
+    private Integer questionDtlOrder;
 
-    public SurveyQuestionSdtlId() {}
-
-    public SurveyQuestionSdtlId(SurveyQuestionDtl sqDtl, Integer questionSdtlOrder) {
-        this.sqDtl = sqDtl;
-        this.questionSdtlOrder = questionSdtlOrder;
-    }
+    @Column(name = "question_sdtl_order")
+    private Integer questionSdtlOrder;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof SurveyQuestionSdtlId)) return false;
         SurveyQuestionSdtlId that = (SurveyQuestionSdtlId) o;
-        return Objects.equals(sqDtl, that.sqDtl) &&
+        return Objects.equals(sqMstId, that.sqMstId) &&
+                Objects.equals(questionDtlOrder, that.questionDtlOrder) &&
                 Objects.equals(questionSdtlOrder, that.questionSdtlOrder);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sqDtl, questionSdtlOrder);
+        return Objects.hash(sqMstId, questionDtlOrder, questionSdtlOrder);
     }
 }

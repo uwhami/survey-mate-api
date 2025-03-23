@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+
+
 @SpringBootTest
 public class SurveyServiceTests {
 
@@ -25,38 +27,43 @@ public class SurveyServiceTests {
     CodeGenerator codeGenerator;
 
     @Test
-    public void dataInsert(){
+    public void dataInsert() {
         // 설문 마스터 저장
+        String sqMstId = codeGenerator.generateCode("SQ01");
         SurveyQuestionMst mst = new SurveyQuestionMst();
-        mst.setSqMstId(codeGenerator.generateCode("SQ01"));
+        mst.setSqMstId(sqMstId);
         mst.setUrl("test012345");
         mst.setDescription("Test Description");
         mst.setTitle("QUESTION TEST");
         surveyQuestionMstRepository.save(mst);
 
-        // 설문 질문 저장
-        SurveyQuestionDtlId dtlId = new SurveyQuestionDtlId();
-        SurveyQuestionDtl dtl = new SurveyQuestionDtl(mst, 1, "SQT001", "질문1");
-        SurveyQuestionDtl dtl2 = new SurveyQuestionDtl(mst, 2, "SQT001", "질문2");
-        surveyQuestionDtlRepository.save(dtl);
+        // 질문1 저장
+        SurveyQuestionDtlId dtlId1 = new SurveyQuestionDtlId(sqMstId, 1);
+        SurveyQuestionDtl dtl1 = new SurveyQuestionDtl();
+        dtl1.setId(dtlId1);
+        dtl1.setSurveyQuestionMst(mst);
+        dtl1.setTypeId("SQT001");
+        dtl1.setQuestionText("질문1");
+        surveyQuestionDtlRepository.save(dtl1);
+
+        // 질문2 저장
+        SurveyQuestionDtlId dtlId2 = new SurveyQuestionDtlId(sqMstId, 2);
+        SurveyQuestionDtl dtl2 = new SurveyQuestionDtl();
+        dtl2.setId(dtlId2);
+        dtl2.setSurveyQuestionMst(mst);
+        dtl2.setTypeId("SQT001");
+        dtl2.setQuestionText("질문2");
         surveyQuestionDtlRepository.save(dtl2);
 
-        // 설문 선택지 저장
-        SurveyQuestionSdtl sdtl = new SurveyQuestionSdtl(dtl, 1, "radio1");
-        SurveyQuestionSdtl sdtl2 = new SurveyQuestionSdtl(dtl, 2, "radio2");
-        surveyQuestionSdtlRepository.save(sdtl);
-        surveyQuestionSdtlRepository.save(sdtl2);
+        // 질문1의 선택지 저장
+        surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl1, 1, "radio1"));
+        surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl1, 2, "radio2"));
 
-        // 두 번째 설문 질문에 대한 선택지 저장
-        SurveyQuestionSdtl sdtl2_1 = new SurveyQuestionSdtl(dtl2, 1, "check1");
-        SurveyQuestionSdtl sdtl2_2 = new SurveyQuestionSdtl(dtl2, 2, "check2");
-        SurveyQuestionSdtl sdtl2_3 = new SurveyQuestionSdtl(dtl2, 3, "check3");
-        surveyQuestionSdtlRepository.save(sdtl2_1);
-        surveyQuestionSdtlRepository.save(sdtl2_2);
-        surveyQuestionSdtlRepository.save(sdtl2_3);
+        // 질문2의 선택지 저장
+        surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl2, 1, "check1"));
+        surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl2, 2, "check2"));
+        surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl2, 3, "check3"));
     }
-
-
-    }
+}
 
 
