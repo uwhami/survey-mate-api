@@ -22,24 +22,19 @@ import java.util.List;
 public class SurveyQuestionMst extends BaseEntity {
 
     @Id
-    private String sqMstId; // 설문 마스터 ID (PK)
-
-    @NotNull(message = "Title cannot be null")
-    @Size(min = 3, max = 255, message = "Title must be between 3 and 255 characters")
-    @Column(nullable = false)
-    private String title; // 설문 제목
-
-    @Column
-    private String description; // 설문 설명 (nullable 기본값)
+    @Column(name = "sq_mst_id")
+    private String sqMstId;
 
     @Column(nullable = false)
-    private String url; //URL(SHA-256)
+    private String title;
 
-    @Column
-    private String groupId; //그룹아이디
+    private String description;
 
-    @OneToMany(mappedBy = "surveyQuestionMst", cascade = CascadeType.ALL)
-    private List<SurveyQuestionDtl> questions = new ArrayList<>();  // 설문에 포함된 질문들
+    @Column(nullable = false)
+    private String url;
 
+    private String groupId;
 
+    @OneToMany(mappedBy = "surveyQuestionMst", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SurveyQuestionDtl> questions = new ArrayList<>();
 }
