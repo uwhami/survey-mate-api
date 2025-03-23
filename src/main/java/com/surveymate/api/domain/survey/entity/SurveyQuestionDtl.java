@@ -19,23 +19,24 @@ import java.util.List;
 public class SurveyQuestionDtl extends BaseEntity {
 
     @EmbeddedId
-    private SurveyQuestionDtlId id; // 복합 키
+    private SurveyQuestionDtlId id;
 
-    @Column(nullable = false)
-    private String typeId; // 질문 유형 ID (FK to SurveyQuestionType)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sq_mst_id", insertable = false, updatable = false)
+    private SurveyQuestionMst surveyQuestionMst;
 
-    @Column(nullable = false)
-    private String questionText; // 질문 내용
+    @Column(name = "type_id", nullable = false)
+    private String typeId;
 
-    @ManyToOne
-    @JoinColumn(name = "sqMstId", insertable = false, updatable = false)
-    private SurveyQuestionMst surveyQuestionMst;  // 'surveyQuestionMst'라는 필드를 참조
+    @Column(name = "question_text", nullable = false)
+    private String questionText;
 
-    @OneToMany(mappedBy = "surveyQuestionDtl", cascade = CascadeType.ALL)
-    private List<SurveyQuestionSdtl> options = new ArrayList<>();  // 설문에 포함된 질문들
+    @OneToMany(mappedBy = "surveyQuestionDtl", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SurveyQuestionSdtl> options = new ArrayList<>();
 
-    public SurveyQuestionDtl(SurveyQuestionMst surveyQuestionMst, int questionDtlOrder, String typeId, String questionText) {
-        this.id = new SurveyQuestionDtlId(surveyQuestionMst, questionDtlOrder);
+    public SurveyQuestionDtl(SurveyQuestionMst mst, int order, String typeId, String questionText) {
+        this.id = new SurveyQuestionDtlId(mst.getSqMstId(), order);
+        this.surveyQuestionMst = mst;
         this.typeId = typeId;
         this.questionText = questionText;
     }
