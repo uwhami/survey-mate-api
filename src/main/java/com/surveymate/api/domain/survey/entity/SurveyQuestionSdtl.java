@@ -14,21 +14,25 @@ import lombok.Setter;
 public class SurveyQuestionSdtl extends BaseEntity {
 
     @EmbeddedId
-    private SurveyQuestionSdtlId id; // 복합 키
+    private SurveyQuestionSdtlId id;
 
-    @Column(nullable = false)
-    private String optionText; // 선택지 내용
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-            @JoinColumn(name = "sqMstId", referencedColumnName = "sqMstId", nullable = false, insertable = false, updatable = false),
-            @JoinColumn(name = "questionDtlOrder", referencedColumnName = "questionDtlOrder", nullable = false, insertable = false, updatable = false)
+            @JoinColumn(name = "sq_mst_id", referencedColumnName = "sq_mst_id", insertable = false, updatable = false),
+            @JoinColumn(name = "question_dtl_order", referencedColumnName = "question_dtl_order", insertable = false, updatable = false)
     })
-    private SurveyQuestionDtl surveyQuestionDtl; // 복합 키에 맞는 외래 키 설정
+    private SurveyQuestionDtl surveyQuestionDtl;
 
+    @Column(name = "option_text", nullable = false)
+    private String optionText;
 
-    public SurveyQuestionSdtl(SurveyQuestionDtl surveyQuestionDtl, int questionSdtlOrder, String optionText) {
-        this.id = new SurveyQuestionSdtlId(surveyQuestionDtl, questionSdtlOrder);
+    public SurveyQuestionSdtl(SurveyQuestionDtl dtl, int questionSdtlOrder, String optionText) {
+        this.id = new SurveyQuestionSdtlId(
+                dtl.getId().getSqMstId(),
+                dtl.getId().getQuestionDtlOrder(),
+                questionSdtlOrder
+        );
+        this.surveyQuestionDtl = dtl;
         this.optionText = optionText;
     }
 }
