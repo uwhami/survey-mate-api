@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/survey/response")
 public class SurveyResponseController {
 
-    SurveyResponseService surveyResponseService;
+    private final SurveyResponseService surveyResponseService;
 
     @GetMapping("/{surveyUrl}")
     public SurveyQuestionMstResponse getSurveyForm(@PathVariable String surveyUrl) {
