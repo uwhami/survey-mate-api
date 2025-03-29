@@ -2,8 +2,6 @@ package com.surveymate.api.domain.survey.entity;
 
 import com.surveymate.api.common.entity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +31,7 @@ public class SurveyQuestionMst extends BaseEntity {
     @Column(nullable = false)
     private String url;
 
-    private String groupId;
+    private Long groupId;
 
     @OneToMany(mappedBy = "surveyQuestionMst", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SurveyQuestionDtl> questions = new ArrayList<>();

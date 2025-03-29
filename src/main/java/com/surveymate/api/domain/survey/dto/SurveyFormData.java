@@ -13,6 +13,7 @@ public class SurveyFormData {
     private String sqMstId;
     private String title;
     private String description;
+    private Long groupId;
     private Integer questionDtlOrder;
     private String typeId;
     private String questionText;

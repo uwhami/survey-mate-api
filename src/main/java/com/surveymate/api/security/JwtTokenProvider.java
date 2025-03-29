@@ -86,9 +86,9 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-        String uuid = claims.getSubject();
 
-        CustomUserDetails userDetails = userDetailsService.loadUserByUuid(uuid);
+        CustomUserDetails userDetails = userDetailsService.loadUserByUuid(claims);
+
         return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
     }
 }
