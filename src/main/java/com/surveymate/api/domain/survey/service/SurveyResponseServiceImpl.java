@@ -1,13 +1,17 @@
 package com.surveymate.api.domain.survey.service;
 
 import com.surveymate.api.common.exception.CustomRuntimeException;
-import com.surveymate.api.domain.survey.dto.SurveyFormData;
-import com.surveymate.api.domain.survey.dto.SurveyQuestionDtlResponse;
-import com.surveymate.api.domain.survey.dto.SurveyQuestionMstResponse;
-import com.surveymate.api.domain.survey.dto.SurveyQuestionSdtlResponse;
+import com.surveymate.api.domain.survey.dto.*;
+import com.surveymate.api.domain.survey.entity.SurveyQuestionMst;
+import com.surveymate.api.domain.survey.entity.SurveyResponseDtl;
+import com.surveymate.api.domain.survey.entity.SurveyResponseMst;
+import com.surveymate.api.domain.survey.repository.SurveyQuestionDtlRepository;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionMstRepository;
+import com.surveymate.api.domain.survey.repository.SurveyResponseDtlRepository;
+import com.surveymate.api.domain.survey.repository.SurveyResponseMstRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,14 +22,17 @@ import java.util.Map;
 @Service
 public class SurveyResponseServiceImpl implements SurveyResponseService {
 
-    private final SurveyQuestionMstRepository surveyQuestionMstRepository;
+    private final SurveyQuestionMstRepository questionMstRepository;
+    private final SurveyResponseMstRepository responseMstRepository;
+    private final SurveyQuestionDtlRepository questionDtlRepository;
+    private final SurveyResponseDtlRepository responseDtlRepository;
 
     @Override
     public SurveyQuestionMstResponse getSurveyForm(String surveyUrl) {
         SurveyQuestionMstResponse response = new SurveyQuestionMstResponse();
 
         try {
-            List<SurveyFormData> formData = surveyQuestionMstRepository.getSurveyWithDetails(surveyUrl);
+            List<SurveyFormData> formData = questionMstRepository.getSurveyWithDetails(surveyUrl);
             if (formData == null || formData.isEmpty()) {
                 return null;
             }
@@ -54,11 +61,36 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
 
                 dtlResponse.getOptions().add(sdtlResponse);
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new CustomRuntimeException("Error calling Survey Response Form", e);
         }
 
         return response;
     }
 
+    @Transactional
+    @Override
+    public void saveResponseData(SurveyResponseDto responseDto) {
+        try {
+            SurveyQuestionMst questionMst = questionMstRepository.findById(responseDto.getSqMstId()).orElseThrow();
+            SurveyResponseMst responseMst = SurveyResponseMst.builder().master(questionMst)
+                    .responseMemNum(responseDto.getMemNum())
+                    .build();
+            responseMstRepository.save(responseMst);
+
+            List<SurveyResponseDtlDto> responseDtlList = responseDto.getSurveyResponse();
+            for (SurveyResponseDtlDto responseItem : responseDtlList) {
+                String responseValue = responseItem.getAnswer().size() == 1 ? responseItem.getAnswer().get(0) : String.join("|", responseItem.getAnswer());
+                SurveyResponseDtl resopnsDtl = SurveyResponseDtl.builder().surveyResponseMst(responseMst)
+                        .sqMstId(responseDto.getSqMstId())
+                        .questionDtlOrder(responseItem.getQuestionId())
+                        .responseValue(responseValue)
+                                .build();
+                responseDtlRepository.save(resopnsDtl);
+            }
+
+        } catch (Exception e) {
+            throw new CustomRuntimeException("Error saving Survey Response Data", e);
+        }
+    }
 }
