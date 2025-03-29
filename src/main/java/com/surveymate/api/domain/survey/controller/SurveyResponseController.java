@@ -21,7 +21,7 @@ public class SurveyResponseController {
 
     @PostMapping("/save")
     public void saveSurveyResponse(@RequestBody SurveyResponseDto surveyResponse) {
-        System.out.println(surveyResponse);
+        surveyResponseService.saveResponseData(surveyResponse);
     }
 
 }
