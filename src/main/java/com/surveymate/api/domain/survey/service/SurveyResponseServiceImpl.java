@@ -1,22 +1,23 @@
 package com.surveymate.api.domain.survey.service;
 
 import com.surveymate.api.common.exception.CustomRuntimeException;
+import com.surveymate.api.domain.auth.model.CustomUserDetails;
 import com.surveymate.api.domain.survey.dto.*;
 import com.surveymate.api.domain.survey.entity.SurveyQuestionMst;
 import com.surveymate.api.domain.survey.entity.SurveyResponseDtl;
 import com.surveymate.api.domain.survey.entity.SurveyResponseMst;
-import com.surveymate.api.domain.survey.repository.SurveyQuestionDtlRepository;
+import com.surveymate.api.domain.survey.exception.SurveyRequestNotFoundException;
+import com.surveymate.api.domain.survey.exception.SurveyResponseUnauthorizedException;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionMstRepository;
 import com.surveymate.api.domain.survey.repository.SurveyResponseDtlRepository;
 import com.surveymate.api.domain.survey.repository.SurveyResponseMstRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -24,7 +25,6 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
 
     private final SurveyQuestionMstRepository questionMstRepository;
     private final SurveyResponseMstRepository responseMstRepository;
-    private final SurveyQuestionDtlRepository questionDtlRepository;
     private final SurveyResponseDtlRepository responseDtlRepository;
 
     @Override
@@ -34,9 +34,16 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
         try {
             List<SurveyFormData> formData = questionMstRepository.getSurveyWithDetails(surveyUrl);
             if (formData == null || formData.isEmpty()) {
-                return null;
+                throw new SurveyRequestNotFoundException();
             }
             SurveyFormData questionMst = formData.get(0);
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            if (!Objects.equals(questionMst.getGroupId(), userDetails.getGroupId())) {
+                throw new SurveyResponseUnauthorizedException();
+            }
+
             response.setSqMstId(questionMst.getSqMstId());
             response.setTitle(questionMst.getTitle());
             response.setDescription(questionMst.getDescription());
@@ -85,7 +92,7 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
                         .sqMstId(responseDto.getSqMstId())
                         .questionDtlOrder(responseItem.getQuestionId())
                         .responseValue(responseValue)
-                                .build();
+                        .build();
                 responseDtlRepository.save(resopnsDtl);
             }
 
