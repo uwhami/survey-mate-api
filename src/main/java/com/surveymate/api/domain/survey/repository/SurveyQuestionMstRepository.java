@@ -13,10 +13,11 @@ public interface SurveyQuestionMstRepository extends JpaRepository<SurveyQuestio
     @Query("SELECT NVL(MAX(CAST(SUBSTRING(s.sqMstId, 11) AS integer)), 0) FROM SurveyQuestionMst s WHERE s.sqMstId LIKE CONCAT('SQ', :today, '%') ORDER BY s.sqMstId DESC LIMIT 1")
     int findTopSqNumByToday(@Param("today") String today);
 
-    @Query(" SELECT new com.surveymate.api.domain.survey.dto.SurveyFormData(\n" +
+    @Query(" SELECT new com.surveymate.api.domain.survey.dto.SurveyFormData(" +
             "        m.sqMstId," +
             "        m.title," +
             "        m.description," +
+            "        m.groupId," +
             "        d.id.questionDtlOrder," +
             "        d.typeId," +
             "        d.questionText," +
