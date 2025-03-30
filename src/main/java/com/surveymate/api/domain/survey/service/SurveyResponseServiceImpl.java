@@ -6,6 +6,7 @@ import com.surveymate.api.domain.survey.dto.*;
 import com.surveymate.api.domain.survey.entity.SurveyQuestionMst;
 import com.surveymate.api.domain.survey.entity.SurveyResponseDtl;
 import com.surveymate.api.domain.survey.entity.SurveyResponseMst;
+import com.surveymate.api.domain.survey.exception.SurveyAlreadyRespondedException;
 import com.surveymate.api.domain.survey.exception.SurveyRequestNotFoundException;
 import com.surveymate.api.domain.survey.exception.SurveyResponseUnauthorizedException;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionMstRepository;
@@ -44,6 +45,10 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
                 throw new SurveyResponseUnauthorizedException();
             }
 
+            if (checkAlreadyResponded(questionMst.getSqMstId(), userDetails.getMemNum())) {
+                throw new SurveyAlreadyRespondedException();
+            }
+
             response.setSqMstId(questionMst.getSqMstId());
             response.setTitle(questionMst.getTitle());
             response.setDescription(questionMst.getDescription());
@@ -80,6 +85,11 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
     public void saveResponseData(SurveyResponseDto responseDto) {
         try {
             SurveyQuestionMst questionMst = questionMstRepository.findById(responseDto.getSqMstId()).orElseThrow();
+
+            if (checkAlreadyResponded(questionMst.getSqMstId(), responseDto.getMemNum())) {
+                throw new SurveyAlreadyRespondedException();
+            }
+
             SurveyResponseMst responseMst = SurveyResponseMst.builder().master(questionMst)
                     .responseMemNum(responseDto.getMemNum())
                     .build();
@@ -99,5 +109,11 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
         } catch (Exception e) {
             throw new CustomRuntimeException("Error saving Survey Response Data", e);
         }
+    }
+
+    @Override
+    public boolean checkAlreadyResponded(String sqMstId, String memNum) {
+        SurveyResponseMst surveyResponseMst = responseMstRepository.findByMaster_SqMstIdAndResponseMemNum(sqMstId, memNum);
+        return surveyResponseMst != null;
     }
 }
