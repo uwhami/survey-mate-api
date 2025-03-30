@@ -11,7 +11,4 @@ public class SurveyRequestNotFoundException extends CustomRuntimeException {
         super(DEFAULT_MESSAGE, HttpStatus.NOT_FOUND);
     }
 
-    public SurveyRequestNotFoundException(String message) {
-        super(DEFAULT_MESSAGE + "(" + message + ")", HttpStatus.NOT_FOUND);
-    }
 }
