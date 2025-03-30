@@ -9,4 +9,6 @@ public interface SurveyResponseService {
     SurveyQuestionMstResponse getSurveyForm(String surveyUrl);
 
     void saveResponseData(SurveyResponseDto responseDto);
+
+    boolean checkAlreadyResponded(String surveyUrl, String memNum);
 }
