@@ -1,6 +1,6 @@
 package com.surveymate.api.domain.member.dto;
 
-import com.surveymate.api.common.dto.MemnumAware;
+import com.surveymate.api.common.dto.MemInfoAware;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberRequest extends MemnumAware {
+public class MemberRequest extends MemInfoAware {
 
     private String userId;
     private String userName;
