@@ -2,6 +2,7 @@ package com.surveymate.api.survey;
 
 import com.surveymate.api.domain.survey.dto.SurveyFormData;
 import com.surveymate.api.domain.survey.dto.SurveyQuestionMstResponse;
+import com.surveymate.api.domain.survey.dto.SurveyResponseDto;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionMstRepository;
 import com.surveymate.api.domain.survey.service.SurveyResponseService;
 import org.junit.jupiter.api.Test;
@@ -31,8 +32,10 @@ public class SurveyResponseServiceTests {
 
     @Test
     public void getSurveyFormResponse(){
+        SurveyResponseDto responseDto = new SurveyResponseDto();
+        responseDto.setMemNum("M202502090001");
         String surveyUrl = "test012345";
-        SurveyQuestionMstResponse surveyQuestionMstResponse = surveyResponseService.getSurveyForm(surveyUrl);
+        SurveyQuestionMstResponse surveyQuestionMstResponse = surveyResponseService.getSurveyForm(surveyUrl, responseDto);
         System.out.println(surveyQuestionMstResponse);
     }
 

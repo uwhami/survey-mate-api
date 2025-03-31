@@ -1,7 +1,6 @@
 package com.surveymate.api.domain.survey.service;
 
 import com.surveymate.api.common.exception.CustomRuntimeException;
-import com.surveymate.api.domain.auth.model.CustomUserDetails;
 import com.surveymate.api.domain.survey.dto.*;
 import com.surveymate.api.domain.survey.entity.SurveyQuestionMst;
 import com.surveymate.api.domain.survey.entity.SurveyResponseDtl;
@@ -13,8 +12,6 @@ import com.surveymate.api.domain.survey.repository.SurveyQuestionMstRepository;
 import com.surveymate.api.domain.survey.repository.SurveyResponseDtlRepository;
 import com.surveymate.api.domain.survey.repository.SurveyResponseMstRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +26,7 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
     private final SurveyResponseDtlRepository responseDtlRepository;
 
     @Override
-    public SurveyQuestionMstResponse getSurveyForm(String surveyUrl) {
+    public SurveyQuestionMstResponse getSurveyForm(String surveyUrl, SurveyResponseDto responseDto) {
         SurveyQuestionMstResponse response = new SurveyQuestionMstResponse();
 
         try {
@@ -38,14 +35,11 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
                 throw new SurveyRequestNotFoundException();
             }
             SurveyFormData questionMst = formData.get(0);
-
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            if (!Objects.equals(questionMst.getGroupId(), userDetails.getGroupId())) {
+            if (!Objects.equals(questionMst.getGroupId(), responseDto.getGroupId())) {
                 throw new SurveyResponseUnauthorizedException();
             }
 
-            if (checkAlreadyResponded(questionMst.getSqMstId(), userDetails.getMemNum())) {
+            if (checkAlreadyResponded(questionMst.getSqMstId(), responseDto.getMemNum())) {
                 throw new SurveyAlreadyRespondedException();
             }
 

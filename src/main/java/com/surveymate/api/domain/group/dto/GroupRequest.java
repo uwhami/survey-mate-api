@@ -1,13 +1,13 @@
 package com.surveymate.api.domain.group.dto;
 
-import com.surveymate.api.common.dto.MemnumAware;
+import com.surveymate.api.common.dto.MemInfoAware;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 
 @Getter
 @AllArgsConstructor
-public class GroupRequest extends MemnumAware {
+public class GroupRequest extends MemInfoAware {
 
     private Long groupId;
     private String groupCode;     // 초대 코드 (유니크)
