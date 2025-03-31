@@ -1,11 +1,8 @@
 package com.surveymate.api.domain.menu.dto;
 
-import com.surveymate.api.common.dto.MemnumAware;
-import com.surveymate.api.common.enums.MemberRole;
 import com.surveymate.api.domain.menu.entity.Menu;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

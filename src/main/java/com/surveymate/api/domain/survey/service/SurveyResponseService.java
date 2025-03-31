@@ -6,7 +6,7 @@ import com.surveymate.api.domain.survey.dto.SurveyResponseDto;
 
 public interface SurveyResponseService {
 
-    SurveyQuestionMstResponse getSurveyForm(String surveyUrl);
+    SurveyQuestionMstResponse getSurveyForm(String surveyUrl, SurveyResponseDto responseDto);
 
     void saveResponseData(SurveyResponseDto responseDto);
 

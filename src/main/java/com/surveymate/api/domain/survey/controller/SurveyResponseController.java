@@ -15,8 +15,8 @@ public class SurveyResponseController {
     private final SurveyResponseService surveyResponseService;
 
     @GetMapping("/{surveyUrl}")
-    public SurveyQuestionMstResponse getSurveyForm(@PathVariable String surveyUrl) {
-        return surveyResponseService.getSurveyForm(surveyUrl);
+    public SurveyQuestionMstResponse getSurveyForm(@ModelAttribute SurveyResponseDto responseDto, @PathVariable String surveyUrl) {
+        return surveyResponseService.getSurveyForm(surveyUrl, responseDto);
     }
 
     @PostMapping("/save")
