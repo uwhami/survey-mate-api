@@ -19,5 +19,8 @@ public class SurveyFormData {
     private String questionText;
     private Integer questionSdtlOrder;
     private String optionText;
+    private String answer;
+    private String respondedMemNum;
+
 
 }
