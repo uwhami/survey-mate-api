@@ -2,6 +2,7 @@ package com.surveymate.api.aspect;
 
 import com.surveymate.api.common.dto.MemInfoAware;
 import com.surveymate.api.domain.auth.model.CustomUserDetails;
+import com.surveymate.api.domain.member.exception.UserNotFoundException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -20,7 +21,7 @@ public class MemInfoAspect {
         Object[] args = joinPoint.getArgs();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new IllegalStateException("Authentication is not available");
+            throw new UserNotFoundException();
         }
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
