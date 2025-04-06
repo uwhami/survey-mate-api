@@ -35,4 +35,7 @@ public class SurveyQuestionMst extends BaseEntity {
 
     @OneToMany(mappedBy = "surveyQuestionMst", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SurveyQuestionDtl> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "master", fetch = FetchType.LAZY)
+    List<SurveyResponseMst> responseMst;
 }

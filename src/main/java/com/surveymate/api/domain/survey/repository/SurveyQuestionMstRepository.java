@@ -22,14 +22,18 @@ public interface SurveyQuestionMstRepository extends JpaRepository<SurveyQuestio
             "        d.typeId," +
             "        d.questionText," +
             "        s.id.questionSdtlOrder," +
-            "        s.optionText" +
+            "        s.optionText," +
+            "        dm.responseValue," +
+            "        rm.createMemNum" +
             "    )" +
             "    FROM SurveyQuestionMst m" +
             "    JOIN m.questions d" +
             "    JOIN d.options s" +
+            "    LEFT JOIN m.responseMst rm ON rm.createMemNum = :memNum" +
+            "    LEFT JOIN d.responseDetails dm" +
             "    WHERE m.url = :surveyUrl" +
             "    ORDER BY d.id.questionDtlOrder, s.id.questionSdtlOrder")
-    List<SurveyFormData> getSurveyWithDetails(@Param("surveyUrl") String surveyUrl);
+    List<SurveyFormData> getSurveyWithDetails(@Param("surveyUrl") String surveyUrl, @Param("memNum") String memNum);
 
 
 }

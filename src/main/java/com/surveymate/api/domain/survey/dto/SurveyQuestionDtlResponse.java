@@ -1,6 +1,9 @@
 package com.surveymate.api.domain.survey.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -14,5 +17,7 @@ public class SurveyQuestionDtlResponse {
     private String questionText; // 질문 내용
     private String typeId; // 질문 유형 ID
     private List<SurveyQuestionSdtlResponse> options; // 선택지 목록
+    private List<String> respondedValue; // 제출한 답안
+
 
 }
