@@ -23,7 +23,8 @@ public class SurveyResponseServiceTests {
     @Test
     public void getSurveyForm() {
         String surveyUrl = "test012345";
-        List<SurveyFormData> list = surveyQuestionMstRepository.getSurveyWithDetails(surveyUrl);
+        String memNum = "M202502090001";
+        List<SurveyFormData> list = surveyQuestionMstRepository.getSurveyWithDetails(surveyUrl, memNum);
         System.out.println("getSurveyForm : list.size() = " + list.size());
         for (SurveyFormData surveyResponseForm : list) {
             System.out.println(surveyResponseForm);
@@ -34,6 +35,7 @@ public class SurveyResponseServiceTests {
     public void getSurveyFormResponse(){
         SurveyResponseDto responseDto = new SurveyResponseDto();
         responseDto.setMemNum("M202502090001");
+        responseDto.setGroupId(15L);
         String surveyUrl = "test012345";
         SurveyQuestionMstResponse surveyQuestionMstResponse = surveyResponseService.getSurveyForm(surveyUrl, responseDto);
         System.out.println(surveyQuestionMstResponse);
