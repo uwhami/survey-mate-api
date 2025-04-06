@@ -44,6 +44,59 @@ public class SurveyServiceImpl implements SurveyService {
             surveyQuestionMstRepository.save(surveyMst);
 
             // 질문 저장
+            int questionDtlOrder = 1;
+            for (SurveyQuestionDtlRequest dtlRequest : request.getQuestions()) {
+                SurveyQuestionDtlId dtlId = new SurveyQuestionDtlId(sqMstId, questionDtlOrder);
+                dtlRequest.setQuestionDtlOrder(questionDtlOrder);
+                SurveyQuestionDtl dtlEntity = surveyMapper.toSurveyQuestionDtl(dtlRequest);
+                dtlEntity.setId(dtlId);
+                dtlEntity.setSurveyQuestionMst(surveyMst);
+                //dtlEntity.setOptions(null);
+                surveyQuestionDtlRepository.save(dtlEntity);
+                // 선택지 저장
+                int questionSdtlOrder = 1;
+                if (dtlRequest.getOptions() != null) {
+                    for (SurveyQuestionSdtlRequest sdtlRequest : dtlRequest.getOptions()) {
+                        sdtlRequest.setQuestionSdtlOrder(questionSdtlOrder);
+                        SurveyQuestionSdtlId sdtlId = new SurveyQuestionSdtlId(
+                                sqMstId,
+                                questionDtlOrder,
+                                sdtlRequest.getQuestionSdtlOrder()
+                        );
+
+                        SurveyQuestionSdtl sdtlEntity = surveyMapper.toSurveyQuestionSdtl(sdtlRequest);
+                        sdtlEntity.setId(sdtlId);
+                        sdtlEntity.setSurveyQuestionDtl(dtlEntity);
+                        surveyQuestionSdtlRepository.save(sdtlEntity);
+                        questionSdtlOrder++;
+                    }
+                }
+                questionDtlOrder++;
+
+            }
+            return surveyMst;
+
+        } catch (Exception e) {
+            log.error("Failed to create survey", e);
+            throw new CustomRuntimeException("Error calling Survey Response Form", e);
+        }
+    }
+    /**
+     * 설문 수정
+     */
+    @Transactional
+    public SurveyQuestionMst updateSurvey(SurveyQuestionMstRequest request) {
+        try {
+            // 마스터 조회
+            log.info("Saving survey master");
+            SurveyQuestionMst surveyMst = surveyMapper.toSurveyQuestionMst(request);
+            String sqMstId = codeGenerator.generateCode("SQ01");
+            surveyMst.setSqMstId(sqMstId);
+            surveyMst.setUrl(urlSHA256Generator.generateUrlSHA256(sqMstId));
+            //surveyMst.setQuestions(null);
+            surveyQuestionMstRepository.save(surveyMst);
+
+            // 질문 저장
             for (SurveyQuestionDtlRequest dtlRequest : request.getQuestions()) {
                 SurveyQuestionDtlId dtlId = new SurveyQuestionDtlId(sqMstId, dtlRequest.getQuestionDtlOrder());
                 SurveyQuestionDtl dtlEntity = surveyMapper.toSurveyQuestionDtl(dtlRequest);
