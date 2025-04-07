@@ -29,8 +29,7 @@ public class SurveyQuestionTypeDataInitializer implements CommandLineRunner {
                 new SurveyQuestionType("SQT005","NUMBER", "숫자 입력형 질문"),
                 new SurveyQuestionType("SQT006","DATE", "날짜 선택형 질문"),
                 new SurveyQuestionType("SQT007","TIME", "시간 선택형 질문"),
-                new SurveyQuestionType("SQT008","RANGE", "범위 선택형 질문 (예: 1~10)"),
-                new SurveyQuestionType("SQT009","DROPDOWN", "드롭다운 선택형 질문")
+                new SurveyQuestionType("SQT008","RANGE", "범위 선택형 질문 (예: 1-10)")
         );
 
         // 기존 데이터가 없을 경우에만 추가
