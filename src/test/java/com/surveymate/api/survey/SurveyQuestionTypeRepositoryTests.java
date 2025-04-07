@@ -25,8 +25,7 @@ public class SurveyQuestionTypeRepositoryTests {
                 new SurveyQuestionType("SQT005","NUMBER", "숫자 입력형 질문"),
                 new SurveyQuestionType("SQT006","DATE", "날짜 선택형 질문"),
                 new SurveyQuestionType("SQT007","TIME", "시간 선택형 질문"),
-                new SurveyQuestionType("SQT008","RANGE", "범위 선택형 질문 (예: 1~10)"),
-                new SurveyQuestionType("SQT009","DROPDOWN", "드롭다운 선택형 질문")
+                new SurveyQuestionType("SQT008","RANGE", "범위 선택형 질문 (예: 1-10)")
         );
         if (surveyQuestionTypeRepository.count() == 0) {
             surveyQuestionTypeRepository.saveAll(questionTypes);
