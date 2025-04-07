@@ -28,7 +28,7 @@ public interface SurveyQuestionMstRepository extends JpaRepository<SurveyQuestio
             "    )" +
             "    FROM SurveyQuestionMst m" +
             "    JOIN m.questions d" +
-            "    JOIN d.options s" +
+            "    LEFT JOIN d.options s" +
             "    LEFT JOIN m.responseMst rm ON rm.createMemNum = :memNum" +
             "    LEFT JOIN d.responseDetails dm" +
             "    WHERE m.url = :surveyUrl" +

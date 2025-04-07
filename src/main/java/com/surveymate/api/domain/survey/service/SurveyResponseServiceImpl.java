@@ -35,7 +35,7 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
                 throw new SurveyRequestNotFoundException();
             }
             SurveyFormData questionMst = formData.get(0);
-            if (!Objects.equals(questionMst.getGroupId(), responseDto.getGroupId())) {
+            if (questionMst.getGroupId() != null && !Objects.equals(questionMst.getGroupId(), responseDto.getGroupId())) {
                 throw new SurveyResponseUnauthorizedException();
             }
 
@@ -56,7 +56,11 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
                     newDtl.setQuestionText(item.getQuestionText());
                     newDtl.setTypeId(item.getTypeId());
                     newDtl.setOptions(new ArrayList<>());
-                    newDtl.setRespondedValue(item.getAnswer() == null ? null : Arrays.asList(item.getAnswer().split("\\|")));
+                    if(item.getTypeId().equals("SQT002")){
+                        newDtl.setRespondedValue(item.getRespondedValue() == null ? null : Arrays.asList(item.getRespondedValue().split("\\|")));
+                    }else{
+                        newDtl.setRespondedValue(item.getRespondedValue() == null ? null : new ArrayList<>(List.of(item.getRespondedValue())));
+                    }
                     response.getQuestions().add(newDtl);
                     return newDtl;
                 });
