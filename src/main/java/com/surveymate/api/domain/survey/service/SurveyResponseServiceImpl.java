@@ -92,7 +92,6 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
             }
 
             SurveyResponseMst responseMst = SurveyResponseMst.builder().master(questionMst)
-                    .responseMemNum(responseDto.getMemNum())
                     .build();
             responseMstRepository.save(responseMst);
 
@@ -114,7 +113,7 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
 
     @Override
     public boolean checkAlreadyResponded(String sqMstId, String memNum) {
-        SurveyResponseMst surveyResponseMst = responseMstRepository.findByMaster_SqMstIdAndResponseMemNum(sqMstId, memNum);
+        SurveyResponseMst surveyResponseMst = responseMstRepository.findByMaster_SqMstIdAndCreateMemNum(sqMstId, memNum);
         return surveyResponseMst != null;
     }
 

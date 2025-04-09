@@ -44,6 +44,7 @@ public interface SurveyQuestionMstRepository extends JpaRepository<SurveyQuestio
             "    , m.title" +
             "    , m.description" +
             "    , m.url" +
+            "    , CASE WHEN rm.id IS NULL THEN false ELSE true END" +
             "    , NULL" +
             ")" +
             "FROM SurveyQuestionMst m " +
