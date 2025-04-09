@@ -4,7 +4,6 @@ import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
-import com.surveymate.api.common.dto.PagedResponse;
 import com.surveymate.api.common.enums.FilePath;
 import com.surveymate.api.common.enums.MemberStatus;
 import com.surveymate.api.common.exception.CustomRuntimeException;
@@ -24,8 +23,6 @@ import com.surveymate.api.file.service.FileService;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -251,10 +248,6 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    @Override
-    public PagedResponse<MemberResponse> getActiveMembersByGroupId(Long groupId, Pageable pageable) {
-        Page<Member> memberPage = memberRepository.findActiveMembersByGroupId(groupId, MemberStatus.ACTIVE, pageable);
-        return new PagedResponse<>(memberPage.map(memberMapper::toDTO));
-    }
+
 
 }

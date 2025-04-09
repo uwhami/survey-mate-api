@@ -1,5 +1,6 @@
 package com.surveymate.api.domain.survey.service;
 
+import com.surveymate.api.common.dto.PagedResponse;
 import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.domain.survey.dto.*;
 import com.surveymate.api.domain.survey.entity.SurveyQuestionMst;
@@ -12,6 +13,8 @@ import com.surveymate.api.domain.survey.repository.SurveyQuestionMstRepository;
 import com.surveymate.api.domain.survey.repository.SurveyResponseDtlRepository;
 import com.surveymate.api.domain.survey.repository.SurveyResponseMstRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -117,7 +120,8 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
 
 
     @Override
-    public List<SurveyResponseDto> getSurveyResponeList(Long groupId, String memNum) {
-        return questionMstRepository.getSurveyResponeList(groupId, memNum);
+    public PagedResponse<SurveyResponseDto> getSurveyResponeList(Long groupId, String memNum, Pageable pageable) {
+          Page<SurveyResponseDto> responseDtoPage = questionMstRepository.getSurveyResponeList(groupId, memNum, pageable);
+          return new PagedResponse<>(responseDtoPage);
     }
 }
