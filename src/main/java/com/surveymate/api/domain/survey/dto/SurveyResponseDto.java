@@ -17,6 +17,7 @@ public class SurveyResponseDto extends MemInfoAware {
     private String title;
     private String description;
     private String surveyUrl;
+    private boolean completed;
     private List<SurveyResponseDtlDto> surveyResponse;
 
 }

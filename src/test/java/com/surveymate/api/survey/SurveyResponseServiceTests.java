@@ -4,7 +4,9 @@ import com.surveymate.api.common.dto.PagedResponse;
 import com.surveymate.api.domain.survey.dto.SurveyFormData;
 import com.surveymate.api.domain.survey.dto.SurveyQuestionMstResponse;
 import com.surveymate.api.domain.survey.dto.SurveyResponseDto;
+import com.surveymate.api.domain.survey.entity.SurveyResponseMst;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionMstRepository;
+import com.surveymate.api.domain.survey.repository.SurveyResponseMstRepository;
 import com.surveymate.api.domain.survey.service.SurveyResponseService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,19 @@ import java.util.List;
 public class SurveyResponseServiceTests {
 
     @Autowired
+    private SurveyResponseMstRepository responseMstRepository;
+
+    @Autowired
     private SurveyResponseService surveyResponseService;
 
     @Autowired
     private SurveyQuestionMstRepository surveyQuestionMstRepository;
+
+    @Test
+    public void findByMaster_SqMstIdAndCreateMemNumTest(){
+        SurveyResponseMst responseMst = responseMstRepository.findByMaster_SqMstIdAndCreateMemNum("SQ202503150001", "M202502090001");
+        System.out.println(responseMst);
+    }
 
     @Test
     public void getSurveyFormTest() {
