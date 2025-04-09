@@ -1,6 +1,7 @@
 package com.surveymate.api.domain.survey.repository;
 
 import com.surveymate.api.domain.survey.dto.SurveyFormData;
+import com.surveymate.api.domain.survey.dto.SurveyResponseDto;
 import com.surveymate.api.domain.survey.entity.SurveyQuestionMst;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -34,6 +35,19 @@ public interface SurveyQuestionMstRepository extends JpaRepository<SurveyQuestio
             "    WHERE m.url = :surveyUrl" +
             "    ORDER BY d.id.questionDtlOrder, s.id.questionSdtlOrder")
     List<SurveyFormData> getSurveyWithDetails(@Param("surveyUrl") String surveyUrl, @Param("memNum") String memNum);
+
+
+    @Query("SELECT new com.surveymate.api.domain.survey.dto.SurveyResponseDto(" +
+            "      m.sqMstId" +
+            "    , m.title" +
+            "    , m.description" +
+            "    , m.url" +
+            "    , NULL" +
+            ")" +
+            "FROM SurveyQuestionMst m " +
+            "LEFT JOIN m.responseMst rm ON rm.createMemNum = :memNum " +
+            "WHERE m.groupId = :groupId OR rm.id IS NOT NULL")
+    List<SurveyResponseDto> getSurveyResponeList(@Param("groupId") Long groupId, @Param("memNum") String memNum);
 
 
 }
