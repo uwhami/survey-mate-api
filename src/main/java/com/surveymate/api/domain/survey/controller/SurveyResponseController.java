@@ -1,12 +1,14 @@
 package com.surveymate.api.domain.survey.controller;
 
+import com.surveymate.api.common.dto.PagedResponse;
 import com.surveymate.api.domain.survey.dto.SurveyQuestionMstResponse;
 import com.surveymate.api.domain.survey.dto.SurveyResponseDto;
 import com.surveymate.api.domain.survey.service.SurveyResponseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -27,8 +29,13 @@ public class SurveyResponseController {
     }
 
     @GetMapping("/list")
-    public List<SurveyResponseDto> getSurveyResponses(@RequestBody SurveyResponseDto surveyResponse) {
-        return surveyResponseService.getSurveyResponeList(surveyResponse.getGroupId(), surveyResponse.getMemNum());
+    public PagedResponse<SurveyResponseDto> getSurveyResponses(
+            @ModelAttribute SurveyResponseDto surveyResponse,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return surveyResponseService.getSurveyResponeList(surveyResponse.getGroupId(), surveyResponse.getMemNum(), pageable);
     }
 
 }

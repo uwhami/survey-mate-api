@@ -5,7 +5,6 @@ import com.surveymate.api.domain.group.dto.GroupReponse;
 import com.surveymate.api.domain.group.dto.GroupRequest;
 import com.surveymate.api.domain.group.service.GroupService;
 import com.surveymate.api.domain.member.dto.MemberResponse;
-import com.surveymate.api.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public class GroupController {
 
     private final GroupService groupService;
-    private final MemberService memberService;
 
     @GetMapping("/{groupId}")
     public GroupReponse getGroupInfo(@PathVariable Long groupId) {
@@ -42,7 +40,7 @@ public class GroupController {
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return memberService.getActiveMembersByGroupId(groupId, pageable);
+        return groupService.getActiveMembersByGroupId(groupId, pageable);
     }
 
 }

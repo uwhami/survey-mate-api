@@ -1,8 +1,11 @@
 package com.surveymate.api.domain.group.service;
 
+import com.surveymate.api.common.dto.PagedResponse;
 import com.surveymate.api.domain.group.dto.GroupReponse;
 import com.surveymate.api.domain.group.dto.GroupRequest;
 import com.surveymate.api.domain.group.entity.Group;
+import com.surveymate.api.domain.member.dto.MemberResponse;
+import org.springframework.data.domain.Pageable;
 
 
 public interface GroupService {
@@ -20,4 +23,7 @@ public interface GroupService {
     GroupReponse selectGroupByUserId(long groupId);
 
     GroupReponse updateGroup(GroupRequest request);
+
+    PagedResponse<MemberResponse> getActiveMembersByGroupId(Long groupId, Pageable pageable);
+
 }
