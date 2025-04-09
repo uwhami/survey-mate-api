@@ -3,6 +3,8 @@ package com.surveymate.api.domain.survey.repository;
 import com.surveymate.api.domain.survey.dto.SurveyFormData;
 import com.surveymate.api.domain.survey.dto.SurveyResponseDto;
 import com.surveymate.api.domain.survey.entity.SurveyQuestionMst;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -47,7 +49,7 @@ public interface SurveyQuestionMstRepository extends JpaRepository<SurveyQuestio
             "FROM SurveyQuestionMst m " +
             "LEFT JOIN m.responseMst rm ON rm.createMemNum = :memNum " +
             "WHERE m.groupId = :groupId OR rm.id IS NOT NULL")
-    List<SurveyResponseDto> getSurveyResponeList(@Param("groupId") Long groupId, @Param("memNum") String memNum);
+    Page<SurveyResponseDto> getSurveyResponeList(@Param("groupId") Long groupId, @Param("memNum") String memNum, Pageable pageable);
 
 
 }
