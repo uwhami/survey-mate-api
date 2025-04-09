@@ -1,6 +1,8 @@
 package com.surveymate.api.domain.group.service;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.surveymate.api.common.dto.PagedResponse;
+import com.surveymate.api.common.enums.MemberStatus;
 import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.domain.group.dto.GroupReponse;
 import com.surveymate.api.domain.group.dto.GroupRequest;
@@ -10,8 +12,14 @@ import com.surveymate.api.domain.group.exception.GroupCodeGenerationException;
 import com.surveymate.api.domain.group.exception.GroupNotFoundException;
 import com.surveymate.api.domain.group.mapper.GroupMapper;
 import com.surveymate.api.domain.group.repository.GroupRepository;
+import com.surveymate.api.domain.member.dto.MemberResponse;
+import com.surveymate.api.domain.member.entity.Member;
+import com.surveymate.api.domain.member.mapper.MemberMapper;
+import com.surveymate.api.domain.member.repository.MemberRepository;
 import com.surveymate.api.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -27,6 +35,10 @@ public class GroupServiceImpl implements GroupService {
     private final JPAQueryFactory jpaQueryFactory;
     private final GroupMapper groupMapper;
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
+    private final MemberMapper memberMapper;
+
+
 
     private static final String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final SecureRandom random = new SecureRandom();
@@ -162,5 +174,11 @@ public class GroupServiceImpl implements GroupService {
         groupRepository.save(group);
 
         return groupMapper.toDto(group);
+    }
+
+    @Override
+    public PagedResponse<MemberResponse> getActiveMembersByGroupId(Long groupId, Pageable pageable) {
+        Page<Member> memberPage = memberRepository.findActiveMembersByGroupId(groupId, MemberStatus.ACTIVE, pageable);
+        return new PagedResponse<>(memberPage.map(memberMapper::toDTO));
     }
 }

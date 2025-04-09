@@ -1,5 +1,6 @@
 package com.surveymate.api.survey;
 
+import com.surveymate.api.common.dto.PagedResponse;
 import com.surveymate.api.domain.survey.dto.SurveyFormData;
 import com.surveymate.api.domain.survey.dto.SurveyQuestionMstResponse;
 import com.surveymate.api.domain.survey.dto.SurveyResponseDto;
@@ -8,6 +9,8 @@ import com.surveymate.api.domain.survey.service.SurveyResponseService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -43,11 +46,9 @@ public class SurveyResponseServiceTests {
 
     @Test
     public void getSurveyResponeListTest() {
-        List<SurveyResponseDto> responseDto = surveyResponseService.getSurveyResponeList(15L,"M202502090001");
-        System.out.println("getSurveyResponeList : responseDto.size() = " + responseDto.size());
-        for (SurveyResponseDto surveyResponseDto : responseDto) {
-            System.out.println(surveyResponseDto);
-        }
+        Pageable pageable = PageRequest.of(0, 10);
+        PagedResponse<SurveyResponseDto> responseDtoPagedResponse = surveyResponseService.getSurveyResponeList(15L,"M202502090001", pageable);
+        System.out.println("responseDtoPagedResponse : responseDto = " + responseDtoPagedResponse);
     }
 
 
