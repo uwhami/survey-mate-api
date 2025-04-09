@@ -114,4 +114,10 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
         SurveyResponseMst surveyResponseMst = responseMstRepository.findByMaster_SqMstIdAndResponseMemNum(sqMstId, memNum);
         return surveyResponseMst != null;
     }
+
+
+    @Override
+    public List<SurveyResponseDto> getSurveyResponeList(Long groupId, String memNum) {
+        return questionMstRepository.getSurveyResponeList(groupId, memNum);
+    }
 }

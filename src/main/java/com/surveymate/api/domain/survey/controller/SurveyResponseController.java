@@ -6,6 +6,8 @@ import com.surveymate.api.domain.survey.service.SurveyResponseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RequiredArgsConstructor
 @RestController
@@ -22,6 +24,11 @@ public class SurveyResponseController {
     @PostMapping("/save")
     public void saveSurveyResponse(@RequestBody SurveyResponseDto surveyResponse) {
         surveyResponseService.saveResponseData(surveyResponse);
+    }
+
+    @GetMapping("/list")
+    public List<SurveyResponseDto> getSurveyResponses(@RequestBody SurveyResponseDto surveyResponse) {
+        return surveyResponseService.getSurveyResponeList(surveyResponse.getGroupId(), surveyResponse.getMemNum());
     }
 
 }
