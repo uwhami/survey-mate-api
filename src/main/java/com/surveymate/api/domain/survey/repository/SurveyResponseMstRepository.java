@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface SurveyResponseMstRepository extends JpaRepository<SurveyResponseMst, Long> {
 
 //    @Query("SELECT srm FROM SurveyResponseMst srm WHERE srm.master.sqMstId = :surveyUrl AND srm.responseMemNum = :memnum")
-    SurveyResponseMst findByMaster_SqMstIdAndResponseMemNum(String sqMstId, String responseMemNum);
+    SurveyResponseMst findByMaster_SqMstIdAndCreateMemNum(String sqMstId, String createMemNum);
 }

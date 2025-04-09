@@ -23,7 +23,5 @@ public class SurveyResponseMst extends BaseEntity {
     @JoinColumn(name = "sq_mst_id", nullable = false)
     private SurveyQuestionMst master;
 
-    @Column(nullable = false)
-    private String responseMemNum;
 
 }
