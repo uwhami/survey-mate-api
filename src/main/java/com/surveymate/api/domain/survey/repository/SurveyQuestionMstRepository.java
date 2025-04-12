@@ -44,12 +44,14 @@ public interface SurveyQuestionMstRepository extends JpaRepository<SurveyQuestio
             "    , m.title" +
             "    , m.description" +
             "    , m.url" +
-            "    , CASE WHEN rm.id IS NULL THEN false ELSE true END" +
+            "    , CASE WHEN rm.srMstId IS NULL THEN false ELSE true END" +
             "    , NULL" +
             ")" +
             "FROM SurveyQuestionMst m " +
             "LEFT JOIN m.responseMst rm ON rm.createMemNum = :memNum " +
-            "WHERE m.groupId = :groupId OR rm.id IS NOT NULL")
+            "WHERE m.groupId = :groupId OR rm.srMstId IS NOT NULL " +
+            "ORDER BY m.sqMstId DESC"
+    )
     Page<SurveyResponseDto> getSurveyResponeList(@Param("groupId") Long groupId, @Param("memNum") String memNum, Pageable pageable);
 
 
