@@ -18,7 +18,7 @@ public class SurveyResponseDtl extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 응답 상세 ID (PK)
+    private Long srDtlId; // 응답 상세 ID (PK)
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "srMstId", nullable = false)

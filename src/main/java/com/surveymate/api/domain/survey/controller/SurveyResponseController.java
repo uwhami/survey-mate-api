@@ -23,7 +23,7 @@ public class SurveyResponseController {
         return surveyResponseService.getSurveyForm(surveyUrl, responseDto);
     }
 
-    @PostMapping("/save")
+    @PostMapping
     public void saveSurveyResponse(@RequestBody SurveyResponseDto surveyResponse) {
         surveyResponseService.saveResponseData(surveyResponse);
     }
