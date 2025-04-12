@@ -10,7 +10,7 @@ import java.util.List;
 public interface SurveyService {
 
     SurveyQuestionMst createSurvey(SurveyQuestionMstRequest surveyQuestionMstRequest);
-    SurveyQuestionMst updateSurvey(SurveyQuestionMstRequest surveyQuestionMstRequest);
+    List<SurveyQuestionMst> getCreatedSurveyList(SurveyQuestionMstRequest surveyQuestionMstRequest);
     /*List<MenuResponse> getAllMenus();
     List<MenuResponse> getMenusByRole(String memberRole);
     void updateMenu(String menuNo, MenuRequest menuRequest);
