@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,18 @@ public class SurveyQuestionMst extends BaseEntity {
     private String url;
 
     private Long groupId;
+
+    @Column(nullable = false)
+    private String status;
+
+    @Column(nullable = false)
+    private boolean isAnonymous;
+
+    @Column(nullable = false )
+    private LocalDateTime startDate;
+
+    @Column(nullable = false)
+    private LocalDateTime endDate;
 
     @OneToMany(mappedBy = "surveyQuestionMst", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SurveyQuestionDtl> questions = new ArrayList<>();
