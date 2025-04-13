@@ -1,6 +1,6 @@
 package com.surveymate.api.domain.survey.repository;
-
 import com.surveymate.api.domain.survey.dto.SurveyFormData;
+import com.surveymate.api.domain.survey.dto.SurveyQuestionMstRequest;
 import com.surveymate.api.domain.survey.dto.SurveyResponseDto;
 import com.surveymate.api.domain.survey.entity.SurveyQuestionMst;
 import org.springframework.data.domain.Page;
@@ -11,7 +11,8 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface SurveyQuestionMstRepository extends JpaRepository<SurveyQuestionMst, String> {
+public interface SurveyQuestionMstRepository
+        extends JpaRepository<SurveyQuestionMst, String>, SurveyQuestionMstRepositoryCustom {
 
     @Query("SELECT NVL(MAX(CAST(SUBSTRING(s.sqMstId, 11) AS integer)), 0) FROM SurveyQuestionMst s WHERE s.sqMstId LIKE CONCAT('SQ', :today, '%') ORDER BY s.sqMstId DESC LIMIT 1")
     int findTopSqNumByToday(@Param("today") String today);
@@ -54,5 +55,5 @@ public interface SurveyQuestionMstRepository extends JpaRepository<SurveyQuestio
     )
     Page<SurveyResponseDto> getSurveyResponeList(@Param("groupId") Long groupId, @Param("memNum") String memNum, Pageable pageable);
 
-
+    Page<SurveyQuestionMst> getSurveyQuestionMstList(SurveyQuestionMstRequest request,  Pageable pageable) ;
 }

@@ -1,9 +1,6 @@
 package com.surveymate.api.domain.survey.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -14,6 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class SurveyQuestionMstRequest {
 
     @NotNull(message = "Title cannot be null")
@@ -21,6 +19,12 @@ public class SurveyQuestionMstRequest {
     private String title; // 설문 제목
 
     private String description; // 설문 설명
+
+    private String startDate; // 설문시작일시
+
+    private String endDate;// 설문종료일시
+
+    private String createMemNum;// 설문생성자
 
     private List<SurveyQuestionDtlRequest> questions; // 질문 목록
 

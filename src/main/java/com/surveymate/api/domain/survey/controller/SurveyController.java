@@ -2,14 +2,14 @@ package com.surveymate.api.domain.survey.controller;
 
 import com.surveymate.api.common.dto.PagedResponse;
 import com.surveymate.api.domain.survey.dto.SurveyQuestionMstRequest;
+import com.surveymate.api.domain.survey.dto.SurveyQuestionMstResponse;
 import com.surveymate.api.domain.survey.dto.SurveyResponseDto;
-import com.surveymate.api.domain.survey.entity.SurveyQuestionMst;
 import com.surveymate.api.domain.survey.service.SurveyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -31,8 +31,11 @@ public class SurveyController {
      * 생성 설문 리스트 조회
      * */
     @GetMapping
-    public List<SurveyQuestionMst> getCreatedSurveyList(@RequestBody SurveyQuestionMstRequest surveyRequest) {
-        return surveyService.getCreatedSurveyList(surveyRequest);
+    public PagedResponse<SurveyQuestionMstResponse> getCreatedSurveyList(@RequestBody SurveyQuestionMstRequest surveyRequest
+        , @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return surveyService.getCreatedSurveyList(surveyRequest,pageable);
+
     }
 
     /**

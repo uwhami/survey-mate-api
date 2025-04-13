@@ -1,7 +1,10 @@
 package com.surveymate.api.domain.survey.service;
 
+import com.surveymate.api.common.dto.PagedResponse;
 import com.surveymate.api.domain.survey.dto.SurveyQuestionMstRequest;
+import com.surveymate.api.domain.survey.dto.SurveyQuestionMstResponse;
 import com.surveymate.api.domain.survey.entity.SurveyQuestionMst;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,10 +13,6 @@ import java.util.List;
 public interface SurveyService {
 
     SurveyQuestionMst createSurvey(SurveyQuestionMstRequest surveyQuestionMstRequest);
-    List<SurveyQuestionMst> getCreatedSurveyList(SurveyQuestionMstRequest surveyQuestionMstRequest);
-    /*List<MenuResponse> getAllMenus();
-    List<MenuResponse> getMenusByRole(String memberRole);
-    void updateMenu(String menuNo, MenuRequest menuRequest);
-    void deleteMenu(String menuNo);*/
+    PagedResponse<SurveyQuestionMstResponse> getCreatedSurveyList(SurveyQuestionMstRequest surveyQuestionMstRequest, Pageable pageable);
 
 }
