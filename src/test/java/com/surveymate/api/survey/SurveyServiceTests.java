@@ -1,6 +1,7 @@
 package com.surveymate.api.survey;
 
 import com.surveymate.api.common.util.CodeGenerator;
+import com.surveymate.api.domain.survey.dto.SurveyQuestionMstRequest;
 import com.surveymate.api.domain.survey.entity.*;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionDtlRepository;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionMstRepository;
@@ -8,7 +9,9 @@ import com.surveymate.api.domain.survey.repository.SurveyQuestionSdtlRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 
 @SpringBootTest
@@ -63,6 +66,24 @@ public class SurveyServiceTests {
         surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl2, 1, "check1"));
         surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl2, 2, "check2"));
         surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl2, 3, "check3"));
+    }
+
+    @Test
+    public void getSurveyQuestionMstList() {
+        SurveyQuestionMstRequest request = SurveyQuestionMstRequest.builder()
+                .title("모닝스타")
+                .build();
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<SurveyQuestionMst> getSurveyQuestionMstList  = surveyQuestionMstRepository.getSurveyQuestionMstList(request, pageable);
+        for (SurveyQuestionMst mst : getSurveyQuestionMstList.getContent()) {
+            System.out.println("설문 제목: " + mst.getTitle());
+            System.out.println("시작일: " + mst.getStartDate());
+            System.out.println("종료일: " + mst.getEndDate());
+            System.out.println("생성일: " + mst.getCreateDate());
+            System.out.println("생성자: " + mst.getCreateMemNum());
+            System.out.println("--------");
+        }
     }
 }
 
