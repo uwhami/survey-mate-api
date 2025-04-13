@@ -52,3 +52,4 @@ public class SurveyQuestionMst extends BaseEntity {
     @OneToMany(mappedBy = "master", fetch = FetchType.LAZY)
     List<SurveyResponseMst> responseMst;
 }
+

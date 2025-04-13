@@ -1,10 +1,13 @@
 package com.surveymate.api.domain.survey.service;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.surveymate.api.common.dto.PagedResponse;
 import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.common.util.CodeGenerator;
 import com.surveymate.api.common.util.UrlSHA256Generator;
 import com.surveymate.api.domain.survey.dto.SurveyQuestionDtlRequest;
 import com.surveymate.api.domain.survey.dto.SurveyQuestionMstRequest;
+import com.surveymate.api.domain.survey.dto.SurveyQuestionMstResponse;
 import com.surveymate.api.domain.survey.dto.SurveyQuestionSdtlRequest;
 import com.surveymate.api.domain.survey.entity.*;
 import com.surveymate.api.domain.survey.mapper.SurveyMapper;
@@ -13,10 +16,10 @@ import com.surveymate.api.domain.survey.repository.SurveyQuestionMstRepository;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionSdtlRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Log4j2
 @Service
@@ -29,6 +32,7 @@ public class SurveyServiceImpl implements SurveyService {
     private final SurveyMapper surveyMapper;
     private final CodeGenerator codeGenerator;
     private final UrlSHA256Generator urlSHA256Generator;
+    private final JPAQueryFactory queryFactory;
 
     /**
      * 설문 생성
@@ -84,10 +88,18 @@ public class SurveyServiceImpl implements SurveyService {
         }
     }
     /**
-     * 설문 수정
+     * 생성된 설문 리스트 조회
      */
     @Transactional
-    public List<SurveyQuestionMst> getCreatedSurveyList(SurveyQuestionMstRequest request) {
-        return null;
+    public PagedResponse<SurveyQuestionMstResponse> getCreatedSurveyList(SurveyQuestionMstRequest request, Pageable pageable) {
+        try {
+
+            Page<SurveyQuestionMst> response = surveyQuestionMstRepository.getSurveyQuestionMstList(request,pageable);
+            return new PagedResponse<>(response.map(surveyMapper::toSurveyQuestionMstResponse));
+
+        } catch (Exception e) {
+            log.error("Failed to create survey", e);
+            throw new CustomRuntimeException("Error calling Survey Response Form", e);
+        }
     }
 }
