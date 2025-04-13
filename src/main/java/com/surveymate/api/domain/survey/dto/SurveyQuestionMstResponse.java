@@ -1,5 +1,6 @@
 package com.surveymate.api.domain.survey.dto;
 
+import com.surveymate.api.common.dto.BaseResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SurveyQuestionMstResponse {
+public class SurveyQuestionMstResponse extends BaseResponse {
 
     private String sqMstId; // 설문 마스터 ID (PK)
     private String title; // 설문 제목
