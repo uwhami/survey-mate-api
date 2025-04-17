@@ -1,11 +1,17 @@
 package com.surveymate.api.survey;
 
+import com.surveymate.api.common.dto.PagedResponse;
 import com.surveymate.api.common.util.CodeGenerator;
 import com.surveymate.api.domain.survey.dto.SurveyQuestionMstRequest;
-import com.surveymate.api.domain.survey.entity.*;
+import com.surveymate.api.domain.survey.dto.SurveyResponseListDto;
+import com.surveymate.api.domain.survey.entity.SurveyQuestionDtl;
+import com.surveymate.api.domain.survey.entity.SurveyQuestionDtlId;
+import com.surveymate.api.domain.survey.entity.SurveyQuestionMst;
+import com.surveymate.api.domain.survey.entity.SurveyQuestionSdtl;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionDtlRepository;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionMstRepository;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionSdtlRepository;
+import com.surveymate.api.domain.survey.service.SurveyService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +34,9 @@ public class SurveyServiceTests {
 
     @Autowired
     CodeGenerator codeGenerator;
+
+    @Autowired
+    SurveyService surveyService;
 
     @Test
     public void dataInsert() {
@@ -84,6 +93,14 @@ public class SurveyServiceTests {
             System.out.println("생성자: " + mst.getCreateMemNum());
             System.out.println("--------");
         }
+    }
+
+    @Test
+    public void getSurveyResponsesBySurveyIdTest(){
+        String sqMstId = "SQ202504060001";
+        Pageable pageable = PageRequest.of(0, 10);
+        PagedResponse<SurveyResponseListDto> response =  surveyService.getSurveyResponsesBySurveyId(sqMstId, pageable);
+        System.out.println(response);
     }
 }
 

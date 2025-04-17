@@ -1,19 +1,16 @@
 package com.surveymate.api.domain.survey.service;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.surveymate.api.common.dto.PagedResponse;
 import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.common.util.CodeGenerator;
 import com.surveymate.api.common.util.UrlSHA256Generator;
-import com.surveymate.api.domain.survey.dto.SurveyQuestionDtlRequest;
-import com.surveymate.api.domain.survey.dto.SurveyQuestionMstRequest;
-import com.surveymate.api.domain.survey.dto.SurveyQuestionMstResponse;
-import com.surveymate.api.domain.survey.dto.SurveyQuestionSdtlRequest;
+import com.surveymate.api.domain.survey.dto.*;
 import com.surveymate.api.domain.survey.entity.*;
 import com.surveymate.api.domain.survey.mapper.SurveyMapper;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionDtlRepository;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionMstRepository;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionSdtlRepository;
+import com.surveymate.api.domain.survey.repository.SurveyResponseMstRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -32,7 +29,7 @@ public class SurveyServiceImpl implements SurveyService {
     private final SurveyMapper surveyMapper;
     private final CodeGenerator codeGenerator;
     private final UrlSHA256Generator urlSHA256Generator;
-    private final JPAQueryFactory queryFactory;
+    private final SurveyResponseMstRepository surveyResponseMstRepository;
 
     /**
      * 설문 생성
@@ -100,6 +97,16 @@ public class SurveyServiceImpl implements SurveyService {
         } catch (Exception e) {
             log.error("Failed to create survey", e);
             throw new CustomRuntimeException("Error calling Survey Response Form", e);
+        }
+    }
+
+    @Override
+    public PagedResponse<SurveyResponseListDto> getSurveyResponsesBySurveyId(String sqMstId, Pageable pageable) {
+        try{
+            Page<SurveyResponseListDto> response = surveyResponseMstRepository.findSurveyResponseMstByMaster_SqMstId(sqMstId, pageable);
+            return new PagedResponse<>(response);
+        }catch(Exception e){
+            throw new CustomRuntimeException("Error calling Survey Response List By SqMstId", e);
         }
     }
 }
