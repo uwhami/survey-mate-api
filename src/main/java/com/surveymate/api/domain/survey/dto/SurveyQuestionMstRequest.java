@@ -1,9 +1,9 @@
 package com.surveymate.api.domain.survey.dto;
 
-import lombok.*;
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.*;
+
 import java.util.List;
 
 
@@ -29,4 +29,6 @@ public class SurveyQuestionMstRequest {
     private List<SurveyQuestionDtlRequest> questions; // 질문 목록
 
     private String groupId; //그룹아이디
+
+    private String sqMstId;
 }
