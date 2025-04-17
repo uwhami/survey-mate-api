@@ -1,6 +1,7 @@
 package com.surveymate.api.domain.survey.entity;
 
 import com.surveymate.api.common.entity.BaseEntity;
+import com.surveymate.api.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,10 @@ public class SurveyResponseMst extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sq_mst_id", nullable = false)
     private SurveyQuestionMst master;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "create_mem_num", referencedColumnName = "mem_num", insertable=false, updatable=false)
+    private Member responseMember;
 
 
 }
