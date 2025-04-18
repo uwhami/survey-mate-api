@@ -33,11 +33,13 @@ public interface SurveyQuestionMstRepository
             "    FROM SurveyQuestionMst m" +
             "    JOIN m.questions d" +
             "    LEFT JOIN d.options s" +
-            "    LEFT JOIN m.responseMst rm ON rm.createMemNum = :memNum" +
+            "    LEFT JOIN m.responseMst rm ON (:memNum IS NULL OR rm.createMemNum = :memNum) AND (:srMstId IS NULL OR rm.srMstId = :srMstId)" +
             "    LEFT JOIN d.responseDetails dm" +
-            "    WHERE m.url = :surveyUrl" +
+            "    WHERE (:surveyUrl IS NULl OR m.url = :surveyUrl) " +
+            "    AND (:srMstId IS NULL OR rm.srMstId = :srMstId)" +
+            "    AND dm.surveyResponseMst = rm" +
             "    ORDER BY d.id.questionDtlOrder, s.id.questionSdtlOrder")
-    List<SurveyFormData> getSurveyWithDetails(@Param("surveyUrl") String surveyUrl, @Param("memNum") String memNum);
+    List<SurveyFormData> getSurveyWithDetails(@Param("surveyUrl") String surveyUrl, @Param("memNum") String memNum, @Param("srMstId") Long srMstId);
 
 
     @Query("SELECT new com.surveymate.api.domain.survey.dto.SurveyResponseDto(" +
