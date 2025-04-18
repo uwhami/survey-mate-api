@@ -2,8 +2,8 @@ package com.surveymate.api.survey;
 
 import com.surveymate.api.common.dto.PagedResponse;
 import com.surveymate.api.common.util.CodeGenerator;
+import com.surveymate.api.domain.survey.dto.ResponsesBySurveyDto;
 import com.surveymate.api.domain.survey.dto.SurveyQuestionMstRequest;
-import com.surveymate.api.domain.survey.dto.SurveyResponseListDto;
 import com.surveymate.api.domain.survey.entity.SurveyQuestionDtl;
 import com.surveymate.api.domain.survey.entity.SurveyQuestionDtlId;
 import com.surveymate.api.domain.survey.entity.SurveyQuestionMst;
@@ -99,7 +99,7 @@ public class SurveyServiceTests {
     public void getSurveyResponsesBySurveyIdTest(){
         String sqMstId = "SQ202504060001";
         Pageable pageable = PageRequest.of(0, 10);
-        PagedResponse<SurveyResponseListDto> response =  surveyService.getSurveyResponsesBySurveyId(sqMstId, pageable);
+        PagedResponse<ResponsesBySurveyDto> response =  surveyService.getSurveyResponsesBySurveyId(sqMstId, pageable);
         System.out.println(response);
     }
 }

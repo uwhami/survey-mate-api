@@ -20,7 +20,12 @@ public class SurveyResponseController {
 
     @GetMapping("/{surveyUrl}")
     public SurveyQuestionMstResponse getSurveyForm(@ModelAttribute SurveyResponseDto responseDto, @PathVariable String surveyUrl) {
-        return surveyResponseService.getSurveyForm(surveyUrl, responseDto);
+        return surveyResponseService.getSurveyForm(surveyUrl, responseDto, null);
+    }
+
+    @GetMapping("/listBySurvey/{srMstId}")
+    public SurveyQuestionMstResponse getSurveyForm(@PathVariable Long srMstId) {
+        return surveyResponseService.getSurveyForm(null, null, srMstId);
     }
 
     @PostMapping
