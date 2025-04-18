@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @Getter
-public class SurveyResponseListDto {
+public class ResponsesBySurveyDto {
 
     private Long srMstId;
     private LocalDateTime createData;

@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface SurveyResponseService {
 
-    SurveyQuestionMstResponse getSurveyForm(String surveyUrl, SurveyResponseDto responseDto);
+    SurveyQuestionMstResponse getSurveyForm(String surveyUrl, SurveyResponseDto responseDto, Long srMstId);
 
     void saveResponseData(SurveyResponseDto responseDto);
 

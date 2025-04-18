@@ -38,7 +38,7 @@ public class SurveyResponseServiceTests {
     public void getSurveyFormTest() {
         String surveyUrl = "test012345";
         String memNum = "M202502090001";
-        List<SurveyFormData> list = surveyQuestionMstRepository.getSurveyWithDetails(surveyUrl, memNum);
+        List<SurveyFormData> list = surveyQuestionMstRepository.getSurveyWithDetails(surveyUrl, memNum, null);
         System.out.println("getSurveyForm : list.size() = " + list.size());
         for (SurveyFormData surveyResponseForm : list) {
             System.out.println(surveyResponseForm);
@@ -51,7 +51,7 @@ public class SurveyResponseServiceTests {
         responseDto.setMemNum("M202502090001");
         responseDto.setGroupId(15L);
         String surveyUrl = "test012345";
-        SurveyQuestionMstResponse surveyQuestionMstResponse = surveyResponseService.getSurveyForm(surveyUrl, responseDto);
+        SurveyQuestionMstResponse surveyQuestionMstResponse = surveyResponseService.getSurveyForm(surveyUrl, responseDto, null);
         System.out.println(surveyQuestionMstResponse);
     }
 
@@ -61,6 +61,14 @@ public class SurveyResponseServiceTests {
         PagedResponse<SurveyResponseDto> responseDtoPagedResponse = surveyResponseService.getSurveyResponeList(15L,"M202502090001", pageable);
         System.out.println("responseDtoPagedResponse : responseDto = " + responseDtoPagedResponse);
     }
+
+    @Test
+    public void getSurveyFormResponseBySrMstIdTest(){
+        Long srMstId = 12L;
+        SurveyQuestionMstResponse surveyQuestionMstResponse = surveyResponseService.getSurveyForm(null, null, srMstId);
+        System.out.println(surveyQuestionMstResponse);
+    }
+
 
 
 }

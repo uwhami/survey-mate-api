@@ -29,22 +29,22 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
     private final SurveyResponseDtlRepository responseDtlRepository;
 
     @Override
-    public SurveyQuestionMstResponse getSurveyForm(String surveyUrl, SurveyResponseDto responseDto) {
+    public SurveyQuestionMstResponse getSurveyForm(String surveyUrl, SurveyResponseDto responseDto, Long srMstId) {
         SurveyQuestionMstResponse response = new SurveyQuestionMstResponse();
 
         try {
-            List<SurveyFormData> formData = questionMstRepository.getSurveyWithDetails(surveyUrl, responseDto.getMemNum());
+            List<SurveyFormData> formData = questionMstRepository.getSurveyWithDetails(surveyUrl, responseDto == null ? null : responseDto.getMemNum(), srMstId);
             if (formData == null || formData.isEmpty()) {
                 throw new SurveyRequestNotFoundException();
             }
             SurveyFormData questionMst = formData.get(0);
-            if (questionMst.getGroupId() != null && !Objects.equals(questionMst.getGroupId(), responseDto.getGroupId())) {
+            if ( questionMst.getGroupId() != null && responseDto != null && !Objects.equals(questionMst.getGroupId(), responseDto.getGroupId())) {
                 throw new SurveyResponseUnauthorizedException();
             }
 
             response.setHasResponded(questionMst.getRespondedMemNum() != null);
 
-            response.setGroupId(responseDto.getGroupId());
+            response.setGroupId(responseDto == null ? null : responseDto.getGroupId());
             response.setSqMstId(questionMst.getSqMstId());
             response.setTitle(questionMst.getTitle());
             response.setDescription(questionMst.getDescription());
