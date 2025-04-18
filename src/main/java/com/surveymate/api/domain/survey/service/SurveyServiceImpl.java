@@ -101,9 +101,9 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public PagedResponse<SurveyResponseListDto> getSurveyResponsesBySurveyId(String sqMstId, Pageable pageable) {
+    public PagedResponse<ResponsesBySurveyDto> getSurveyResponsesBySurveyId(String sqMstId, Pageable pageable) {
         try{
-            Page<SurveyResponseListDto> response = surveyResponseMstRepository.findSurveyResponseMstByMaster_SqMstId(sqMstId, pageable);
+            Page<ResponsesBySurveyDto> response = surveyResponseMstRepository.findSurveyResponseMstByMaster_SqMstId(sqMstId, pageable);
             return new PagedResponse<>(response);
         }catch(Exception e){
             throw new CustomRuntimeException("Error calling Survey Response List By SqMstId", e);
