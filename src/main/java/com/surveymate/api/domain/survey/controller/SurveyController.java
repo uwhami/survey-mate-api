@@ -30,7 +30,7 @@ public class SurveyController {
     /**
      * 생성 설문 리스트 조회
      * */
-    @GetMapping
+    @PostMapping("/list")
     public PagedResponse<SurveyQuestionMstResponse> getCreatedSurveyList(@RequestBody SurveyQuestionMstRequest surveyRequest
         , @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);

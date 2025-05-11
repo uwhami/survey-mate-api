@@ -43,7 +43,7 @@ public class SurveyServiceImpl implements SurveyService {
             String sqMstId = codeGenerator.generateCode("SQ01");
             surveyMst.setSqMstId(sqMstId);
             surveyMst.setUrl(urlSHA256Generator.generateUrlSHA256(sqMstId));
-            //surveyMst.setQuestions(null);
+            surveyMst.setStatus("ACTIVE");
             surveyQuestionMstRepository.save(surveyMst);
 
             // 질문 저장
@@ -54,7 +54,6 @@ public class SurveyServiceImpl implements SurveyService {
                 SurveyQuestionDtl dtlEntity = surveyMapper.toSurveyQuestionDtl(dtlRequest);
                 dtlEntity.setId(dtlId);
                 dtlEntity.setSurveyQuestionMst(surveyMst);
-                //dtlEntity.setOptions(null);
                 surveyQuestionDtlRepository.save(dtlEntity);
                 // 선택지 저장
                 int questionSdtlOrder = 1;
