@@ -2,7 +2,7 @@ spring:
   application:
     name: "Survey Mate API"
   profiles:
-    active: dev
+    active: prod
 
   servlet:
     multipart:
