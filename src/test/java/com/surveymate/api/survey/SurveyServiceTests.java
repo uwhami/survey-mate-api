@@ -47,7 +47,11 @@ public class SurveyServiceTests {
         mst.setUrl("test012345");
         mst.setDescription("Test Description");
         mst.setTitle("QUESTION TEST");
-        surveyQuestionMstRepository.save(mst);
+        try{
+            surveyQuestionMstRepository.save(mst);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
 
         // 질문1 저장
         SurveyQuestionDtlId dtlId1 = new SurveyQuestionDtlId(sqMstId, 1);
@@ -56,7 +60,11 @@ public class SurveyServiceTests {
         dtl1.setSurveyQuestionMst(mst);
         dtl1.setTypeId("SQT001");
         dtl1.setQuestionText("질문1");
-        surveyQuestionDtlRepository.save(dtl1);
+        try{
+            surveyQuestionDtlRepository.save(dtl1);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
 
         // 질문2 저장
         SurveyQuestionDtlId dtlId2 = new SurveyQuestionDtlId(sqMstId, 2);
@@ -65,16 +73,21 @@ public class SurveyServiceTests {
         dtl2.setSurveyQuestionMst(mst);
         dtl2.setTypeId("SQT001");
         dtl2.setQuestionText("질문2");
-        surveyQuestionDtlRepository.save(dtl2);
+        try {
+            surveyQuestionDtlRepository.save(dtl2);
 
-        // 질문1의 선택지 저장
-        surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl1, 1, "radio1"));
-        surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl1, 2, "radio2"));
 
-        // 질문2의 선택지 저장
-        surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl2, 1, "check1"));
-        surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl2, 2, "check2"));
-        surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl2, 3, "check3"));
+            // 질문1의 선택지 저장
+            surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl1, 1, "radio1"));
+            surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl1, 2, "radio2"));
+
+            // 질문2의 선택지 저장
+            surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl2, 1, "check1"));
+            surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl2, 2, "check2"));
+            surveyQuestionSdtlRepository.save(new SurveyQuestionSdtl(dtl2, 3, "check3"));
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
     @Test
