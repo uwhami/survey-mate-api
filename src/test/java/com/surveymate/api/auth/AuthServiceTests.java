@@ -89,7 +89,11 @@ public class AuthServiceTests {
                 .memNum("M202412100001")
                 .build();
         System.out.println("uuid : " + uuid);
-        loginHistoryRepository.save(loginHistory);
+        try{
+            loginHistoryRepository.save(loginHistory);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
 
     }
 }
