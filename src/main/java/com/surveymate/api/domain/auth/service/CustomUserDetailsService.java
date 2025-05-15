@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -42,9 +43,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public CustomUserDetails loadUserByUuid(Claims claims) throws UsernameNotFoundException {
         String uuid = claims.getSubject();
+        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+        bb.putLong(UUID.fromString(uuid).getMostSignificantBits());
+        bb.putLong(UUID.fromString(uuid).getLeastSignificantBits());
+        byte[] uuidBytes = bb.array();
+
         String memnum = cacheService.getFromCache(uuid);
         if (memnum == null) {
-            LoginHistory loginInfo = loginHistoryRepository.findByUuid(UUID.fromString(uuid));
+            LoginHistory loginInfo = loginHistoryRepository.findByUuid(uuidBytes);
             if(loginInfo == null){
                 throw new UsernameNotFoundException("USER_NOT_FOUND");
             }
