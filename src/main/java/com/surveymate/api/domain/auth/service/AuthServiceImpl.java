@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -210,8 +211,12 @@ public class AuthServiceImpl implements AuthService {
             memberService.resetPasswordError(loginRequest.getUserId());
 
             UUID uuid = UUID.randomUUID();
+            ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+            bb.putLong(uuid.getMostSignificantBits());
+            bb.putLong(uuid.getLeastSignificantBits());
+            byte[] uuidBytes = bb.array();
             LoginHistory loginHistory = LoginHistory.builder()
-                    .uuid(uuid)
+                    .uuid(uuidBytes)
                     .memNum(member.getMemNum())
                     .build();
             loginHistoryRepository.save(loginHistory);
@@ -287,13 +292,19 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Member findMemberByLoginHistoryUuid(UUID uuid) {
+
+        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+        bb.putLong(uuid.getMostSignificantBits());
+        bb.putLong(uuid.getLeastSignificantBits());
+        byte[] uuidBytes = bb.array();
+
         QMember qMember = QMember.member;
         QLoginHistory qLoginHistory = QLoginHistory.loginHistory;
         Member member = queryFactory
                         .select(qMember)
                         .from(qMember)
                         .join(qLoginHistory).on(qMember.memNum.eq(qLoginHistory.memNum))
-                        .where(qLoginHistory.uuid.eq(uuid))
+                        .where(qLoginHistory.uuid.eq(uuidBytes))
                         .fetchOne();
         if(member == null){
             throw new UserNotFoundException();
