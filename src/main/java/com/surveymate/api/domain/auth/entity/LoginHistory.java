@@ -1,6 +1,9 @@
 package com.surveymate.api.domain.auth.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +11,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Builder
@@ -19,8 +21,8 @@ import java.util.UUID;
 public class LoginHistory {
 
     @Id
-    @Column(name = "uuid", columnDefinition = "BINARY(16)", nullable = false, unique = true)
-    private UUID uuid;
+    @Column(name = "uuid", nullable = false, unique = true)
+    private byte[] uuid;
 
     @Column(name = "mem_num", nullable = false)
     private String memNum;

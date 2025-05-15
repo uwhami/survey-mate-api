@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.UUID;
 
@@ -84,8 +85,12 @@ public class AuthServiceTests {
     @Test
     public void loginHistory() {
         UUID uuid = UUID.randomUUID();
+        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+        bb.putLong(uuid.getMostSignificantBits());
+        bb.putLong(uuid.getLeastSignificantBits());
+        byte[] uuidBytes = bb.array();
         LoginHistory loginHistory = LoginHistory.builder()
-                .uuid(uuid)
+                .uuid(uuidBytes)
                 .memNum("M202412100001")
                 .build();
         System.out.println("uuid : " + uuid);
