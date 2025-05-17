@@ -239,7 +239,7 @@ public class AuthServiceImpl implements AuthService {
                 // 아이디는 맞지만 비밀번호가 틀렸을 경우 오류 횟수 증가
                 memberService.increasePasswordError(loginRequest.getUserId());
             }
-            throw new RuntimeException("Authentication failed: " + ex.getMessage());
+            throw new CustomRuntimeException("Authentication failed: " + ex.getMessage());
         } catch (Exception ex) {
             throw new CustomRuntimeException(ex.getMessage(), ex);
         }
