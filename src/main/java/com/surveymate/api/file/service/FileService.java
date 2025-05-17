@@ -24,4 +24,7 @@ public interface FileService {
 
     String getFilePath(String fileId) throws Exception;
 
+    String getThumbnailFilePath(String fileId) throws Exception;
+
+
 }
