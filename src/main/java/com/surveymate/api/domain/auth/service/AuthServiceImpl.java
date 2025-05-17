@@ -29,6 +29,7 @@ import com.surveymate.api.file.service.FileService;
 import com.surveymate.api.security.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -65,6 +66,9 @@ public class AuthServiceImpl implements AuthService {
     private final GuavaCacheService cacheService;
     private final GroupService groupService;
     private final JPAQueryFactory queryFactory;
+
+    @Value("${IP}")
+    private String prodIp;
 
     @Override
     public boolean checkDuplicateId(String userId) {
@@ -222,6 +226,7 @@ public class AuthServiceImpl implements AuthService {
             loginHistoryRepository.save(loginHistory);
 
             cacheService.saveToCache(uuid.toString(), member.getMemNum());
+            String profileImgPath = prodIp + "/" + fileService.getThumbnailFilePath(member.getProfileImageUuid());
 
             // 인증 성공 시 JWT 토큰 생성
             String accessToken = jwtTokenProvider.generateToken(uuid.toString(), member);
@@ -229,7 +234,8 @@ public class AuthServiceImpl implements AuthService {
 
             return Map.of(
                     "accessToken", accessToken,
-                    "refreshToken", refreshToken
+                    "refreshToken", refreshToken,
+                    "profileImgPath", profileImgPath
             );
 
         } catch (BadCredentialsException ex) {   // 아이디나 비밀번호가 틀린 경우.

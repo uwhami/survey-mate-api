@@ -13,6 +13,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
@@ -223,5 +224,25 @@ public class FileServiceImpl implements FileService {
         UploadedFile fileEntity = fileRepository.findById(fileId)
                 .orElseThrow(() -> new FileNotFoundException("File not found with ID: " + fileId));
         return fileEntity.getFilePath();
+    }
+
+    @Override
+    public String getThumbnailFilePath(String fileId) throws Exception {
+        String originalPath = getFilePath(fileId);
+        if (!StringUtils.hasText(originalPath)) {
+            return null;
+        }
+        // 예: uploads/member/profile/fc76fbc0-xxx.jpg
+        int lastSlashIndex = originalPath.lastIndexOf('/');
+        if (lastSlashIndex == -1) {
+            return null;
+        }
+        String fileName = originalPath.substring(lastSlashIndex + 1);
+        if(fileName.equals("default.png")){
+            return originalPath;
+        }
+
+        String directory = originalPath.substring(0, lastSlashIndex);
+        return directory + "/thumbnail/s_" + fileName;
     }
 }
