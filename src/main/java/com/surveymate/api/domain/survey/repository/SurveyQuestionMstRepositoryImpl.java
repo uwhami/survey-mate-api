@@ -32,6 +32,9 @@ public class SurveyQuestionMstRepositoryImpl implements SurveyQuestionMstReposit
         if (request.getEndDate() != null) {
             builder.and(m.startDate.loe(LocalDateTime.parse(request.getEndDate())));
         }
+        if (request.getGroupId() != null) {
+            builder.and(m.groupId.eq(Long.valueOf(request.getGroupId())));
+        }
 
 
         List<SurveyQuestionMst> content = queryFactory
