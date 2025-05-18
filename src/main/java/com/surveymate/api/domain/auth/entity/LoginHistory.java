@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 
@@ -22,6 +24,7 @@ public class LoginHistory {
 
     @Id
     @Column(name = "uuid", nullable = false, unique = true)
+    @JdbcTypeCode(SqlTypes.BINARY)
     private byte[] uuid;
 
     @Column(name = "mem_num", nullable = false)
