@@ -226,7 +226,7 @@ public class AuthServiceImpl implements AuthService {
             loginHistoryRepository.save(loginHistory);
 
             cacheService.saveToCache(uuid.toString(), member.getMemNum());
-            String profileImgPath = prodIp + "/" + fileService.getThumbnailFilePath(member.getProfileImageUuid());
+            String profileImgPath = "/" + fileService.getThumbnailFilePath(member.getProfileImageUuid());
 
             // 인증 성공 시 JWT 토큰 생성
             String accessToken = jwtTokenProvider.generateToken(uuid.toString(), member);
