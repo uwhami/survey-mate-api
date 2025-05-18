@@ -19,7 +19,7 @@ public class CommonCodeDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        commonCodeMstRepository.deleteAll();
+//        commonCodeMstRepository.deleteAll();
 //        setRole();
     }
 
