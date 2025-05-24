@@ -119,8 +119,8 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
 
 
     @Override
-    public PagedResponse<SurveyResponseDto> getSurveyResponeList(Long groupId, String memNum, Pageable pageable) {
-          Page<SurveyResponseDto> responseDtoPage = questionMstRepository.getSurveyResponeList(groupId, memNum, pageable);
+    public PagedResponse<SurveyResponseDto> getSurveyResponeList(String memNum, Pageable pageable) {
+          Page<SurveyResponseDto> responseDtoPage = questionMstRepository.getSurveyResponeList(memNum, pageable);
           return new PagedResponse<>(responseDtoPage);
     }
 }

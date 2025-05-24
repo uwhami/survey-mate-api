@@ -40,7 +40,7 @@ public class SurveyResponseController {
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return surveyResponseService.getSurveyResponeList(surveyResponse.getGroupId(), surveyResponse.getMemNum(), pageable);
+        return surveyResponseService.getSurveyResponeList(surveyResponse.getMemNum(), pageable);
     }
 
 }
