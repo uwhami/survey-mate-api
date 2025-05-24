@@ -58,7 +58,7 @@ public class SurveyResponseServiceTests {
     @Test
     public void getSurveyResponeListTest() {
         Pageable pageable = PageRequest.of(0, 10);
-        PagedResponse<SurveyResponseDto> responseDtoPagedResponse = surveyResponseService.getSurveyResponeList(15L,"M202502090001", pageable);
+        PagedResponse<SurveyResponseDto> responseDtoPagedResponse = surveyResponseService.getSurveyResponeList("M202502090001", pageable);
         System.out.println("responseDtoPagedResponse : responseDto = " + responseDtoPagedResponse);
     }
 

@@ -155,7 +155,7 @@ public class AuthServiceImpl implements AuthService {
             throw new UserAlreadyExistsException("이미 존재하는 ID 입니다. : " + member.getUserId());
         }
 
-        if (memberService.checkDuplicatedEmail(member.getUserEmail())) {
+        if (StringUtils.hasText(member.getUserEmail()) && memberService.checkDuplicatedEmail(member.getUserEmail())) {
             throw new EmailAlreadyExistsException(member.getUserEmail());
         }
 
