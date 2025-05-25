@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Builder
 @Entity
 @Table(name = "survey_response_mst")
@@ -28,5 +30,6 @@ public class SurveyResponseMst extends BaseEntity {
     @JoinColumn(name = "create_mem_num", referencedColumnName = "mem_num", insertable=false, updatable=false)
     private Member responseMember;
 
-
+    @OneToMany(mappedBy = "surveyResponseMst")
+    private List<SurveyResponseDtl> responseDetails;
 }

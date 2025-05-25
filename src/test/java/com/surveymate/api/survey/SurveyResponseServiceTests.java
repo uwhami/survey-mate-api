@@ -5,6 +5,7 @@ import com.surveymate.api.domain.survey.dto.SurveyFormData;
 import com.surveymate.api.domain.survey.dto.SurveyQuestionMstResponse;
 import com.surveymate.api.domain.survey.dto.SurveyResponseDto;
 import com.surveymate.api.domain.survey.entity.SurveyResponseMst;
+import com.surveymate.api.domain.survey.repository.SurveyQuestionMstQueryRepositoryImpl;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionMstRepository;
 import com.surveymate.api.domain.survey.repository.SurveyResponseMstRepository;
 import com.surveymate.api.domain.survey.service.SurveyResponseService;
@@ -28,6 +29,9 @@ public class SurveyResponseServiceTests {
     @Autowired
     private SurveyQuestionMstRepository surveyQuestionMstRepository;
 
+    @Autowired
+    private SurveyQuestionMstQueryRepositoryImpl questionMstQueryRepository;
+
     @Test
     public void findByMaster_SqMstIdAndCreateMemNumTest(){
         SurveyResponseMst responseMst = responseMstRepository.findByMaster_SqMstIdAndCreateMemNum("SQ202503150001", "M202502090001");
@@ -38,7 +42,7 @@ public class SurveyResponseServiceTests {
     public void getSurveyFormTest() {
         String surveyUrl = "test012345";
         String memNum = "M202502090001";
-        List<SurveyFormData> list = surveyQuestionMstRepository.getSurveyWithDetails(surveyUrl, memNum, null);
+        List<SurveyFormData> list = questionMstQueryRepository.getSurveyWithDetails(surveyUrl, memNum, null);
         System.out.println("getSurveyForm : list.size() = " + list.size());
         for (SurveyFormData surveyResponseForm : list) {
             System.out.println(surveyResponseForm);
@@ -58,7 +62,7 @@ public class SurveyResponseServiceTests {
     @Test
     public void getSurveyResponeListTest() {
         Pageable pageable = PageRequest.of(0, 10);
-        PagedResponse<SurveyResponseDto> responseDtoPagedResponse = surveyResponseService.getSurveyResponeList("M202502090001", pageable);
+        PagedResponse<SurveyResponseDto> responseDtoPagedResponse = surveyResponseService.getSurveyResponeList(15L,"M202502090001", pageable);
         System.out.println("responseDtoPagedResponse : responseDto = " + responseDtoPagedResponse);
     }
 

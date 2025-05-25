@@ -14,5 +14,5 @@ public interface SurveyResponseService {
 
     boolean checkAlreadyResponded(String surveyUrl, String memNum);
 
-    PagedResponse<SurveyResponseDto> getSurveyResponeList(String memNum, Pageable pageable);
+    PagedResponse<SurveyResponseDto> getSurveyResponeList(Long groupId, String memNum, Pageable pageable);
 }
