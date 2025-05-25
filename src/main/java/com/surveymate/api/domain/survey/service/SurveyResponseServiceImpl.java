@@ -9,6 +9,7 @@ import com.surveymate.api.domain.survey.entity.SurveyResponseMst;
 import com.surveymate.api.domain.survey.exception.SurveyAlreadyRespondedException;
 import com.surveymate.api.domain.survey.exception.SurveyRequestNotFoundException;
 import com.surveymate.api.domain.survey.exception.SurveyResponseUnauthorizedException;
+import com.surveymate.api.domain.survey.repository.SurveyQuestionMstQueryRepositoryImpl;
 import com.surveymate.api.domain.survey.repository.SurveyQuestionMstRepository;
 import com.surveymate.api.domain.survey.repository.SurveyResponseDtlRepository;
 import com.surveymate.api.domain.survey.repository.SurveyResponseMstRepository;
@@ -27,13 +28,14 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
     private final SurveyQuestionMstRepository questionMstRepository;
     private final SurveyResponseMstRepository responseMstRepository;
     private final SurveyResponseDtlRepository responseDtlRepository;
+    private final SurveyQuestionMstQueryRepositoryImpl questionMstQueryRepository;
 
     @Override
     public SurveyQuestionMstResponse getSurveyForm(String surveyUrl, SurveyResponseDto responseDto, Long srMstId) {
         SurveyQuestionMstResponse response = new SurveyQuestionMstResponse();
 
         try {
-            List<SurveyFormData> formData = questionMstRepository.getSurveyWithDetails(surveyUrl, responseDto == null ? null : responseDto.getMemNum(), srMstId);
+            List<SurveyFormData> formData = questionMstQueryRepository.getSurveyWithDetails(surveyUrl, responseDto == null ? null : responseDto.getMemNum(), srMstId);
             if (formData == null || formData.isEmpty()) {
                 throw new SurveyRequestNotFoundException();
             }
@@ -119,8 +121,8 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
 
 
     @Override
-    public PagedResponse<SurveyResponseDto> getSurveyResponeList(String memNum, Pageable pageable) {
-          Page<SurveyResponseDto> responseDtoPage = questionMstRepository.getSurveyResponeList(memNum, pageable);
+    public PagedResponse<SurveyResponseDto> getSurveyResponeList(Long groupId, String memNum, Pageable pageable) {
+          Page<SurveyResponseDto> responseDtoPage = questionMstRepository.getSurveyResponeList(groupId, memNum, pageable);
           return new PagedResponse<>(responseDtoPage);
     }
 }
