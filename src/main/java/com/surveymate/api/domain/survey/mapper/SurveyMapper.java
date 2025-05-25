@@ -19,6 +19,8 @@ public interface SurveyMapper {
     @Mapping(target = "url", ignore = true)
     @Mapping(target = "questions", ignore = true)
     @Mapping(target = "responseMst", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "anonymous", ignore = true)
     SurveyQuestionMst toSurveyQuestionMst(SurveyQuestionMstRequest request);
 
     // SurveyQuestionMst 엔티티 -> SurveyQuestionMstResponse DTO 변환
