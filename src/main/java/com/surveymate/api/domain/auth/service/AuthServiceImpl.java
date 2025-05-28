@@ -166,6 +166,9 @@ public class AuthServiceImpl implements AuthService {
                 savedFile = fileService.uploadFileAndCreateThumbnail(file, FilePath.MEMBER_PROFILE);
                 member.setProfileImageUuid(savedFile.getFileId());
             }
+            if(!StringUtils.hasText(member.getUserEmail())){
+                member.setUserEmail(null);
+            }
 
             member.setMemNum(codeGenerator.generateCode("MU01"));
             member.setPassword(passwordEncoder.encode(member.getPassword()));
