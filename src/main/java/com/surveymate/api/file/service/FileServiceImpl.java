@@ -106,7 +106,9 @@ public class FileServiceImpl implements FileService {
 
         Path savedFilePath = directory.resolve(saveName);
         try {
-            Files.copy(multipartFile.getInputStream(), savedFilePath);
+            if(!thumbnail){
+                Files.copy(multipartFile.getInputStream(), savedFilePath);
+            }
 
             if(thumbnail) {
                 validateImageFile(multipartFile);
@@ -114,7 +116,8 @@ public class FileServiceImpl implements FileService {
                 String thumbnailPathString = filePathString + "/thumbnail";
                 Path thumbnailDirectory = createDirectoryIfNotExists(thumbnailPathString);
                 Path thumbnailPath = thumbnailDirectory.resolve("s_" + saveName);
-                Thumbnails.of(savedFilePath.toFile()).size(200, 200).toFile(thumbnailPath.toFile());
+//                Thumbnails.of(savedFilePath.toFile()).size(200, 200).toFile(thumbnailPath.toFile());
+                Thumbnails.of(multipartFile.getInputStream()).size(200, 200).toFile(thumbnailPath.toFile());
             }
         } catch (ThumbnailCreationException | IOException e){
             handleThumbnailCreationError(savedFilePath, e);

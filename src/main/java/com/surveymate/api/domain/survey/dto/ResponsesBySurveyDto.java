@@ -12,7 +12,6 @@ public class ResponsesBySurveyDto {
 
     private Long srMstId;
     private LocalDateTime createData;
-    private String createMemNum;
     private String userId;
     private String userName;
 

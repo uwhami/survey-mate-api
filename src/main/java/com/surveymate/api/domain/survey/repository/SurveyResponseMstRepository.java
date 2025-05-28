@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface SurveyResponseMstRepository extends JpaRepository<SurveyResponseMst, Long> {
 
@@ -15,13 +16,12 @@ public interface SurveyResponseMstRepository extends JpaRepository<SurveyRespons
     @Query(" SELECT new com.surveymate.api.domain.survey.dto.ResponsesBySurveyDto(" +
             "       srm.srMstId" +
             "      ,srm.createDate" +
-            "      ,srm.createMemNum" +
             "      ,mem.userId" +
             "      ,mem.userName " +
             ")" +
             " FROM SurveyResponseMst srm" +
             " LEFT JOIN srm.responseMember mem" +
             " WHERE srm.master.sqMstId = :sqMstId")
-    Page<ResponsesBySurveyDto> findSurveyResponseMstByMaster_SqMstId(String sqMstId, Pageable pageable);
+    Page<ResponsesBySurveyDto> findSurveyResponseMstByMaster_SqMstId(@Param("sqMstId") String sqMstId, Pageable pageable);
 
 }
