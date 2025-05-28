@@ -43,7 +43,7 @@ public class Member extends BaseEntity implements UserDetails {
     @Column(name = "user_name", length = 50, nullable = false)
     private String userName;
 
-    @Column(name = "user_email", length = 50, nullable = false, unique = true)
+    @Column(name = "user_email", length = 50, unique = true)
     private String userEmail;
 
     @Column(name = "profile_image_uuid", length = 200)
