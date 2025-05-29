@@ -90,7 +90,7 @@ public class SurveyServiceImpl implements SurveyService {
     public PagedResponse<SurveyQuestionMstResponse> getCreatedSurveyList(SurveyQuestionMstRequest request, Pageable pageable) {
         try {
 
-            Page<SurveyQuestionMst> response = surveyQuestionMstRepository.getSurveyQuestionMstListByCreateMemNum(request.getMemNum(),pageable);
+            Page<SurveyQuestionMst> response = surveyQuestionMstRepository.getSurveyQuestionMstList(request, pageable);
             return new PagedResponse<>(response.map(surveyMapper::toSurveyQuestionMstResponse));
 
         } catch (Exception e) {
