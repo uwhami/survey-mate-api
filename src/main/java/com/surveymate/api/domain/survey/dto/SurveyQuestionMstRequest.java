@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SurveyQuestionMstRequest extends MemInfoAware {
+public class SurveyQuestionMstRequest{
 
     @NotNull(message = "Title cannot be null")
     @Size(min = 3, max = 255, message = "Title must be between 3 and 255 characters")
@@ -28,6 +28,8 @@ public class SurveyQuestionMstRequest extends MemInfoAware {
     private String createMemNum;// 설문생성자
 
     private List<SurveyQuestionDtlRequest> questions; // 질문 목록
+
+    private String groupId; //그룹아이디
 
     private String sqMstId;
 }

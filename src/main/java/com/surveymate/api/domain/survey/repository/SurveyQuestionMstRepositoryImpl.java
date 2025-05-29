@@ -1,6 +1,7 @@
 package com.surveymate.api.domain.survey.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.surveymate.api.common.util.AuthUtil;
 import com.surveymate.api.domain.survey.dto.SurveyQuestionMstRequest;
 import com.surveymate.api.domain.survey.entity.QSurveyQuestionMst;
 import com.surveymate.api.domain.survey.entity.SurveyQuestionMst;
@@ -22,6 +23,9 @@ public class SurveyQuestionMstRepositoryImpl implements SurveyQuestionMstReposit
         QSurveyQuestionMst m = QSurveyQuestionMst.surveyQuestionMst;
 
         BooleanBuilder builder = new BooleanBuilder();
+        String memNum = AuthUtil.getMemNum();
+        Long groupId = AuthUtil.getGroupId();
+        builder.and(m.createMemNum.containsIgnoreCase(memNum));
 
         if (request.getTitle() != null && !request.getTitle().isBlank()) {
             builder.and(m.title.containsIgnoreCase(request.getTitle()));
@@ -32,10 +36,11 @@ public class SurveyQuestionMstRepositoryImpl implements SurveyQuestionMstReposit
         if (request.getEndDate() != null) {
             builder.and(m.startDate.loe(LocalDateTime.parse(request.getEndDate())));
         }
-        if (request.getGroupId() != null) {
-            builder.and(m.groupId.eq(Long.valueOf(request.getGroupId())));
+        if ("normal".equalsIgnoreCase(request.getGroupId())) {
+            builder.and(m.groupId.isNull());
+        } else if("group".equalsIgnoreCase(request.getGroupId())) {
+            builder.and(m.groupId.eq(groupId));
         }
-
 
         List<SurveyQuestionMst> content = queryFactory
                 .selectFrom(m)
