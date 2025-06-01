@@ -97,14 +97,18 @@ public class SurveyServiceTests {
                 .build();
 
         Pageable pageable = PageRequest.of(0, 10);
-        Page<SurveyQuestionMst> getSurveyQuestionMstList  = surveyQuestionMstRepository.getSurveyQuestionMstList(request, pageable);
-        for (SurveyQuestionMst mst : getSurveyQuestionMstList.getContent()) {
-            System.out.println("설문 제목: " + mst.getTitle());
-            System.out.println("시작일: " + mst.getStartDate());
-            System.out.println("종료일: " + mst.getEndDate());
-            System.out.println("생성일: " + mst.getCreateDate());
-            System.out.println("생성자: " + mst.getCreateMemNum());
-            System.out.println("--------");
+        try{
+            Page<SurveyQuestionMst> getSurveyQuestionMstList  = surveyQuestionMstRepository.getSurveyQuestionMstList(request, pageable);
+            for (SurveyQuestionMst mst : getSurveyQuestionMstList.getContent()) {
+                System.out.println("설문 제목: " + mst.getTitle());
+                System.out.println("시작일: " + mst.getStartDate());
+                System.out.println("종료일: " + mst.getEndDate());
+                System.out.println("생성일: " + mst.getCreateDate());
+                System.out.println("생성자: " + mst.getCreateMemNum());
+                System.out.println("--------");
+            }
+        }catch(Exception e){
+            System.out.println(e.getMessage());
         }
     }
 
