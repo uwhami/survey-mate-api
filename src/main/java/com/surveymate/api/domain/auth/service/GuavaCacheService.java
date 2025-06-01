@@ -34,7 +34,9 @@ public class GuavaCacheService {
 
     @Scheduled(fixedRate = 600000) // 10분마다 실행
     public void cleanUpCache() {
-        cache.cleanUp();
-//        log.info("================================Cache cleaned up================================");
+        if (cache.size() > 0) {
+            cache.cleanUp();
+            log.info("================================Cache cleaned up================================ Cache size: {}", cache.size());
+        }
     }
 }
