@@ -5,6 +5,8 @@ import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 
 @Getter
 @ToString
@@ -14,6 +16,8 @@ public class SurveyFormData {
     private final String title;
     private final String description;
     private final Long groupId;
+    private final LocalDateTime startDate;
+    private final LocalDateTime endDate;
     private final Integer questionDtlOrder;
     private final String typeId;
     private final String questionText;
@@ -28,13 +32,16 @@ public class SurveyFormData {
 
     @QueryProjection
     public SurveyFormData(String sqMstId, String title, String description,
-                          Long groupId, Integer questionDtlOrder, String typeId,
+                          Long groupId, LocalDateTime startDate, LocalDateTime endDate,
+                          Integer questionDtlOrder, String typeId,
                           String questionText, Integer questionSdtlOrder, String optionText,
                           String respondedValue, String respondedMemNum) {
         this.sqMstId = sqMstId;
         this.title = title;
         this.description = description;
         this.groupId = groupId;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.questionDtlOrder = questionDtlOrder;
         this.typeId = typeId;
         this.questionText = questionText;

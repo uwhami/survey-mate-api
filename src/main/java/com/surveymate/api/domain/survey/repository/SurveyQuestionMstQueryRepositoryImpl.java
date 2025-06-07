@@ -67,6 +67,8 @@ public class SurveyQuestionMstQueryRepositoryImpl implements SurveyQuestionMstQu
                         m.title,
                         m.description,
                         m.groupId,
+                        m.startDate,
+                        m.endDate,
                         d.id.questionDtlOrder,
                         d.typeId,
                         d.questionText,

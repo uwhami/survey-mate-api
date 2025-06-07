@@ -12,6 +12,11 @@ spring:
   config:
     import: "optional:file:.env[.properties]"
 
+  jackson:
+    serialization:
+      # LocalDateTime 같은 날짜/시간 타입을 Timestamp 배열 대신 ISO-8601 문자열로 변환
+      write-dates-as-timestamps: false
+
   mail:
     host: smtp.gmail.com
     port: 587
