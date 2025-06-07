@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -20,5 +21,6 @@ public class SurveyResponseDto extends MemInfoAware {
     private boolean completed;
     private List<SurveyResponseDtlDto> surveyResponse;
     private Long srMstId;
+    private LocalDateTime createDate;
 
 }

@@ -23,6 +23,7 @@ public interface SurveyQuestionMstRepository
             "    , CASE WHEN rm.srMstId IS NULL THEN false ELSE true END" +
             "    , NULL" +
             "    , rm.srMstId" +
+            "    , rm.createDate" +
             ")" +
             "FROM SurveyQuestionMst m " +
             "LEFT JOIN m.responseMst rm ON rm.createMemNum = :memNum " +

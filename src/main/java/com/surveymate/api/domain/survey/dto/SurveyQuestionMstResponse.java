@@ -20,6 +20,8 @@ public class SurveyQuestionMstResponse extends BaseResponse {
     private String url; // URL (SHA-256)
     private Long groupId; // 그룹 아이디
     private boolean hasResponded;
+    private String startDt;
+    private String endDt;
     private List<SurveyQuestionDtlResponse> questions; // 질문 목록
 
 }
