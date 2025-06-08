@@ -21,6 +21,7 @@ public class SurveyResponseDto extends MemInfoAware {
     private boolean completed;
     private List<SurveyResponseDtlDto> surveyResponse;
     private Long srMstId;
+    private LocalDateTime endDate;
     private LocalDateTime createDate;
 
 }
