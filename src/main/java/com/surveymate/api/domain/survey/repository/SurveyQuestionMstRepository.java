@@ -23,6 +23,7 @@ public interface SurveyQuestionMstRepository
             "    , CASE WHEN rm.srMstId IS NULL THEN false ELSE true END" +
             "    , NULL" +
             "    , rm.srMstId" +
+            "    , m.endDate" +
             "    , rm.createDate" +
             ")" +
             "FROM SurveyQuestionMst m " +
