@@ -45,7 +45,8 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
             }
 
             response.setHasResponded(questionMst.getRespondedMemNum() != null);
-
+            response.setStartDate(questionMst.getStartDate());
+            response.setEndDate(questionMst.getEndDate());
             response.setGroupId(responseDto == null ? null : responseDto.getGroupId());
             response.setSqMstId(questionMst.getSqMstId());
             response.setTitle(questionMst.getTitle());
