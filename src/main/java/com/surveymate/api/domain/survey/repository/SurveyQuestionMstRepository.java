@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
+
 public interface SurveyQuestionMstRepository
         extends JpaRepository<SurveyQuestionMst, String>, SurveyQuestionMstRepositoryCustom {
 
@@ -25,14 +27,15 @@ public interface SurveyQuestionMstRepository
             "    , rm.srMstId" +
             "    , m.endDate" +
             "    , rm.createDate" +
+            "    , null" +
             ")" +
             "FROM SurveyQuestionMst m " +
             "LEFT JOIN m.responseMst rm ON rm.createMemNum = :memNum " +
-            "WHERE rm.srMstId IS NOT NULL " +
-            "OR m.groupId = :groupId " +
+            "WHERE (rm.srMstId IS NOT NULL OR m.groupId = :groupId) " +
+            "AND m.startDate <= :clientDate " +
             "ORDER BY m.sqMstId DESC"
     )
-    Page<SurveyResponseDto> getSurveyResponeList(@Param("groupId") Long groupId, @Param("memNum") String memNum, Pageable pageable);
+    Page<SurveyResponseDto> getSurveyResponeList(@Param("groupId") Long groupId, @Param("memNum") String memNum, Pageable pageable, @Param("clientDate") LocalDateTime clientDate);
 
     Page<SurveyQuestionMst> getSurveyQuestionMstListByCreateMemNum(String createMemNum, Pageable pageable) ;
 }

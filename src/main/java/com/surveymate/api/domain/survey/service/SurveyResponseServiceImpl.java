@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -122,8 +123,8 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
 
 
     @Override
-    public PagedResponse<SurveyResponseDto> getSurveyResponeList(Long groupId, String memNum, Pageable pageable) {
-          Page<SurveyResponseDto> responseDtoPage = questionMstRepository.getSurveyResponeList(groupId, memNum, pageable);
+    public PagedResponse<SurveyResponseDto> getSurveyResponeList(Long groupId, String memNum, Pageable pageable, LocalDateTime clientDate) {
+          Page<SurveyResponseDto> responseDtoPage = questionMstRepository.getSurveyResponeList(groupId, memNum, pageable, clientDate);
           return new PagedResponse<>(responseDtoPage);
     }
 }
