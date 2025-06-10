@@ -5,6 +5,8 @@ import com.surveymate.api.domain.survey.dto.SurveyQuestionMstResponse;
 import com.surveymate.api.domain.survey.dto.SurveyResponseDto;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
+
 
 public interface SurveyResponseService {
 
@@ -14,5 +16,5 @@ public interface SurveyResponseService {
 
     boolean checkAlreadyResponded(String surveyUrl, String memNum);
 
-    PagedResponse<SurveyResponseDto> getSurveyResponeList(Long groupId, String memNum, Pageable pageable);
+    PagedResponse<SurveyResponseDto> getSurveyResponeList(Long groupId, String memNum, Pageable pageable, LocalDateTime clientDate);
 }
