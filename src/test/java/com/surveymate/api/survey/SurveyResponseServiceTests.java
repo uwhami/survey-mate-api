@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest
@@ -62,7 +63,8 @@ public class SurveyResponseServiceTests {
     @Test
     public void getSurveyResponeListTest() {
         Pageable pageable = PageRequest.of(0, 10);
-        PagedResponse<SurveyResponseDto> responseDtoPagedResponse = surveyResponseService.getSurveyResponeList(15L,"M202502090001", pageable);
+        LocalDateTime dateTime1 = LocalDateTime.of(2025, 6, 11, 10, 30);
+        PagedResponse<SurveyResponseDto> responseDtoPagedResponse = surveyResponseService.getSurveyResponeList(15L,"M202502090001", pageable, dateTime1);
         System.out.println("responseDtoPagedResponse : responseDto = " + responseDtoPagedResponse);
     }
 
