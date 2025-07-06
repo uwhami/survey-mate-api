@@ -1,5 +1,6 @@
 package com.surveymate.api.domain.member.repository;
 
+import com.surveymate.api.common.enums.MemberRole;
 import com.surveymate.api.common.enums.MemberStatus;
 import com.surveymate.api.domain.member.entity.Member;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, String> {
 
+    @Query("SELECT m FROM Member m LEFT JOIN FETCH m.group WHERE m.memNum = :memNum")
     Optional<Member> findByMemNum(String memNum);
 
     Optional<Member> findByUserId(@Param("userId") String userId);
@@ -42,5 +44,9 @@ public interface MemberRepository extends JpaRepository<Member, String> {
 
     @Query("SELECT m FROM Member m WHERE m.group.groupId = :groupId AND m.memStatus = :status")
     Page<Member> findActiveMembersByGroupId(@Param("groupId") Long groupId, @Param("status") MemberStatus status, Pageable pageable);
+
+    @Modifying
+    @Query("UPDATE Member m SET m.memRole = :memberRole WHERE m.memNum = :memNum")
+    int updateMemberRoleToUser(@Param("memNum") String memNum, @Param("memberRole") MemberRole memberRole);
 
 }

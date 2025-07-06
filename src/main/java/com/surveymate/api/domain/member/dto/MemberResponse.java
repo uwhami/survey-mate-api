@@ -19,5 +19,6 @@ public class MemberResponse {
     private String memRole;
     private String socialType;
     private Long groupId;
+    private String groupName;
 
 }

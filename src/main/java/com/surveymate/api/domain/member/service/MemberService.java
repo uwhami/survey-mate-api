@@ -1,6 +1,7 @@
 package com.surveymate.api.domain.member.service;
 
 
+import com.surveymate.api.common.enums.MemberRole;
 import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
 import com.surveymate.api.domain.group.entity.Group;
 import com.surveymate.api.domain.member.dto.ChangePasswordRequest;
@@ -32,5 +33,7 @@ public interface MemberService {
     void passwordReset(PasswordResetRequest request);
 
     void deleteMember(MemberRequest request);
+
+    void updateMemberRoleToUser(String memNum, MemberRole role);
 
 }

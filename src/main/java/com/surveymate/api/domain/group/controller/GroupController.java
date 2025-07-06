@@ -23,14 +23,15 @@ public class GroupController {
         return groupService.selectGroupByUserId(groupId);
     }
 
+    @PostMapping()
+    public GroupReponse createGroup(@RequestBody GroupRequest request) throws Exception{
+        return groupService.createGroupFromRequest(request);
+    }
+
     @PreAuthorize("hasAnyRole('MANAGER')")
     @PutMapping()
     public GroupReponse updateGroup(@RequestBody GroupRequest request) throws Exception{
-        if(request.getGroupId() == null) {
-            return groupService.createGroupFromRequest(request);
-        }else{
-            return groupService.updateGroup(request);
-        }
+        return groupService.updateGroup(request);
     }
 
     @GetMapping("/{groupId}/members")
