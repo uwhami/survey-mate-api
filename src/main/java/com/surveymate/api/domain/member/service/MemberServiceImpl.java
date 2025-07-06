@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.surveymate.api.common.enums.FilePath;
+import com.surveymate.api.common.enums.MemberRole;
 import com.surveymate.api.common.enums.MemberStatus;
 import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.domain.auth.dto.PasswordResetRequest;
@@ -93,6 +94,10 @@ public class MemberServiceImpl implements MemberService {
         Member member = optionalMember.get();
         MemberResponse memberResponse = memberMapper.toDTO(member);
         memberResponse.setProfileImageUri(fileService.getFilePath(member.getProfileImageUuid()));
+        if(member.getGroup() != null) {
+            memberResponse.setGroupName(member.getGroup().getGroupName());
+            memberResponse.setGroupId(member.getGroup().getGroupId());
+        }
         return memberResponse;
     }
 
@@ -248,6 +253,17 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
+    @Transactional
+    @Override
+    public void updateMemberRoleToUser(String memNum, MemberRole role) {
+        try{
+            int cnt = memberRepository.updateMemberRoleToUser(memNum, role);
+            if(cnt == 0){
+                throw new UserNotFoundException("Error Updating Member Role..");
+            }
+        }catch (Exception e){
+            throw new CustomRuntimeException(e.getMessage(), e);
+        }
 
-
+    }
 }

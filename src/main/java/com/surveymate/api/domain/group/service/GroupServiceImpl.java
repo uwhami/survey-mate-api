@@ -2,6 +2,7 @@ package com.surveymate.api.domain.group.service;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.surveymate.api.common.dto.PagedResponse;
+import com.surveymate.api.common.enums.MemberRole;
 import com.surveymate.api.common.enums.MemberStatus;
 import com.surveymate.api.common.exception.CustomRuntimeException;
 import com.surveymate.api.domain.group.dto.GroupReponse;
@@ -106,6 +107,7 @@ public class GroupServiceImpl implements GroupService {
         Group group = createGroup(groupRequest.getGroupName(), groupRequest.getGroupAuthCode(), null);
         /* 사용자에 그룹정보 저장. */
         memberService.assignGroupToMember(groupRequest.getMemNum(), group);
+        memberService.updateMemberRoleToUser(groupRequest.getMemNum(), MemberRole.MANAGER);
         return groupMapper.toDto(group);
     }
 
