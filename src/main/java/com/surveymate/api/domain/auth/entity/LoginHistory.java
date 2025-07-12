@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 public class LoginHistory {
 
     @Id
-    @Column(name = "uuid", nullable = false, unique = true)
+    @Column(name = "uuid", nullable = false, unique = true, columnDefinition = "BINARY(16)")
     @JdbcTypeCode(SqlTypes.BINARY)
     private byte[] uuid;
 

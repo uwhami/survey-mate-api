@@ -12,6 +12,8 @@ public interface GroupService {
 
     Group createGroup(String groupName, String groupAuthCode, String userId);
 
+    GroupReponse joinGroup(GroupRequest groupRequest);
+
     GroupReponse createGroupFromRequest(GroupRequest groupRequest) throws Exception;
 
     boolean isExistsGroupCode(String groupCode);
