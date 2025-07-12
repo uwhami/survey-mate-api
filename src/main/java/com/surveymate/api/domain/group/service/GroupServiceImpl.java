@@ -103,6 +103,22 @@ public class GroupServiceImpl implements GroupService {
 
     @Transactional
     @Override
+    public GroupReponse joinGroup(GroupRequest groupRequest) {
+        if(!StringUtils.hasText(groupRequest.getGroupCode())) {
+            throw new GroupNotFoundException();
+        }
+        Group group = groupRepository.findByGroupCode(groupRequest.getGroupCode())
+                .orElseThrow(GroupNotFoundException::new);
+
+        int updateCnt = memberRepository.updateGroupIdByMemNum(groupRequest.getMemNum(), group.getGroupId());
+        if(updateCnt == 0){
+            throw new GroupNotFoundException();
+        }
+        return groupMapper.toDto(group);
+    }
+
+    @Transactional
+    @Override
     public GroupReponse createGroupFromRequest(GroupRequest groupRequest) throws Exception{
         Group group = createGroup(groupRequest.getGroupName(), groupRequest.getGroupAuthCode(), null);
         /* 사용자에 그룹정보 저장. */
@@ -113,17 +129,15 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public boolean isExistsGroupCode(String groupCode) {
-        return groupRepository.findByGroupCode(groupCode) != null;
+        return groupRepository.findByGroupCode(groupCode).isPresent();
     }
 
     @Override
     public void setGroupAuthCode(String groupCode, String authCode) {
         QGroup qGroup = QGroup.group;
 
-        Group group = groupRepository.findByGroupCode(groupCode);
-        if (group == null) {
-            throw new GroupNotFoundException();
-        }
+        Group group = groupRepository.findByGroupCode(groupCode)
+                .orElseThrow(GroupNotFoundException::new);
 
         try{
             long appectedRows =  jpaQueryFactory
@@ -143,10 +157,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group validateGroupCodeAndGroupAuthCode(String groupCode, String groupAuthCode) {
-        Group group = groupRepository.findByGroupCodeAndGroupAuthCode(groupCode, groupAuthCode);
-        if(group == null){
-            throw new GroupNotFoundException();
-        }
+        Group group = groupRepository.findByGroupCodeAndGroupAuthCode(groupCode, groupAuthCode)
+                .orElseThrow(GroupNotFoundException::new);
         return group;
     }
 

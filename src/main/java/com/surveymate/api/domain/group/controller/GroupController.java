@@ -28,6 +28,11 @@ public class GroupController {
         return groupService.createGroupFromRequest(request);
     }
 
+    @PostMapping("/join")
+    public GroupReponse joinGroup(@RequestBody GroupRequest request) throws Exception{
+        return groupService.joinGroup(request);
+    }
+
     @PreAuthorize("hasAnyRole('MANAGER')")
     @PutMapping()
     public GroupReponse updateGroup(@RequestBody GroupRequest request) throws Exception{
