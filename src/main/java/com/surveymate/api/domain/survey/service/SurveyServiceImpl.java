@@ -79,7 +79,7 @@ public class SurveyServiceImpl implements SurveyService {
             return surveyMst;
 
         } catch (Exception e) {
-            log.error("Failed to create survey", e);
+            log.error("Failed to create survey", e.getMessage());
             throw new CustomRuntimeException("Error calling Survey Response Form", e);
         }
     }
@@ -94,7 +94,7 @@ public class SurveyServiceImpl implements SurveyService {
             return new PagedResponse<>(response.map(surveyMapper::toSurveyQuestionMstResponse));
 
         } catch (Exception e) {
-            log.error("Failed to create survey", e);
+            log.error("Failed to create survey", e.getMessage());
             throw new CustomRuntimeException("Error calling Survey Response Form", e);
         }
     }

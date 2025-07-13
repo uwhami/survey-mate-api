@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="30" status="WARN">
+    <Properties>
+        <Property name="LOG_PATTERN_DEV">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} [%X{transactionId}] %-5level %msg%n
+        </Property>
+        <Property name="LOG_PATTERN_PROD">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} [%X{transactionId}] %-5level %msg%n
+        </Property>    </Properties>
+
+    <Appenders>
+        <Console name="ConsoleDev" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN_DEV}" />
+        </Console>
+
+        <Console name="ConsoleProd" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN_PROD}" />
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <!-- 불필요한 시스템 로그 줄이기 -->
+        <Logger name="sun.rmi" level="info"/>
+        <Logger name="javax.management" level="info"/>
+        <Logger name="java.rmi" level="info"/>
+
+        <!-- 데이터소스 및 Hibernate -->
+        <Logger name="com.zaxxer.hikari" level="info"/>
+        <Logger name="org.hibernate" level="info"/>
+        <Logger name="org.hibernate.SQL" level="info"/>
+        <Logger name="org.hibernate.type.descriptor.sql" level="warn"/>
+        <Logger name="org.hibernate.engine.transaction.internal.TransactionImpl" level="info"/>
+        <Logger name="org.hibernate.orm.jdbc.bind" level="info"/>
+
+        <!-- Spring -->
+        <Logger name="org.springframework.web" level="info"/>
+        <Logger name="org.springframework.boot.autoconfigure" level="info"/>
+        <Logger name="org.springframework.context.annotation.ConditionEvaluator" level="warn"/>
+        <Logger name="org.apache.catalina" level="info"/>
+        <Logger name="org.springframework.beans.factory" level="info"/>
+        <Logger name="org.springframework.orm.jpa" level="info"/>
+        <Logger name="org.springframework.jdbc.datasource" level="info"/>
+
+        <!-- dev 프로필 -->
+        <SpringProfile name="dev">
+            <Logger name="com.surveymate" level="debug"/>
+            <Root level="info">
+                <AppenderRef ref="ConsoleDev"/>
+            </Root>
+        </SpringProfile>
+
+        <!-- prod 프로필 -->
+        <SpringProfile name="prod">
+            <Logger name="com.surveymate" level="info"/>
+            <Root level="info">
+                <AppenderRef ref="ConsoleProd"/>
+            </Root>
+        </SpringProfile>
+    </Loggers>
+</Configuration>
