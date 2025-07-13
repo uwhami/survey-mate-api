@@ -39,7 +39,7 @@ public class QueryExecutionLoggingAspect {
 
             return result;
         } catch (Exception e) {
-            log.error("[{}] Exception in method: {}", source, methodName, e);
+            log.error("[{}] Exception in method: {}", source, methodName);
             throw e;
         }
     }

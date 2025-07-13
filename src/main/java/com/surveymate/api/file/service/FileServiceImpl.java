@@ -211,7 +211,7 @@ public class FileServiceImpl implements FileService {
             }
 
         } catch (IOException e) {
-            log.error("파일 삭제 실패: {}", filePath, e);
+            log.error("파일 삭제 실패: {}", filePath, e.getMessage());
             throw new IOException("파일 삭제 중 오류가 발생했습니다: " + filePath);
         }
 

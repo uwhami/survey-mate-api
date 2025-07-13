@@ -33,21 +33,6 @@ file:
   upload:
     member-profile: uploads/member/profile
 
-logging:
-  level:
-    root: ERROR
-    com:
-      surveymate: DEBUG
-    org:
-      springframework:
-        web: DEBUG
-        transaction: DEBUG
-      hibernate:
-        SQL: false
-        orm:
-          jdbc:
-            bind: false
-
 google:
   client:
     id: ${GOOGLE_CLIENT_ID}
