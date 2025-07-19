@@ -35,6 +35,7 @@ JWT 인증, 공통 응답 처리, AOP를 활용한 백엔드 구조를 적용하
 - 파일 업로드 및 접근 URL 반환 기능
 - 파일 경로, 멤버 Role/Status, 소셜 로그인 타입 등 ENUM 처리로 타입 안정성 확보와 DB 의존도 최소화, 코드 가독성 향상
 - 공통코드 클래스(CodeGenerator), 채번로직(SequenceGenerator)을 적용하여 하여 회원가입, 설문조사 작성 시 코드를 생성하여 관리
+- lo4j2를 이용한 로그 패턴화
 
 ### 운영/배포
 - AWS EC2 인스턴스 생성 및 Nginx 설정
@@ -44,11 +45,11 @@ JWT 인증, 공통 응답 처리, AOP를 활용한 백엔드 구조를 적용하
 
 ### 도메인 주소 연결
 > https://djsurveymate.duckdns.org
+> https://insurveymate.duckdns.org
 
 &nbsp;
 
 ## 추가 예정 기능
-- 로그 설정
 - 그룹 초대 및 가입 신청/승인
 - 그룹 매니저 권한 요청/승인 흐름
 - 설문 응답 임시 저장 및 기한 지정 기능
